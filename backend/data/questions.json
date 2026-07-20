@@ -1,0 +1,1252 @@
+{
+  "vectors_intro": [
+    {
+      "id": "vectors_intro_q1",
+      "question": "Which of the following best describes the fundamental nature of a vector in R^n?",
+      "choices": {
+        "A": "An object possessing both magnitude and direction.",
+        "B": "A single numerical value representing a quantity.",
+        "C": "A geometric shape with defined boundaries.",
+        "D": "A set of numbers where order does not matter."
+      },
+      "correct_answer": "A",
+      "explanation": "Vectors are uniquely defined by having both a size (magnitude) and an orientation (direction). Scalars, in contrast, only have magnitude."
+    },
+    {
+      "id": "vectors_intro_q2",
+      "question": "When a vector is represented geometrically as an arrow in R^2 starting from the origin (0,0), what do its components [x, y] directly correspond to?",
+      "choices": {
+        "A": "The coordinates of the arrow's head.",
+        "B": "The length of the arrow.",
+        "C": "The slope of the line segment forming the arrow.",
+        "D": "The area of the triangle formed by the arrow and the axes."
+      },
+      "correct_answer": "A",
+      "explanation": "For a vector originating at the origin, its components directly specify the (x, y) coordinates of the point where the arrow terminates, which defines its direction and magnitude."
+    },
+    {
+      "id": "vectors_intro_q3",
+      "question": "A vector in R^n is most accurately defined as:",
+      "choices": {
+        "A": "An ordered list of n real numbers.",
+        "B": "Any collection of n distinct real numbers.",
+        "C": "A single real number multiplied by a unit direction.",
+        "D": "A variable that can take on multiple real values."
+      },
+      "correct_answer": "A",
+      "explanation": "The definition of a vector in R^n emphasizes that it is an 'ordered list' of n real numbers. The order of the components is crucial and distinguishes one vector from another."
+    },
+    {
+      "id": "vectors_intro_q4",
+      "question": "A vector 'v' starts at point P(2, -3) and ends at point Q(5, 1). What are the components of vector 'v'?",
+      "choices": {
+        "A": "[3, 4]",
+        "B": "[-3, -4]",
+        "C": "[7, -2]",
+        "D": "[5, 1]"
+      },
+      "correct_answer": "A",
+      "explanation": "To find the components of a vector from a starting point P to an ending point Q, you subtract the coordinates of P from Q: v = Q - P = (5-2, 1-(-3)) = (3, 4)."
+    }
+  ],
+  "vector_operations": [
+    {
+      "id": "vector_operations_q1",
+      "question": "Given the vector **v** = [2, -3], what is the result of the scalar multiplication 4**v**?",
+      "choices": {
+        "A": "[8, -12]",
+        "B": "[6, 1]",
+        "C": "[8, -3]",
+        "D": "[2, -12]"
+      },
+      "correct_answer": "A",
+      "explanation": "To perform scalar multiplication, each component of the vector is multiplied by the scalar. So, 4 * [2, -3] = [4*2, 4*(-3)] = [8, -12]."
+    },
+    {
+      "id": "vector_operations_q2",
+      "question": "To add two vectors **u** = [u₁, u₂] and **v** = [v₁, v₂], which of the following expressions represents the correct component-wise operation?",
+      "choices": {
+        "A": "**u** + **v** = [u₁ + v₁, u₂ + v₂]",
+        "B": "**u** + **v** = [u₁v₁, u₂v₂]",
+        "C": "**u** + **v** = [u₁ + v₂, u₂ + v₁]",
+        "D": "**u** + **v** = [||**u**|| + ||**v**||]"
+      },
+      "correct_answer": "A",
+      "explanation": "Vector addition is performed by adding corresponding components of the vectors. So, the first component of the result is the sum of the first components of **u** and **v**, and similarly for the second components."
+    },
+    {
+      "id": "vector_operations_q3",
+      "question": "Given vectors **a** = [1, 2] and **b** = [3, -1], compute the vector operation 2**a** - **b**.",
+      "choices": {
+        "A": "[-1, 5]",
+        "B": "[5, 3]",
+        "C": "[-1, 3]",
+        "D": "[-4, 5]"
+      },
+      "correct_answer": "A",
+      "explanation": "First, perform scalar multiplication: 2**a** = 2 * [1, 2] = [2, 4]. Then perform vector subtraction: [2, 4] - [3, -1] = [2-3, 4-(-1)] = [-1, 5]."
+    },
+    {
+      "id": "vector_operations_q4",
+      "question": "If **v** and **u** are vectors in Rⁿ, and k is a scalar, which of the following statements about basic vector operations is always true?",
+      "choices": {
+        "A": "The operation **v** - **u** results in a vector in Rⁿ.",
+        "B": "The operation k * **v** can change the dimension of **v**.",
+        "C": "The sum of a vector and a scalar (**v** + k) is a valid operation, resulting in a vector.",
+        "D": "The magnitude of a vector ||**v**|| is a vector in Rⁿ."
+      },
+      "correct_answer": "A",
+      "explanation": "Vector subtraction between two vectors of the same dimension (Rⁿ) always results in another vector of that same dimension (Rⁿ). Scalar multiplication only scales the vector, not its dimension (B is false). You cannot add a vector and a scalar (C is false). The magnitude of a vector is a scalar, not a vector (D is false)."
+    }
+  ],
+  "dot_product": [
+    {
+      "id": "dot_product_q1",
+      "question": "What type of mathematical object is the result of a dot product between two non-zero vectors in R^n?",
+      "choices": {
+        "A": "A scalar",
+        "B": "A vector in R^n",
+        "C": "A matrix",
+        "D": "A complex number"
+      },
+      "correct_answer": "A",
+      "explanation": "The dot product always yields a single scalar value (a real number), not a vector, matrix, or complex number."
+    },
+    {
+      "id": "dot_product_q2",
+      "question": "If the dot product of two non-zero vectors **u** and **v** is zero (**u ⋅ v = 0**), what can be concluded about their relationship?",
+      "choices": {
+        "A": "They are parallel.",
+        "B": "They are orthogonal (perpendicular).",
+        "C": "Their magnitudes are equal.",
+        "D": "One of the vectors must be the zero vector."
+      },
+      "correct_answer": "B",
+      "explanation": "A zero dot product is the defining characteristic of orthogonal (perpendicular) non-zero vectors. If either vector were zero, the dot product would also be zero, but the question specifies non-zero vectors."
+    },
+    {
+      "id": "dot_product_q3",
+      "question": "Consider two non-zero vectors **a** and **b**. Which of the following statements is true regarding their dot product, **a ⋅ b**?",
+      "choices": {
+        "A": "**a ⋅ b** is always equal to the product of their magnitudes: ||**a**|| ||**b**||.",
+        "B": "If **a** and **b** point in exactly opposite directions, **a ⋅ b** will be negative.",
+        "C": "The dot product **a ⋅ b** is a vector pointing in the same direction as **a**.",
+        "D": "**a ⋅ b** is only defined for 2D vectors."
+      },
+      "correct_answer": "B",
+      "explanation": "The dot product formula `a ⋅ b = ||a|| ||b|| cos(θ)` shows that if vectors point in exactly opposite directions (θ = 180°), then `cos(θ) = -1`, resulting in a negative dot product. Option A is only true if they are parallel and in the same direction (θ = 0°). Option C is incorrect as the dot product is a scalar. Option D is incorrect as the dot product is defined for vectors in R^n."
+    },
+    {
+      "id": "dot_product_q4",
+      "question": "For what value of *k* are the vectors **u** = [3, -1, 2] and **v** = [1, *k*, 5] orthogonal?",
+      "choices": {
+        "A": "*k* = 13",
+        "B": "*k* = -13",
+        "C": "*k* = 7",
+        "D": "*k* = -7"
+      },
+      "correct_answer": "A",
+      "explanation": "For vectors to be orthogonal, their dot product must be zero. Calculate **u ⋅ v** = (3)(1) + (-1)(*k*) + (2)(5) = 3 - *k* + 10 = 13 - *k*. Setting this to zero, 13 - *k* = 0, which gives *k* = 13."
+    }
+  ],
+  "linear_combinations": [
+    {
+      "id": "linear_combinations_q1",
+      "question": "What is the defining characteristic of a linear combination of vectors `v_1, v_2, ..., v_k`?",
+      "choices": {
+        "A": "It is a sum of scalar multiples of these vectors.",
+        "B": "It is a sum of these vectors without any scalar multiplication.",
+        "C": "It is the product of these vectors.",
+        "D": "It is any vector that is parallel to at least one of the given vectors."
+      },
+      "correct_answer": "A",
+      "explanation": "A linear combination is formed by multiplying each vector by a scalar and then adding the results together. The scalars can be any real numbers."
+    },
+    {
+      "id": "linear_combinations_q2",
+      "question": "If a vector `w` can be expressed as `w = 3u - 2v`, what does this necessarily imply about `w`?",
+      "choices": {
+        "A": "`w` lies in the span of `u` and `v`.",
+        "B": "`w` is parallel to `u`.",
+        "C": "`w` is orthogonal to `v`.",
+        "D": "`w` must be a scalar, not a vector."
+      },
+      "correct_answer": "A",
+      "explanation": "By definition, the span of a set of vectors is the set of all possible linear combinations of those vectors. Since `w` is a linear combination of `u` and `v`, it must belong to their span."
+    },
+    {
+      "id": "linear_combinations_q3",
+      "question": "Given vectors `v1 = [1, 2]` and `v2 = [2, 4]`, which of the following vectors is a linear combination of `v1` and `v2`?",
+      "choices": {
+        "A": "[3, 6]",
+        "B": "[1, 3]",
+        "C": "[0, 1]",
+        "D": "[2, 1]"
+      },
+      "correct_answer": "A",
+      "explanation": "Vectors `v1` and `v2` are linearly dependent, with `v2 = 2v1`. Their span is the line passing through the origin in the direction of `v1 = [1, 2]`. The vector `[3, 6]` can be written as `3 * v1` (or `1.5 * v2`), placing it on this line. The other vectors are not scalar multiples of `[1, 2]`."
+    },
+    {
+      "id": "linear_combinations_q4",
+      "question": "If vector `x` is a linear combination of vectors `y` and `z`, and `y` is a linear combination of `z` and `w`, which of the following statements is always true?",
+      "choices": {
+        "A": "`x` is a linear combination of `z` and `w`.",
+        "B": "`w` is a linear combination of `x` and `y`.",
+        "C": "`z` is a linear combination of `x` and `w`.",
+        "D": "`y` is a scalar multiple of `z`."
+      },
+      "correct_answer": "A",
+      "explanation": "Given `x = a*y + b*z` and `y = c*z + d*w`. Substituting the expression for `y` into the equation for `x` yields `x = a*(c*z + d*w) + b*z = (ac+b)*z + (ad)*w`. This shows that `x` can always be written as a linear combination of `z` and `w`."
+    }
+  ],
+  "span": [
+    {
+      "id": "span_q1",
+      "question": "What does the span of a set of vectors {v1, v2, ..., vk} in a vector space represent?",
+      "choices": {
+        "A": "The set of all possible linear combinations of v1, v2, ..., vk.",
+        "B": "The collection of the vectors v1, v2, ..., vk themselves.",
+        "C": "The sum v1 + v2 + ... + vk.",
+        "D": "The set of all scalar multiples of only the first vector, v1."
+      },
+      "correct_answer": "A",
+      "explanation": "The span is defined as the set of all linear combinations that can be formed from the given vectors."
+    },
+    {
+      "id": "span_q2",
+      "question": "If a vector 'w' is in the span of {v1, v2}, what is the fundamental implication?",
+      "choices": {
+        "A": "'w' can be expressed as a linear combination of v1 and v2, i.e., w = c1*v1 + c2*v2 for some scalars c1, c2.",
+        "B": "'w' is orthogonal to both v1 and v2.",
+        "C": "'w' is a scalar multiple of v1 or a scalar multiple of v2 (but not necessarily both).",
+        "D": "'w' must be one of the vectors v1 or v2."
+      },
+      "correct_answer": "A",
+      "explanation": "Being in the span means the vector can be formed by combining the given vectors using scalar multiplication and addition, which is the definition of a linear combination."
+    },
+    {
+      "id": "span_q3",
+      "question": "Which of the following is always true about the span of a single non-zero vector {v} in R^3?",
+      "choices": {
+        "A": "It is a line passing through the origin.",
+        "B": "It is a plane passing through the origin.",
+        "C": "It is only the vector 'v' itself.",
+        "D": "It is a single point at the origin."
+      },
+      "correct_answer": "A",
+      "explanation": "The span of a single non-zero vector consists of all its scalar multiples, which geometrically forms a line passing through the origin and containing the vector 'v'."
+    },
+    {
+      "id": "span_q4",
+      "question": "Is the vector [3, 4] in the span of {[1, 1], [2, 2]}?",
+      "choices": {
+        "A": "No.",
+        "B": "Yes, because both [1,1] and [2,2] are in R^2.",
+        "C": "Yes, because [3,4] can be written as 3*[1,1] + 0*[2,2].",
+        "D": "Yes, because the vectors [1,1] and [2,2] are linearly independent."
+      },
+      "correct_answer": "A",
+      "explanation": "The vectors [1,1] and [2,2] are linearly dependent, as [2,2] = 2*[1,1]. Their span is the line y=x. Since [3,4] (where x=3, y=4) does not lie on the line y=x, it is not in their span."
+    }
+  ],
+  "linear_independence": [
+    {
+      "id": "linear_independence_q1",
+      "question": "A set of vectors {v1, v2, ..., vk} is linearly independent if and only if which of the following is true?",
+      "choices": {
+        "A": "The equation c1v1 + c2v2 + ... + ckvk = 0 has only the trivial solution (c1 = c2 = ... = ck = 0).",
+        "B": "At least one of the vectors vi is the zero vector.",
+        "C": "Each vector vi can be written as a linear combination of the other vectors in the set.",
+        "D": "All vectors in the set are orthogonal to each other."
+      },
+      "correct_answer": "A",
+      "explanation": "The fundamental definition of linear independence states that the only way to form the zero vector from a linear combination of the set's vectors is if all scalar coefficients are zero. Options B and C describe conditions for linear dependence. Option D describes orthogonality, which implies linear independence for non-zero vectors, but is not the definition of linear independence itself."
+    },
+    {
+      "id": "linear_independence_q2",
+      "question": "If a set of vectors {v1, v2, v3} in R^3 is linearly dependent, which statement MUST be true?",
+      "choices": {
+        "A": "At least one vector in the set can be expressed as a linear combination of the other vectors in the set.",
+        "B": "The set must contain the zero vector.",
+        "C": "All vectors in the set are scalar multiples of each other.",
+        "D": "The set spans all of R^3."
+      },
+      "correct_answer": "A",
+      "explanation": "By definition, a set is linearly dependent if and only if at least one vector can be written as a linear combination of the others. Option B is a sufficient condition for dependence, but not necessary (e.g., {(1,0,0), (2,0,0), (0,1,0)} is dependent but contains no zero vector). Option C is too strong; for example, {(1,0,0), (2,0,0), (0,1,0)} is dependent, but (0,1,0) is not a scalar multiple of (1,0,0). Option D is incorrect; a linearly dependent set may span a subspace of lower dimension than the full space (e.g., a line or a plane)."
+    },
+    {
+      "id": "linear_independence_q3",
+      "question": "Consider a set of 5 vectors in R^4. Which of the following statements about this set's linear independence is always true?",
+      "choices": {
+        "A": "The set must be linearly dependent.",
+        "B": "The set must be linearly independent.",
+        "C": "The set is linearly independent if and only if it spans R^4.",
+        "D": "The set spans a subspace of dimension exactly 4."
+      },
+      "correct_answer": "A",
+      "explanation": "In an m-dimensional vector space (like R^4, where m=4), any set containing more than m vectors must be linearly dependent. Since there are 5 vectors in R^4 (5 > 4), they must be linearly dependent. Option B is incorrect as it violates this fundamental principle. Options C and D are not always true; for example, the vectors might not span R^4 even if they were linearly independent (which they aren't here)."
+    },
+    {
+      "id": "linear_independence_q4",
+      "question": "Suppose a set of vectors S = {v1, v2, v3} contains the zero vector (e.g., v1 = 0). What can be concluded about the linear independence of S?",
+      "choices": {
+        "A": "The set S is linearly dependent.",
+        "B": "The set S is linearly independent only if v2 and v3 are non-zero.",
+        "C": "The set S is linearly independent if v2 and v3 are not scalar multiples of each other.",
+        "D": "The linear independence of S cannot be determined without knowing v2 and v3."
+      },
+      "correct_answer": "A",
+      "explanation": "If a set of vectors contains the zero vector, it is always linearly dependent. We can form a non-trivial linear combination that equals the zero vector by assigning a non-zero scalar coefficient to the zero vector and zero coefficients to all other vectors (e.g., 1*0 + 0*v2 + 0*v3 = 0). Therefore, options B, C, and D are incorrect because the presence of the zero vector alone guarantees linear dependence."
+    }
+  ],
+  "matrices_intro": [
+    {
+      "id": "matrices_intro_q1",
+      "question": "Which of the following best describes a matrix?",
+      "choices": {
+        "A": "A rectangular array of numbers organized into rows and columns.",
+        "B": "A single numerical value used for algebraic expressions.",
+        "C": "A list of numbers arranged in a single line.",
+        "D": "A graph illustrating relationships between mathematical functions."
+      },
+      "correct_answer": "A",
+      "explanation": "A matrix is defined as a rectangular array of numbers, specifically organized into rows and columns, which allows for structured data representation beyond a single number or a simple linear list."
+    },
+    {
+      "id": "matrices_intro_q2",
+      "question": "If a matrix has dimensions 'm x n', what do 'm' and 'n' primarily represent?",
+      "choices": {
+        "A": "'m' represents the number of rows and 'n' represents the number of columns.",
+        "B": "'m' represents the number of columns and 'n' represents the number of rows.",
+        "C": "'m' represents the total number of elements and 'n' represents the number of unique values.",
+        "D": "'m' and 'n' represent the starting and ending values of the elements, respectively."
+      },
+      "correct_answer": "A",
+      "explanation": "By convention, when describing matrix dimensions as m x n, 'm' always refers to the number of rows, and 'n' always refers to the number of columns. This order is crucial for understanding matrix structure."
+    },
+    {
+      "id": "matrices_intro_q3",
+      "question": "Which of the following is a fundamental application of matrices?",
+      "choices": {
+        "A": "Storing a collection of unrelated single numerical values without any specific order.",
+        "B": "Representing and solving systems of linear equations.",
+        "C": "Performing basic arithmetic operations on individual scalar quantities.",
+        "D": "Generating random numbers for statistical simulations."
+      },
+      "correct_answer": "B",
+      "explanation": "Matrices are exceptionally powerful tools for representing and solving systems of linear equations, where each row can correspond to an equation and columns to variables. They also represent linear transformations and structured data."
+    },
+    {
+      "id": "matrices_intro_q4",
+      "question": "Consider the matrix A = [[3, -1, 0], [2, 5, 7]]. What are the dimensions of matrix A?",
+      "choices": {
+        "A": "2 x 3",
+        "B": "3 x 2",
+        "C": "6",
+        "D": "1 x 6"
+      },
+      "correct_answer": "A",
+      "explanation": "Matrix A has 2 rows (horizontal) and 3 columns (vertical). Therefore, its dimensions are 2 x 3 (rows by columns)."
+    }
+  ],
+  "matrix_operations": [
+    {
+      "id": "matrix_operations_q1",
+      "question": "For two matrices A and B to be added or subtracted, what must be true about their dimensions?",
+      "choices": {
+        "A": "They must have the same number of rows and columns.",
+        "B": "They must have the same number of columns.",
+        "C": "They must have the same number of rows.",
+        "D": "One matrix must be a scalar multiple of the other."
+      },
+      "correct_answer": "A",
+      "explanation": "Matrix addition and subtraction are defined only for matrices of the same dimensions (same number of rows and columns)."
+    },
+    {
+      "id": "matrix_operations_q2",
+      "question": "If A is an m x n matrix and c is a scalar, which of the following expressions is always true?",
+      "choices": {
+        "A": "(cA)^T = cA^T",
+        "B": "(cA)^T = (1/c)A^T (assuming c ≠ 0)",
+        "C": "(cA)^T = c^T A^T",
+        "D": "(cA)^T = A^T"
+      },
+      "correct_answer": "A",
+      "explanation": "The transpose of a scalar multiple of a matrix is the scalar multiple of the transpose of the matrix. The scalar itself is unaffected by the transpose operation."
+    },
+    {
+      "id": "matrix_operations_q3",
+      "question": "Given two m x n matrices A and B, which statement correctly describes the transpose of their sum, (A + B)^T?",
+      "choices": {
+        "A": "(A + B)^T = A^T + B^T",
+        "B": "(A + B)^T = A^T B^T",
+        "C": "(A + B)^T = A + B",
+        "D": "(A + B)^T = A^T - B^T"
+      },
+      "correct_answer": "A",
+      "explanation": "The transpose of a sum of matrices is the sum of their transposes. Options B confuses it with the transpose of a product, C implies the transpose has no effect, and D changes the operation."
+    },
+    {
+      "id": "matrix_operations_q4",
+      "question": "Given matrices A = [[1, 2], [3, 4]] and B = [[0, 1], [-1, 2]], calculate 2A - B^T.",
+      "choices": {
+        "A": "[[2, 5], [5, 6]]",
+        "B": "[[2, 3], [7, 6]]",
+        "C": "[[2, 3], [7, 10]]",
+        "D": "[[2, 5], [2, 2]]"
+      },
+      "correct_answer": "A",
+      "explanation": "First, calculate 2A = [[2, 4], [6, 8]]. Next, find B^T = [[0, -1], [1, 2]]. Finally, perform the subtraction: 2A - B^T = [[2-0, 4-(-1)], [6-1, 8-2]] = [[2, 5], [5, 6]]. Option B results from 2A - B. Option C results from 2A + B^T. Option D results from scaling only the first row of A and then subtracting B^T."
+    }
+  ],
+  "matrix_multiplication": [
+    {
+      "id": "matrix_multiplication_q1",
+      "question": "For two matrices A and B, when is the product AB defined?",
+      "choices": {
+        "A": "The number of columns in A must equal the number of rows in B.",
+        "B": "The number of rows in A must equal the number of columns in B.",
+        "C": "The dimensions of A and B must be identical.",
+        "D": "The number of rows in A must equal the number of rows in B."
+      },
+      "correct_answer": "A",
+      "explanation": "Matrix multiplication AB is defined only when the number of columns in the first matrix (A) is equal to the number of rows in the second matrix (B). These are often referred to as the 'inner dimensions'."
+    },
+    {
+      "id": "matrix_multiplication_q2",
+      "question": "If matrix P has dimensions 3x5 and matrix Q has dimensions 5x2, what are the dimensions of the product PQ?",
+      "choices": {
+        "A": "3x2",
+        "B": "5x5",
+        "C": "2x3",
+        "D": "The product is undefined."
+      },
+      "correct_answer": "A",
+      "explanation": "For matrices P (m x n) and Q (n x p), the product PQ has dimensions m x p. Here, P is 3x5 and Q is 5x2, so the product PQ will be 3x2. The inner dimensions (5 and 5) match, so the product is defined."
+    },
+    {
+      "id": "matrix_multiplication_q3",
+      "question": "To find the element in the 1st row, 2nd column of the product matrix C = AB, which components are involved in the calculation?",
+      "choices": {
+        "A": "The dot product of the 1st row of A and the 2nd column of B.",
+        "B": "The dot product of the 1st column of A and the 2nd row of B.",
+        "C": "The element A[1,2] multiplied by the element B[1,2].",
+        "D": "The sum of all elements in the 1st row of A multiplied by the sum of all elements in the 2nd column of B."
+      },
+      "correct_answer": "A",
+      "explanation": "Each element (c_ij) in the product matrix C = AB is calculated by taking the dot product of the i-th row of matrix A and the j-th column of matrix B. So, c_12 comes from row 1 of A and column 2 of B."
+    },
+    {
+      "id": "matrix_multiplication_q4",
+      "question": "Given A = [[1, 2], [3, 4]] and B = [[5, 6], [7, 8]], what is the element in the 2nd row, 1st column of the product matrix AB?",
+      "choices": {
+        "A": "19",
+        "B": "22",
+        "C": "43",
+        "D": "50"
+      },
+      "correct_answer": "C",
+      "explanation": "To find the element in the 2nd row, 1st column of AB, we take the dot product of the 2nd row of A and the 1st column of B. (2nd row of A = [3, 4]) dot (1st column of B = [5, 7]) = (3 * 5) + (4 * 7) = 15 + 28 = 43."
+    }
+  ],
+  "systems_of_equations": [
+    {
+      "id": "systems_of_equations_q1",
+      "question": "What is the defining characteristic of a solution to a system of linear equations?",
+      "choices": {
+        "A": "It is a set of values for the variables that satisfies all equations simultaneously.",
+        "B": "It is a set of values that satisfies at least one equation in the system.",
+        "C": "It is the single point where any two equations in the system intersect.",
+        "D": "It is a graphical representation of the equations on a coordinate plane."
+      },
+      "correct_answer": "A",
+      "explanation": "A solution to a system of linear equations must satisfy every equation in the system at the same time. Options B, C, and D describe partial satisfaction, specific geometric interpretations for 2D systems, or just graphs, respectively, not the definition of a solution for the entire system."
+    },
+    {
+      "id": "systems_of_equations_q2",
+      "question": "Geometrically, what does it mean if a system of two linear equations in two variables has no solution?",
+      "choices": {
+        "A": "The two lines intersect at exactly one point.",
+        "B": "The two lines are identical (coincident).",
+        "C": "The two lines are parallel and distinct.",
+        "D": "The two lines are perpendicular."
+      },
+      "correct_answer": "C",
+      "explanation": "If a system of two linear equations in two variables has no solution, it means there is no (x, y) point that lies on both lines simultaneously. Geometrically, this occurs when the lines are parallel and never intersect, but are not the same line. Option A describes a unique solution, B describes infinitely many solutions, and D describes a specific angle between lines that doesn't define solution existence."
+    },
+    {
+      "id": "systems_of_equations_q3",
+      "question": "Which statement accurately describes a fundamental property of a system of linear equations?",
+      "choices": {
+        "A": "It must have an equal number of equations and variables.",
+        "B": "Every equation in the system must be linear.",
+        "C": "It must always have at least one unique solution.",
+        "D": "The variables involved must always be real numbers."
+      },
+      "correct_answer": "B",
+      "explanation": "By definition, a 'system of linear equations' requires that every equation within the system be linear. The number of equations and variables don't have to be equal (A), and systems can have no solution or infinitely many solutions, not always a unique one (C). While often working with real numbers, linear algebra also deals with complex numbers (D)."
+    },
+    {
+      "id": "systems_of_equations_q4",
+      "question": "During row reduction of an augmented matrix representing a system of linear equations, you arrive at a row that translates to `0 = 7`. What can you conclude about the system's solution?",
+      "choices": {
+        "A": "The system has a unique solution.",
+        "B": "The system has infinitely many solutions.",
+        "C": "The system has no solution.",
+        "D": "The system is underdetermined, requiring more equations."
+      },
+      "correct_answer": "C",
+      "explanation": "A row in the augmented matrix that translates to a false statement like `0 = 7` indicates a contradiction within the system of equations. This means there are no values for the variables that can satisfy all equations simultaneously, and thus the system has no solution. Options A and B describe other solution types, and D is a misinterpretation of the significance of a contradiction."
+    }
+  ],
+  "gaussian_elimination": [
+    {
+      "id": "gaussian_elimination_q1",
+      "question": "What is the primary goal of Gaussian Elimination when applied to an augmented matrix of a system of linear equations?",
+      "choices": {
+        "A": "To transform the augmented matrix into row echelon form (REF).",
+        "B": "To find the determinant of the coefficient matrix.",
+        "C": "To calculate the inverse of the coefficient matrix.",
+        "D": "To convert the coefficient matrix into a diagonal matrix."
+      },
+      "correct_answer": "A",
+      "explanation": "Gaussian Elimination's main objective is to reduce the augmented matrix to row echelon form (REF) using elementary row operations, which simplifies the system for solving."
+    },
+    {
+      "id": "gaussian_elimination_q2",
+      "question": "Which property of the original system of linear equations is preserved when elementary row operations are applied during Gaussian Elimination?",
+      "choices": {
+        "A": "The determinant of the coefficient matrix.",
+        "B": "The trace of the coefficient matrix.",
+        "C": "The solution set of the system.",
+        "D": "The condition number of the matrix."
+      },
+      "correct_answer": "C",
+      "explanation": "Elementary row operations transform a system of equations into an equivalent system, meaning they have the exact same set of solutions. Other properties like the determinant or trace may change."
+    },
+    {
+      "id": "gaussian_elimination_q3",
+      "question": "After performing Gaussian Elimination and obtaining the augmented matrix in row echelon form, which scenario indicates that the system of linear equations has no solution?",
+      "choices": {
+        "A": "If the coefficient matrix part of any row consists entirely of zeros.",
+        "B": "If the determinant of the original coefficient matrix is zero.",
+        "C": "If there is a row of the form `[0 0 ... 0 | c]` where `c` is a non-zero number.",
+        "D": "If the number of pivot positions is less than the number of variables."
+      },
+      "correct_answer": "C",
+      "explanation": "A row of the form `[0 0 ... 0 | c]` with `c ≠ 0` represents the inconsistent equation `0 = c`, which means the system has no solution. Option A could lead to infinite or unique solutions depending on the augmented part. Option B indicates non-unique solutions (infinite or no solution) but doesn't specifically pinpoint 'no solution'. Option D indicates infinite solutions, not no solution."
+    },
+    {
+      "id": "gaussian_elimination_q4",
+      "question": "Given an augmented matrix in row echelon form: `[ 1  2  -1 |  4 ]`, `[ 0  1   3 | -2 ]`, `[ 0  0   1 |  5 ]`. What is the immediate next step to solve the system of linear equations using Gaussian Elimination?",
+      "choices": {
+        "A": "Multiply the first row by -1 to make its leading entry positive.",
+        "B": "Perform back-substitution to find the values of the variables.",
+        "C": "Convert the matrix to reduced row echelon form (RREF) using more row operations.",
+        "D": "Check if the determinant of the original coefficient matrix is non-zero."
+      },
+      "correct_answer": "B",
+      "explanation": "Once the augmented matrix is in row echelon form, the final step of Gaussian Elimination is to use back-substitution. This involves solving for the last variable, then substituting that value into the second-to-last equation to solve for the next variable, and so on. Converting to RREF is part of Gauss-Jordan elimination, not standard Gaussian Elimination as defined."
+    }
+  ],
+  "row_echelon_form": [
+    {
+      "id": "row_echelon_form_q1",
+      "question": "Which of the following conditions is NOT necessarily required for a matrix to be in Row Echelon Form (REF) based on the provided definition?",
+      "choices": {
+        "A": "All zero rows are located at the bottom of the matrix.",
+        "B": "The leading entry (pivot) of each non-zero row is to the right of the pivot in the row above it.",
+        "C": "All leading entries (pivots) are equal to 1.",
+        "D": "Every non-zero row must contain a leading entry."
+      },
+      "correct_answer": "C",
+      "explanation": "The definition of Row Echelon Form states that all zero rows must be at the bottom and leading entries must be to the right of those above them. It does not require leading entries to be 1; this is a condition for Reduced Row Echelon Form (RREF)."
+    },
+    {
+      "id": "row_echelon_form_q2",
+      "question": "If a matrix is in Row Echelon Form and its first non-zero row has a leading entry in column 3, what can be definitively concluded about the leading entry of its second non-zero row (if it exists)?",
+      "choices": {
+        "A": "It must be in a column to the right of column 3.",
+        "B": "It must be in column 4.",
+        "C": "It must be in column 1 or 2.",
+        "D": "It must be equal to 1."
+      },
+      "correct_answer": "A",
+      "explanation": "According to the definition, the leading entry of each non-zero row must be to the right of the pivot in the row above. If the first non-zero row's leading entry is in column 3, the next non-zero row's leading entry must be in a column with an index greater than 3 (i.e., to the right of column 3)."
+    },
+    {
+      "id": "row_echelon_form_q3",
+      "question": "Consider a matrix with at least two non-zero rows. Which scenario would prevent it from being in Row Echelon Form?",
+      "choices": {
+        "A": "A leading entry of a non-zero row is a value other than 1 (e.g., 5).",
+        "B": "A row consisting entirely of zeros appears above a non-zero row.",
+        "C": "There are non-zero entries located directly above a leading entry.",
+        "D": "The number of leading entries is less than the total number of rows."
+      },
+      "correct_answer": "B",
+      "explanation": "A matrix is in Row Echelon Form only if all zero rows are at the bottom. Therefore, a zero row appearing above a non-zero row violates this fundamental condition. Options A and C are not forbidden by the definition of REF (only RREF often requires these). Option D is possible if there are zero rows."
+    },
+    {
+      "id": "row_echelon_form_q4",
+      "question": "Which of the following matrices is in Row Echelon Form?",
+      "choices": {
+        "A": "[[2, 1, 3], [0, 0, 5], [0, 0, 0]]",
+        "B": "[[0, 1, 2], [3, 4, 5], [0, 0, 0]]",
+        "C": "[[1, 2, 3], [0, 1, 4], [0, 2, 5]]",
+        "D": "[[1, 2, 3], [0, 0, 0], [0, 4, 5]]"
+      },
+      "correct_answer": "A",
+      "explanation": "In matrix A: All zero rows are at the bottom. The leading entry of row 1 is 2 (column 1). The leading entry of row 2 is 5 (column 3). Column 3 is to the right of column 1. Therefore, matrix A satisfies both conditions for Row Echelon Form. Matrix B violates the leading entry position rule (3 is left of 1). Matrix C violates the leading entry position rule (2 is not to the right of 1). Matrix D violates the zero row position rule (a zero row is above a non-zero row)."
+    }
+  ],
+  "matrix_rank": [
+    {
+      "id": "matrix_rank_q1",
+      "question": "Which of the following statements most accurately defines the rank of a matrix A?",
+      "choices": {
+        "A": "The number of pivot positions in its row echelon form.",
+        "B": "The total number of rows in the matrix.",
+        "C": "The value of the determinant of the matrix.",
+        "D": "The number of non-zero entries in the matrix."
+      },
+      "correct_answer": "A",
+      "explanation": "The rank of a matrix is fundamentally defined as the number of pivot positions in its row echelon form (or reduced row echelon form). This is equivalent to the dimension of its row space and column space."
+    },
+    {
+      "id": "matrix_rank_q2",
+      "question": "If an m x n matrix A has a rank of k, what does this imply about the vectors that form its columns?",
+      "choices": {
+        "A": "There are exactly k linearly independent column vectors in A.",
+        "B": "The column vectors of A span an R^k space.",
+        "C": "All n column vectors of A are linearly independent if k=n.",
+        "D": "The dimension of the null space of A is k."
+      },
+      "correct_answer": "A",
+      "explanation": "The rank of a matrix is the dimension of its column space, which means it is the maximum number of linearly independent column vectors in the matrix. While option C is true, it's a specific case, and option A is a more general and direct implication of the rank definition."
+    },
+    {
+      "id": "matrix_rank_q3",
+      "question": "For any m x n matrix A, what is the maximum possible value for its rank?",
+      "choices": {
+        "A": "min(m, n)",
+        "B": "m * n",
+        "C": "m",
+        "D": "n"
+      },
+      "correct_answer": "A",
+      "explanation": "The rank of a matrix cannot exceed the number of rows (m) because the row space is a subspace of R^n, nor can it exceed the number of columns (n) because the column space is a subspace of R^m. Therefore, the maximum possible rank is the smaller of the two dimensions, min(m, n)."
+    },
+    {
+      "id": "matrix_rank_q4",
+      "question": "A 3x4 matrix A has its first row as [1 2 3 4]. The second row is [2 4 6 8] and the third row is [3 6 9 12]. What is the rank of matrix A?",
+      "choices": {
+        "A": "1",
+        "B": "2",
+        "C": "3",
+        "D": "4"
+      },
+      "correct_answer": "A",
+      "explanation": "All rows are scalar multiples of the first row (Row2 = 2*Row1, Row3 = 3*Row1). When this matrix is reduced to row echelon form, only one non-zero row will remain, and the other two will become zero rows. Therefore, there is only one pivot position, and the rank is 1."
+    }
+  ],
+  "null_space": [
+    {
+      "id": "null_space_q1",
+      "question": "What is the null space of an m x n matrix A?",
+      "choices": {
+        "A": "The set of all vectors x in R^n such that Ax = 0.",
+        "B": "The set of all vectors b in R^m such that Ax = b has a solution.",
+        "C": "The set of all vectors y in R^m such that A^T y = 0.",
+        "D": "The set of all vectors x in R^n such that Ax is a non-zero vector."
+      },
+      "correct_answer": "A",
+      "explanation": "The null space of a matrix A is defined as the set of all vectors x in the domain such that when multiplied by A, the result is the zero vector. This is precisely option A."
+    },
+    {
+      "id": "null_space_q2",
+      "question": "Which of the following statements about the null space Null(A) of a matrix A is always true?",
+      "choices": {
+        "A": "Null(A) is a subspace of the domain of the linear transformation defined by A.",
+        "B": "Null(A) always contains only non-zero vectors if A is not invertible.",
+        "C": "The dimension of Null(A) is always equal to the number of columns of A.",
+        "D": "Null(A) is a subspace of the codomain of the linear transformation defined by A."
+      },
+      "correct_answer": "A",
+      "explanation": "The null space is always a subspace because it is closed under vector addition and scalar multiplication, and it always contains the zero vector. Since A maps vectors from its domain to its codomain, and Ax=0 means x must be in the domain, Null(A) is a subspace of the domain."
+    },
+    {
+      "id": "null_space_q3",
+      "question": "If a vector x is in the null space of a matrix A, what does this imply about the linear transformation T(x) = Ax?",
+      "choices": {
+        "A": "The transformation maps x to the zero vector.",
+        "B": "The transformation maps x to a non-zero vector in the column space of A.",
+        "C": "The transformation maps x to a vector in the row space of A.",
+        "D": "The transformation maps x to itself."
+      },
+      "correct_answer": "A",
+      "explanation": "By definition, if x is in the null space of A, then Ax = 0. Therefore, the linear transformation T(x) = Ax maps the vector x to the zero vector."
+    },
+    {
+      "id": "null_space_q4",
+      "question": "Consider the matrix A = [[1, 2], [3, 6]]. Which of the following vectors is in the null space of A?",
+      "choices": {
+        "A": "x = [-2, 1]",
+        "B": "x = [1, 0]",
+        "C": "x = [0, 1]",
+        "D": "x = [1, 2]"
+      },
+      "correct_answer": "A",
+      "explanation": "To check if a vector x is in the null space, we compute Ax. For x = [-2, 1], A*x = [[1, 2], [3, 6]] * [-2, 1]^T = [1*(-2) + 2*1, 3*(-2) + 6*1]^T = [-2+2, -6+6]^T = [0, 0]^T. Since Ax = 0, x = [-2, 1] is in the null space."
+    }
+  ],
+  "column_space": [
+    {
+      "id": "column_space_q1",
+      "question": "Which of the following best defines the column space of an m x n matrix A?",
+      "choices": {
+        "A": "The set of all vectors b in R^m for which the equation Ax = b has at least one solution.",
+        "B": "The set of all solutions x in R^n to the homogeneous equation Ax = 0.",
+        "C": "The span of the row vectors of A.",
+        "D": "The set of all vectors x in R^n such that Ax is the zero vector."
+      },
+      "correct_answer": "A",
+      "explanation": "The column space of A is defined as the set of all possible linear combinations of the column vectors of A. This is equivalent to the set of all vectors b for which Ax = b is consistent (has at least one solution), and also represents the range (or image) of the linear transformation T(x) = Ax."
+    },
+    {
+      "id": "column_space_q2",
+      "question": "Let A be an m x n matrix. The column space of A is a subspace of which vector space?",
+      "choices": {
+        "A": "R^m",
+        "B": "R^n",
+        "C": "The null space of A",
+        "D": "The row space of A"
+      },
+      "correct_answer": "A",
+      "explanation": "If A is an m x n matrix, the linear transformation T(x) = Ax maps vectors from R^n to R^m. The column space, being the set of all possible output vectors Ax, must therefore be a subspace of the codomain, R^m."
+    },
+    {
+      "id": "column_space_q3",
+      "question": "If a vector b is in the column space of an m x n matrix A, what does this guarantee about the equation Ax = b?",
+      "choices": {
+        "A": "The equation Ax = b has at least one solution.",
+        "B": "The matrix A is invertible.",
+        "C": "The vector b must be the zero vector.",
+        "D": "The column vectors of A are linearly independent."
+      },
+      "correct_answer": "A",
+      "explanation": "By definition, if b is in the column space of A, it means b can be expressed as a linear combination of the columns of A. This is precisely what it means for the equation Ax = b to be consistent (i.e., to have at least one solution). Options B, C, and D are not necessarily true; for example, A could be a non-square matrix, b could be a non-zero vector, or the columns could be linearly dependent if the null space is non-trivial."
+    },
+    {
+      "id": "column_space_q4",
+      "question": "Given the matrix A = [[1, 2], [3, 6], [0, 0]], which of the following vectors is in the column space of A?",
+      "choices": {
+        "A": "[2, 6, 0]",
+        "B": "[1, 1, 0]",
+        "C": "[0, 0, 1]",
+        "D": "[2, 1, 0]"
+      },
+      "correct_answer": "A",
+      "explanation": "The column space of A is the span of its column vectors: col1 = [1, 3, 0] and col2 = [2, 6, 0]. Notice that col2 = 2 * col1. Therefore, the column space is spanned by just one vector, [1, 3, 0]. Any vector in the column space must be a scalar multiple of [1, 3, 0]. Option A, [2, 6, 0], is 2 * [1, 3, 0], so it is in the column space. The other options are not scalar multiples of [1, 3, 0]."
+    }
+  ],
+  "determinants": [
+    {
+      "id": "determinants_q1",
+      "question": "If the determinant of a square matrix A is zero (det(A) = 0), what does this primarily imply about the matrix A?",
+      "choices": {
+        "A": "A is non-invertible.",
+        "B": "A is the zero matrix.",
+        "C": "The system Ax=b has a unique solution for any b.",
+        "D": "A has a positive trace."
+      },
+      "correct_answer": "A",
+      "explanation": "A determinant of zero signifies that the matrix is singular, meaning it does not have an inverse. This is a fundamental property of determinants."
+    },
+    {
+      "id": "determinants_q2",
+      "question": "For a 2x2 matrix A, the absolute value of its determinant represents what geometrically?",
+      "choices": {
+        "A": "The area of the parallelogram formed by its column vectors.",
+        "B": "The length of its main diagonal.",
+        "C": "The volume of the unit cube after transformation by A.",
+        "D": "The sum of its eigenvalues."
+      },
+      "correct_answer": "A",
+      "explanation": "In 2D, the absolute value of the determinant represents the area of the parallelogram spanned by the column (or row) vectors of the matrix. More generally, it's the scaling factor for area/volume transformation."
+    },
+    {
+      "id": "determinants_q3",
+      "question": "If matrix B is obtained from matrix A by swapping two rows, how does det(B) relate to det(A)?",
+      "choices": {
+        "A": "det(B) = -det(A)",
+        "B": "det(B) = det(A)",
+        "C": "det(B) = 1/det(A)",
+        "D": "det(B) = 0 if det(A) is non-zero."
+      },
+      "correct_answer": "A",
+      "explanation": "One of the fundamental properties of determinants is that swapping any two rows (or columns) of a matrix multiplies its determinant by -1."
+    },
+    {
+      "id": "determinants_q4",
+      "question": "Given two square matrices A and B of the same size, if det(A) = 3 and det(B) = -2, what is det(AB)?",
+      "choices": {
+        "A": "-6",
+        "B": "1",
+        "C": "5",
+        "D": "Undefined, as matrix multiplication does not directly relate to individual determinants in this way."
+      },
+      "correct_answer": "A",
+      "explanation": "The determinant of a product of square matrices is the product of their determinants: det(AB) = det(A) * det(B). So, det(AB) = 3 * (-2) = -6."
+    }
+  ],
+  "inverse_matrices": [
+    {
+      "id": "inverse_matrices_q1",
+      "question": "For a square matrix A, its inverse A⁻¹ is defined by which of the following fundamental properties?",
+      "choices": {
+        "A": "A * A⁻¹ = I",
+        "B": "A * A⁻¹ = 0 (Zero matrix)",
+        "C": "A + A⁻¹ = I",
+        "D": "A * A⁻¹ = A"
+      },
+      "correct_answer": "A",
+      "explanation": "The defining property of a matrix inverse A⁻¹ is that when multiplied by the original matrix A, it yields the identity matrix I. This holds true for both A * A⁻¹ and A⁻¹ * A."
+    },
+    {
+      "id": "inverse_matrices_q2",
+      "question": "A square matrix A is invertible if and only if which of the following conditions is met?",
+      "choices": {
+        "A": "The determinant of A is non-zero.",
+        "B": "A has at least one row of zeros.",
+        "C": "A is a symmetric matrix.",
+        "D": "All entries of A are non-zero."
+      },
+      "correct_answer": "A",
+      "explanation": "A square matrix is invertible if and only if its determinant is non-zero. This condition implies the matrix is full rank and its column (or row) vectors are linearly independent."
+    },
+    {
+      "id": "inverse_matrices_q3",
+      "question": "If A and B are invertible n x n matrices, which of the following expressions correctly represents the inverse of their product (AB)?",
+      "choices": {
+        "A": "B⁻¹A⁻¹",
+        "B": "A⁻¹B⁻¹",
+        "C": "(BA)⁻¹",
+        "D": "A⁻¹ + B⁻¹"
+      },
+      "correct_answer": "A",
+      "explanation": "The inverse of a product of matrices is the product of their inverses in reverse order. This property is crucial for manipulating matrix expressions involving inverses."
+    },
+    {
+      "id": "inverse_matrices_q4",
+      "question": "If A is an invertible n x n matrix and Ax = b is a system of linear equations, what is the unique solution x?",
+      "choices": {
+        "A": "x = A⁻¹b",
+        "B": "x = bA⁻¹",
+        "C": "x = Ab",
+        "D": "x = b/A (division by matrix)"
+      },
+      "correct_answer": "A",
+      "explanation": "To solve for x in Ax = b, we multiply both sides by A⁻¹ from the left: A⁻¹(Ax) = A⁻¹b. Since A⁻¹A = I, this simplifies to Ix = A⁻¹b, which means x = A⁻¹b. Matrix division (b/A) is not a defined operation."
+    }
+  ],
+  "linear_transformations": [
+    {
+      "id": "linear_transformations_q1",
+      "question": "Which of the following pairs of properties *defines* a linear transformation T: V -> W between vector spaces V and W?",
+      "choices": {
+        "A": "T(u + v) = T(u) + T(v) and T(cu) = cT(u) for all u, v in V and all scalars c.",
+        "B": "T(0_V) = 0_W and T(u + v) = T(u) + T(v) for all u, v in V.",
+        "C": "T(u) is a vector in W and T(cu) = cT(u) for all u in V and all scalars c.",
+        "D": "T(u + v) = T(u) + T(v) and T(u) ≠ 0_W for any u ≠ 0_V."
+      },
+      "correct_answer": "A",
+      "explanation": "The definition of a linear transformation requires both the preservation of vector addition and scalar multiplication. Option A correctly states these two fundamental properties. Option B includes T(0_V) = 0_W, which is a consequence of linearity, not a defining property, and it omits scalar multiplication. Option C omits vector addition. Option D's second condition (T(u) ≠ 0_W for u ≠ 0_V) is not always true for linear transformations (e.g., the zero transformation)."
+    },
+    {
+      "id": "linear_transformations_q2",
+      "question": "Which of the following transformations T: R^2 -> R^2 is *not* a linear transformation?",
+      "choices": {
+        "A": "T(x, y) = (x + y, x - y)",
+        "B": "T(x, y) = (2x, 3y)",
+        "C": "T(x, y) = (x^2, y)",
+        "D": "T(x, y) = (0, 0)"
+      },
+      "correct_answer": "C",
+      "explanation": "A transformation is linear if it preserves vector addition and scalar multiplication. For T(x, y) = (x^2, y), let's check the scalar multiplication property: T(c(x, y)) = T(cx, cy) = ((cx)^2, cy) = (c^2x^2, cy). This is not equal to cT(x, y) = c(x^2, y) = (cx^2, cy) unless c=1 or x=0. Also, it fails the addition property: T((1,0) + (1,0)) = T(2,0) = (4,0), but T(1,0) + T(1,0) = (1,0) + (1,0) = (2,0). Options A, B, and D represent linear transformations."
+    },
+    {
+      "id": "linear_transformations_q3",
+      "question": "A transformation T: R^n -> R^m is a linear transformation if and only if:",
+      "choices": {
+        "A": "Its kernel is trivial (contains only the zero vector).",
+        "B": "Its range is equal to the codomain R^m.",
+        "C": "It can be represented by a unique m x n matrix A such that T(x) = Ax for all x in R^n.",
+        "D": "T(0_V) is not necessarily the zero vector of R^m."
+      },
+      "correct_answer": "C",
+      "explanation": "A fundamental theorem of linear algebra states that every linear transformation from R^n to R^m can be represented by a unique m x n matrix, and conversely, any transformation defined by matrix multiplication is a linear transformation. Option A describes an injective (one-to-one) linear transformation, which is not true for all linear transformations. Option B describes a surjective (onto) linear transformation, also not true for all. Option D is incorrect; a linear transformation must always map the zero vector to the zero vector."
+    },
+    {
+      "id": "linear_transformations_q4",
+      "question": "Let T: R^2 -> R^3 be a linear transformation such that T([1, 0]) = [2, -1, 3] and T([0, 1]) = [-1, 4, 0]. What is T([3, 2])?",
+      "choices": {
+        "A": "[4, 5, 9]",
+        "B": "[1, 3, 3]",
+        "C": "[6, -3, 9]",
+        "D": "[0, 0, 0]"
+      },
+      "correct_answer": "A",
+      "explanation": "Since T is a linear transformation, it preserves scalar multiplication and vector addition. We can express [3, 2] as a linear combination of the standard basis vectors: [3, 2] = 3 * [1, 0] + 2 * [0, 1]. Therefore, T([3, 2]) = T(3 * [1, 0] + 2 * [0, 1]) = 3 * T([1, 0]) + 2 * T([0, 1]). Substituting the given values: 3 * [2, -1, 3] + 2 * [-1, 4, 0] = [6, -3, 9] + [-2, 8, 0] = [4, 5, 9]. Option B incorrectly adds T([1,0]) + T([0,1]) ignoring scalars. Option C only calculates 3*T([1,0]). Option D is the image of the zero vector, not [3,2]."
+    }
+  ],
+  "eigenvalues_intro": [
+    {
+      "id": "eigenvalues_intro_q1",
+      "question": "Which of the following statements is always true regarding the eigenvalues of an n x n real matrix A?",
+      "choices": {
+        "A": "If 0 is an eigenvalue of A, then the corresponding eigenvector must be the zero vector.",
+        "B": "A is invertible if and only if 0 is not an eigenvalue of A.",
+        "C": "Every real square matrix A has at least one real eigenvalue.",
+        "D": "If v is an eigenvector of A, then any scalar multiple cv is also an eigenvector of A."
+      },
+      "correct_answer": "B",
+      "explanation": "A matrix A is invertible if and only if its determinant is non-zero. Since the eigenvalues are the roots of det(A - λI) = 0, setting λ = 0 yields det(A) = 0, meaning A is singular (not invertible) if and only if 0 is an eigenvalue."
+    },
+    {
+      "id": "eigenvalues_intro_q2",
+      "question": "Let T be a linear transformation in R^2 that reflects every vector across a fixed line L passing through the origin. What are the eigenvalues of the standard matrix representing T?",
+      "choices": {
+        "A": "1 and -1",
+        "B": "1 and 0",
+        "C": "0 and -1",
+        "D": "1 is the only eigenvalue."
+      },
+      "correct_answer": "A",
+      "explanation": "Any vector lying on the line L is unchanged by the reflection, acting as an eigenvector for λ = 1. Any vector perpendicular to L is reversed in direction, acting as an eigenvector for λ = -1."
+    },
+    {
+      "id": "eigenvalues_intro_q3",
+      "question": "If λ is an eigenvalue of an invertible matrix A with corresponding eigenvector v, which of the following is NOT necessarily true?",
+      "choices": {
+        "A": "λ^2 is an eigenvalue of A^2 with eigenvector v.",
+        "B": "λ + 3 is an eigenvalue of A + 3I with eigenvector v.",
+        "C": "1/λ is an eigenvalue of the inverse matrix A^-1 with eigenvector v.",
+        "D": "λ is an eigenvalue of the transpose matrix A^T with eigenvector v."
+      },
+      "correct_answer": "D",
+      "explanation": "While A and A^T always share the exact same eigenvalues because det(A - λI) = det(A^T - λI), they do not generally share the same eigenvectors."
+    },
+    {
+      "id": "eigenvalues_intro_q4",
+      "question": "What are the eigenvalues of the matrix A = [[1, 4], [2, 3]]?",
+      "choices": {
+        "A": "1 and 3",
+        "B": "5 and -1",
+        "C": "2 and 4",
+        "D": "5 and 1"
+      },
+      "correct_answer": "B",
+      "explanation": "Solving the characteristic equation det(A - λI) = (1-λ)(3-λ) - 8 = λ^2 - 4λ - 5 = 0 yields (λ - 5)(λ + 1) = 0, which gives eigenvalues λ = 5 and λ = -1."
+    }
+  ],
+  "eigenvectors": [
+    {
+      "id": "eigenvectors_q1",
+      "question": "By definition, which of the following is required for a vector v to be an eigenvector of a square matrix A corresponding to eigenvalue λ?",
+      "choices": {
+        "A": "v must be a non-zero vector satisfying Av = λv.",
+        "B": "v can be any vector, including the zero vector, satisfying Av = λv.",
+        "C": "v must be a unit vector (length 1) satisfying Av = λv.",
+        "D": "v must satisfy vA = λv."
+      },
+      "correct_answer": "A",
+      "explanation": "By definition, an eigenvector must be a non-zero vector. If the zero vector were allowed, every scalar λ would be an eigenvalue because A0 = λ0 is always true, making the concept trivial and useless."
+    },
+    {
+      "id": "eigenvectors_q2",
+      "question": "If v is an eigenvector of a 2x2 real matrix A corresponding to the eigenvalue λ = -2, what is the geometric effect of multiplying v by A?",
+      "choices": {
+        "A": "v is reversed in direction and scaled by a factor of 2.",
+        "B": "v is rotated by 90 degrees and doubled in length.",
+        "C": "v remains in the exact same direction and is halved in length.",
+        "D": "v is mapped to the zero vector because the eigenvalue is negative."
+      },
+      "correct_answer": "A",
+      "explanation": "Multiplying an eigenvector by its matrix scales it by its eigenvalue. Since λ = -2, the vector's length is scaled by |-2| = 2, and the negative sign reverses its pointing direction (a 180-degree change in direction)."
+    },
+    {
+      "id": "eigenvectors_q3",
+      "question": "Let v1 and v2 be eigenvectors of a matrix A corresponding to distinct eigenvalues λ1 and λ2. Under what conditions is the sum w = v1 + v2 also an eigenvector of A?",
+      "choices": {
+        "A": "w is never an eigenvector of A.",
+        "B": "w is always an eigenvector of A.",
+        "C": "w is an eigenvector only if λ1 + λ2 = 1.",
+        "D": "w is an eigenvector only if v1 and v2 are orthogonal."
+      },
+      "correct_answer": "A",
+      "explanation": "Since λ1 and λ2 are distinct, v1 and v2 are linearly independent. Aw = A(v1 + v2) = λ1*v1 + λ2*v2. For w to be an eigenvector, we must have Aw = c(v1 + v2) for some scalar c. This would require (λ1 - c)v1 + (λ2 - c)v2 = 0, which implies λ1 = c = λ2. This contradicts the premise that the eigenvalues are distinct."
+    },
+    {
+      "id": "eigenvectors_q4",
+      "question": "Consider the matrix A = [[3, 1], [2, 4]]. By directly testing the definition of an eigenvector, determine which of the following is an eigenvector of A and identify its corresponding eigenvalue.",
+      "choices": {
+        "A": "v = [1, 2]^T with eigenvalue λ = 5",
+        "B": "v = [1, 1]^T with eigenvalue λ = 4",
+        "C": "v = [2, 1]^T with eigenvalue λ = 3",
+        "D": "v = [0, 0]^T with eigenvalue λ = 0"
+      },
+      "correct_answer": "A",
+      "explanation": "Multiplying A by [1, 2]^T yields [3(1)+1(2), 2(1)+4(2)]^T = [5, 10]^T, which is exactly 5 * [1, 2]^T. Thus, v = [1, 2]^T is an eigenvector with eigenvalue λ = 5."
+    }
+  ],
+  "diagonalization": [
+    {
+      "id": "diagonalization_q1",
+      "question": "An n x n matrix A is diagonalizable over the real numbers if and only if which of the following conditions holds?",
+      "choices": {
+        "A": "A has n distinct real eigenvalues.",
+        "B": "A has n linearly independent eigenvectors in R^n.",
+        "C": "A is invertible.",
+        "D": "The characteristic polynomial of A has no repeated roots."
+      },
+      "correct_answer": "B",
+      "explanation": "While having n distinct eigenvalues (no repeated roots) is a sufficient condition for diagonalizability, it is not necessary (for example, the identity matrix has repeated eigenvalues but is diagonal). The defining necessary and sufficient condition is having n linearly independent eigenvectors."
+    },
+    {
+      "id": "diagonalization_q2",
+      "question": "Suppose a 3x3 matrix A has eigenvalues lambda = 2 with algebraic multiplicity 2, and lambda = 5 with algebraic multiplicity 1. Under what condition is A diagonalizable?",
+      "choices": {
+        "A": "A is never diagonalizable because it has a repeated eigenvalue.",
+        "B": "A is diagonalizable if and only if the eigenspace corresponding to lambda = 2 is 2-dimensional.",
+        "C": "A is always diagonalizable because it has 3 eigenvalues counting multiplicity.",
+        "D": "A is diagonalizable if and only if A is invertible."
+      },
+      "correct_answer": "B",
+      "explanation": "For A to be diagonalizable, the sum of the dimensions of its eigenspaces (geometric multiplicities) must equal 3. Since lambda = 5 has algebraic multiplicity 1, its geometric multiplicity is guaranteed to be 1. Thus, A is diagonalizable if and only if the eigenspace for lambda = 2 has dimension equal to its algebraic multiplicity, which is 2."
+    },
+    {
+      "id": "diagonalization_q3",
+      "question": "Which of the following statements correctly describes the relationship between an n x n matrix being invertible and being diagonalizable?",
+      "choices": {
+        "A": "If a matrix is invertible, it must be diagonalizable.",
+        "B": "If a matrix is diagonalizable, it must be invertible.",
+        "C": "A matrix is diagonalizable if and only if it is invertible.",
+        "D": "Invertibility and diagonalizability are independent; a matrix can have one property without the other."
+      },
+      "correct_answer": "D",
+      "explanation": "Invertibility is about whether 0 is an eigenvalue, while diagonalizability is about having enough linearly independent eigenvectors. For example, the zero matrix is diagonalizable but not invertible, while a non-trivial shear matrix is invertible but not diagonalizable."
+    },
+    {
+      "id": "diagonalization_q4",
+      "question": "Consider the 2x2 matrix A with top row [3, k] and bottom row [0, 3]. For which real values of k is A diagonalizable?",
+      "choices": {
+        "A": "Only for k = 0",
+        "B": "For all real values of k",
+        "C": "Only for k != 0",
+        "D": "For no real values of k"
+      },
+      "correct_answer": "A",
+      "explanation": "The matrix has a single eigenvalue, lambda = 3, with algebraic multiplicity 2. If k = 0, the matrix is already diagonal (hence diagonalizable). If k is not 0, solving (A - 3I)x = 0 yields only 1 linearly independent eigenvector, meaning the matrix cannot be diagonalized."
+    }
+  ],
+  "orthogonality": [
+    {
+      "id": "orthogonality_q1",
+      "question": "Which of the following statements is always true regarding orthogonality in an inner product space?",
+      "choices": {
+        "A": "The zero vector is orthogonal to every vector in the space.",
+        "B": "An orthogonal set of vectors must also be an orthonormal set.",
+        "C": "An orthonormal set of vectors can contain the zero vector.",
+        "D": "If two vectors are orthogonal, they must be linearly dependent."
+      },
+      "correct_answer": "A",
+      "explanation": "By definition, the inner product of the zero vector with any vector is zero, making it orthogonal to all vectors. Orthonormal sets require all vectors to have unit length (norm of 1), which excludes the zero vector and distinguishes them from general orthogonal sets."
+    },
+    {
+      "id": "orthogonality_q2",
+      "question": "Suppose S is a set of non-zero, mutually orthogonal vectors in R^n. Which of the following must be true?",
+      "choices": {
+        "A": "The set S is linearly independent.",
+        "B": "The set S must span R^n.",
+        "C": "The set S contains at least one vector of unit length.",
+        "D": "The matrix with these vectors as columns must be an orthogonal matrix."
+      },
+      "correct_answer": "A",
+      "explanation": "Any orthogonal set of non-zero vectors is linearly independent. It does not necessarily span R^n unless the number of vectors equals n, and the vectors do not need to be of unit length."
+    },
+    {
+      "id": "orthogonality_q3",
+      "question": "If a vector x is orthogonal to both vectors u and v in R^n, which of the following is guaranteed to be true?",
+      "choices": {
+        "A": "x is orthogonal to any vector in the span of {u, v}.",
+        "B": "u and v must be orthogonal to each other.",
+        "C": "x must be the zero vector.",
+        "D": "The set {x, u, v} must be an orthonormal set."
+      },
+      "correct_answer": "A",
+      "explanation": "If x is orthogonal to u and v, then the dot product of x with any linear combination c1*u + c2*v is c1*(x.u) + c2*(x.v) = 0. Therefore, x is orthogonal to every vector in the subspace spanned by u and v."
+    },
+    {
+      "id": "orthogonality_q4",
+      "question": "For what value of k are the vectors u = [2, k, -3]^T and v = [1, 4, 2]^T orthogonal?",
+      "choices": {
+        "A": "1",
+        "B": "-1",
+        "C": "0",
+        "D": "2"
+      },
+      "correct_answer": "A",
+      "explanation": "Two vectors are orthogonal if their dot product is zero. Computing the dot product: 2(1) + k(4) + (-3)(2) = 4k - 4 = 0, which solves to k = 1."
+    }
+  ],
+  "projections": [
+    {
+      "id": "projections_q1",
+      "question": "If proj_W(x) represents the orthogonal projection of a vector x onto a subspace W, which of the following relations must hold for all x?",
+      "choices": {
+        "A": "(x - proj_W(x)) · w = 0 for all w in W",
+        "B": "proj_W(x) · w = 0 for all w in W",
+        "C": "(x + proj_W(x)) · w = 0 for all w in W",
+        "D": "proj_W(x) · x = 0"
+      },
+      "correct_answer": "A",
+      "explanation": "By definition, the orthogonal projection proj_W(x) is the unique vector in W such that the residual vector (x - proj_W(x)) is orthogonal to the subspace W. Therefore, the dot product of the residual with any vector w in W must be zero."
+    },
+    {
+      "id": "projections_q2",
+      "question": "A student attempts to find the orthogonal projection of b onto a subspace W spanned by {v1, v2} using the formula proj_W(b) = [ (b·v1)/(v1·v1) ]*v1 + [ (b·v2)/(v2·v2) ]*v2. Under what condition is this formula guaranteed to yield the correct orthogonal projection?",
+      "choices": {
+        "A": "Only if v1 and v2 are orthogonal to each other.",
+        "B": "For any basis {v1, v2} of W, regardless of their angle.",
+        "C": "Only if both v1 and v2 are unit vectors, regardless of their angle.",
+        "D": "Only if the vector b is already contained within the subspace W."
+      },
+      "correct_answer": "A",
+      "explanation": "The standard component-wise addition formula for orthogonal projections only works if the vectors spanning the subspace form an orthogonal basis. If v1 and v2 are not orthogonal, the projection onto one vector will interfere with the projection onto the other, requiring a projection matrix or Gram-Schmidt orthonormalization first."
+    },
+    {
+      "id": "projections_q3",
+      "question": "Let W be a subspace of R^3, b be a vector not in W, and p = proj_W(b). If y is any vector in W such that y is not equal to p, which of the following inequalities is always true?",
+      "choices": {
+        "A": "||b - p|| < ||b - y||",
+        "B": "||b - p|| > ||b - y||",
+        "C": "||p|| < ||y||",
+        "D": "||b - p|| = ||b - y||"
+      },
+      "correct_answer": "A",
+      "explanation": "The Best Approximation Theorem states that the orthogonal projection p of b onto W is the unique closest point in W to b. Therefore, the distance from b to any other vector y in W must be strictly greater than the distance from b to p."
+    },
+    {
+      "id": "projections_q4",
+      "question": "What is the orthogonal projection of the vector b = (1, 4) onto the line spanned by v = (1, 2)?",
+      "choices": {
+        "A": "(1.8, 3.6)",
+        "B": "(9, 18)",
+        "C": "(0.53, 2.12)",
+        "D": "(1, 2)"
+      },
+      "correct_answer": "A",
+      "explanation": "Using the projection formula proj_v(b) = ((b·v)/(v·v))*v, we get b·v = (1*1 + 4*2) = 9, and v·v = (1*1 + 2*2) = 5. Thus, the projection is (9/5)*v = 1.8*(1, 2) = (1.8, 3.6)."
+    }
+  ],
+  "gram_schmidt": [
+    {
+      "id": "gram_schmidt_q1",
+      "question": "During the Gram-Schmidt process, a set of linearly independent vectors {v1, ..., vn} is transformed into an orthonormal basis {u1, ..., un}. Which of the following properties is guaranteed to hold at each step k for all 1 <= k <= n?",
+      "choices": {
+        "A": "span{u1, ..., uk} = span{v1, ..., vk}",
+        "B": "span{uk, ..., un} = span{vk, ..., vn}",
+        "C": "uk is orthogonal to vk",
+        "D": "The vector uk is independent of the ordering of the initial vectors {v1, ..., vk}"
+      },
+      "correct_answer": "A",
+      "explanation": "The Gram-Schmidt process is a sequential algorithm designed to build an orthonormal basis incrementally, ensuring that at each step k, the subspace spanned by the first k orthonormal vectors is identical to the subspace spanned by the first k original vectors."
+    },
+    {
+      "id": "gram_schmidt_q2",
+      "question": "In the k-th step of the Gram-Schmidt process, we compute an intermediate orthogonal vector w_k = v_k - proj_{U}(v_k), where U is the span of the previously computed orthonormal vectors {u1, ..., u_{k-1}}. Geometrically, what does the vector w_k represent?",
+      "choices": {
+        "A": "The projection of v_k onto the orthogonal complement of U.",
+        "B": "The projection of v_k onto the subspace U.",
+        "C": "The shortest vector in the subspace U.",
+        "D": "The vector in U that is closest to v_k."
+      },
+      "correct_answer": "A",
+      "explanation": "Subtracting the projection of v_k onto U from v_k itself leaves only the component of v_k that is perpendicular to U. This is mathematically defined as the projection of v_k onto the orthogonal complement of U."
+    },
+    {
+      "id": "gram_schmidt_q3",
+      "question": "Suppose you apply the Gram-Schmidt process to a set of three vectors {v1, v2, v3} where v3 is a linear combination of v1 and v2. What occurs when trying to compute the third orthonormal vector u3?",
+      "choices": {
+        "A": "The intermediate vector w3 becomes the zero vector, making normalization impossible due to division by zero.",
+        "B": "The process succeeds but produces u3 = 0, which is then included in the orthonormal basis.",
+        "C": "The algorithm automatically skips v3 and successfully computes a three-dimensional orthonormal basis using v1 and v2.",
+        "D": "The vector u3 is successfully computed but will fail to be orthogonal to u1 and u2."
+      },
+      "correct_answer": "A",
+      "explanation": "Because v3 lies completely within the span of v1 and v2 (and thus the span of u1 and u2), its projection onto this subspace is equal to itself. Subtracting this projection yields the zero vector, which cannot be normalized because its norm is zero."
+    },
+    {
+      "id": "gram_schmidt_q4",
+      "question": "Apply the Gram-Schmidt process to the vectors v1 = [1, 1]^T and v2 = [0, 2]^T. What is the resulting second orthonormal vector u2?",
+      "choices": {
+        "A": "[-1/sqrt(2), 1/sqrt(2)]^T",
+        "B": "[-1, 0]^T",
+        "C": "[1, 0]^T",
+        "D": "[0, 1]^T"
+      },
+      "correct_answer": "A",
+      "explanation": "First, u1 = v1 / ||v1|| = [1/sqrt(2), 1/sqrt(2)]^T. Next, the orthogonal component w2 = v2 - (v2 . u1)u1 = [0, 2]^T - (2/sqrt(2))[1/sqrt(2), 1/sqrt(2)]^T = [0, 2]^T - [1, 1]^T = [-1, 1]^T. Normalizing w2 gives u2 = [-1/sqrt(2), 1/sqrt(2)]^T."
+    }
+  ],
+  "svd_intro": [
+    {
+      "id": "svd_intro_q1",
+      "question": "Let A be an m x n real matrix. In its Singular Value Decomposition A = U * Σ * V^T, what are the standard properties of the matrices U, Σ, and V?",
+      "choices": {
+        "A": "U is an m x m orthogonal matrix, V is an n x n orthogonal matrix, and Σ is an m x n diagonal matrix with non-negative real entries.",
+        "B": "U is an m x n orthogonal matrix, V is an n x m orthogonal matrix, and Σ is an m x m diagonal matrix with positive real entries.",
+        "C": "U is an m x m symmetric matrix, V is an n x n symmetric matrix, and Σ is an m x n diagonal matrix with arbitrary complex entries.",
+        "D": "U is an m x m orthogonal matrix, V is an n x n orthogonal matrix, and Σ is an n x n upper-triangular matrix with positive real entries."
+      },
+      "correct_answer": "A",
+      "explanation": "By definition, the SVD of an m x n matrix A consists of an m x m orthogonal matrix U, an n x n orthogonal matrix V (making V^T also orthogonal), and an m x n diagonal matrix Σ containing non-negative real singular values."
+    },
+    {
+      "id": "svd_intro_q2",
+      "question": "For any real m x n matrix A with SVD A = U * Σ * V^T, which of the following statements correctly describes the relationship between the SVD of A and the eigendecompositions of A^T * A and A * A^T?",
+      "choices": {
+        "A": "The columns of U are orthonormal eigenvectors of A * A^T, and the columns of V are orthonormal eigenvectors of A^T * A.",
+        "B": "The columns of U are orthonormal eigenvectors of A^T * A, and the columns of V are orthonormal eigenvectors of A * A^T.",
+        "C": "The columns of U and V are the same as the eigenvectors of A, provided A is diagonalizable.",
+        "D": "The non-zero diagonal entries of Σ are the non-zero eigenvalues of both A * A^T and A^T * A."
+      },
+      "correct_answer": "A",
+      "explanation": "Since A^T * A = (V * Σ^T * U^T) * (U * Σ * V^T) = V * (Σ^T * Σ) * V^T, the columns of V are eigenvectors of A^T * A. Similarly, A * A^T = U * (Σ * Σ^T) * U^T, meaning the columns of U are eigenvectors of A * A^T."
+    },
+    {
+      "id": "svd_intro_q3",
+      "question": "Geometrically, how does the linear transformation x -> Ax map the unit sphere in R^n into R^m, using the SVD decomposition A = U * Σ * V^T?",
+      "choices": {
+        "A": "It first rotates or reflects the sphere via V^T, stretches it along the coordinate axes by the singular values in Σ, and then rotates or reflects the resulting ellipsoid via U.",
+        "B": "It first projects the sphere onto a lower-dimensional subspace via V^T, shears it via Σ, and then projects it onto a higher-dimensional subspace via U.",
+        "C": "It first stretches the sphere into an ellipsoid via V^T, rotates it via Σ, and then projects it via U.",
+        "D": "It rotates the sphere via U, stretches it via V^T, and then maps it to the origin via Σ."
+      },
+      "correct_answer": "A",
+      "explanation": "The orthogonal matrix V^T represents an isometry (rotation/reflection) in R^n. The diagonal matrix Σ stretches the space along the principal axes by the singular values, turning the sphere into an ellipsoid. Finally, the orthogonal matrix U performs another rotation/reflection in R^m."
+    },
+    {
+      "id": "svd_intro_q4",
+      "question": "A 3 x 4 matrix A has singular values σ1 = 8, σ2 = 3, and σ3 = 0. What is the rank of A and its matrix L2-norm ||A||_2?",
+      "choices": {
+        "A": "Rank is 2, and ||A||_2 = 8.",
+        "B": "Rank is 3, and ||A||_2 = 8.",
+        "C": "Rank is 2, and ||A||_2 = 11.",
+        "D": "Rank is 3, and ||A||_2 = 24."
+      },
+      "correct_answer": "A",
+      "explanation": "The rank of a matrix is equal to the number of its non-zero singular values, which is 2 (since 8 and 3 are non-zero, and 0 is zero). The matrix L2-norm is equal to its largest singular value, which is 8."
+    }
+  ]
+}
