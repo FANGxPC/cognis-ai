@@ -339,17 +339,16 @@ class TestAPI:
         resp = client.post("/match", json={"query": "   "})
         assert resp.status_code == 400
 
-    def test_unimplemented_endpoints_return_501(self, client):
-        stubs = [
-            ("/traverse", "post", {"session_id": "x", "node_id": "y"}),
-            ("/diagnose?session_id=x", "get", None),
-            ("/remediate?node_id=x", "get", None),
-        ]
-        for path, method, body in stubs:
-            if method == "post":
-                resp = client.post(path, json=body)
-            else:
-                resp = client.get(path)
-            assert resp.status_code == 501, (
-                f"Expected 501 for {method.upper()} {path}, got {resp.status_code}"
-            )
+    def test_implemented_endpoints_reject_invalid_input(self, client):
+        """Previously-stubbed endpoints are now implemented and return proper errors."""
+        # /traverse with unknown session → 404
+        resp = client.post("/traverse", json={"session_id": "x", "node_id": "y"})
+        assert resp.status_code == 404
+
+        # /diagnose with unknown session → 404
+        resp = client.get("/diagnose?session_id=x")
+        assert resp.status_code == 404
+
+        # /remediate with unknown node → 404
+        resp = client.get("/remediate?node_id=x")
+        assert resp.status_code == 404

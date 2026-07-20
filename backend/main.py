@@ -1,18 +1,16 @@
 """
 main.py — FastAPI application entry point.
 
-Endpoints implemented by Day 1:
+Endpoints:
   GET  /health       → health check
   GET  /graph        → full graph JSON with mastery state
   POST /match        → free-text query → best matching node
-
-Endpoints stubbed for later days:
-  POST /traverse     → (Day 5) backward traversal path
-  GET  /question     → (Day 5-6) probe question for a node
-  POST /answer       → (Day 6) score a student's answer
-  GET  /diagnose     → (Day 7) diagnosis summary card
-  GET  /remediate    → (Day 7) remediation content
-  POST /retest       → (Day 8) retest after remediation
+  POST /traverse     → backward traversal path from matched node
+  GET  /question     → probe question for a node
+  POST /answer       → score a student's answer
+  GET  /diagnose     → diagnosis summary card
+  GET  /remediate    → explanation + practice questions for root cause
+  POST /retest       → re-serve question after remediation
 """
 
 from __future__ import annotations
@@ -27,6 +25,7 @@ from pydantic import BaseModel
 
 from graph import load_graph, load_questions, ConceptGraph
 from embeddings import node_cache
+from diagnostic import DiagnosticEngine
 
 
 # ---------------------------------------------------------------------------
@@ -35,6 +34,7 @@ from embeddings import node_cache
 
 _graph: ConceptGraph | None = None
 _questions: dict[str, list[dict[str, Any]]] | None = None
+_engine: DiagnosticEngine | None = None
 
 # In-memory session store  {session_id: session_dict}
 _sessions: dict[str, dict[str, Any]] = {}
@@ -42,7 +42,7 @@ _sessions: dict[str, dict[str, Any]] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _graph, _questions
+    global _graph, _questions, _engine
 
     print("[startup] Loading concept graph...")
     _graph = load_graph()
@@ -54,7 +54,10 @@ async def lifespan(app: FastAPI):
 
     print("[startup] Building node embedding cache...")
     node_cache.build(_graph.nodes)
-    print("[startup] Ready.")
+    print("[startup] Embedding cache ready.")
+
+    _engine = DiagnosticEngine(_graph, _questions)
+    print("[startup] Diagnostic engine initialized. Ready.")
 
     yield
 
@@ -69,7 +72,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Prereq Sleuth API",
     description="AI-powered prerequisite diagnosis for Linear Algebra concepts.",
-    version="0.1.0",
+    version="0.2.0",
     lifespan=lifespan,
 )
 
@@ -112,7 +115,7 @@ class AnswerRequest(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# Helper
+# Helpers
 # ---------------------------------------------------------------------------
 
 def _require_graph() -> ConceptGraph:
@@ -127,6 +130,18 @@ def _require_questions() -> dict[str, list[dict]]:
     return _questions
 
 
+def _require_engine() -> DiagnosticEngine:
+    if _engine is None:
+        raise HTTPException(status_code=503, detail="Diagnostic engine not initialized.")
+    return _engine
+
+
+def _require_session(session_id: str) -> dict[str, Any]:
+    if session_id not in _sessions:
+        raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found.")
+    return _sessions[session_id]
+
+
 def _get_or_create_session(session_id: str | None) -> tuple[str, dict]:
     """Return (session_id, session_dict) — creating a new session if needed."""
     if session_id and session_id in _sessions:
@@ -139,15 +154,16 @@ def _get_or_create_session(session_id: str | None) -> tuple[str, dict]:
         "traversal_path": [],
         "traversal_index": 0,       # which step of the path we're probing
         "mastery": {},               # {node_id: float}
+        "asked_questions": {},       # {node_id: [question_id, ...]}
         "root_cause_node": None,
-        "status": "idle",            # idle | traversing | diagnosed | remediating | complete
+        "status": "idle",            # idle | matched | traversing | diagnosed | retesting | complete
     }
     _sessions[sid] = session
     return sid, session
 
 
 # ---------------------------------------------------------------------------
-# Routes: Day 1
+# Routes: Core
 # ---------------------------------------------------------------------------
 
 @app.get("/health", tags=["system"])
@@ -204,6 +220,7 @@ def match_query(req: MatchRequest) -> MatchResponse:
     session["traversal_path"] = []
     session["traversal_index"] = 0
     session["mastery"] = {}
+    session["asked_questions"] = {}
     session["root_cause_node"] = None
     session["status"] = "matched"
 
@@ -219,13 +236,29 @@ def match_query(req: MatchRequest) -> MatchResponse:
 
 
 # ---------------------------------------------------------------------------
-# Routes: Stubbed for future days (return 501 Not Implemented)
+# Routes: Diagnostic Flow
 # ---------------------------------------------------------------------------
 
 @app.post("/traverse", tags=["core"])
 def traverse(req: TraverseRequest) -> dict[str, Any]:
-    """[Day 5] Start backward traversal from a matched node."""
-    raise HTTPException(status_code=501, detail="Not implemented yet — Day 5.")
+    """
+    Build a backward traversal path from the matched node and
+    initialize the probing session.
+    """
+    engine = _require_engine()
+    session = _require_session(req.session_id)
+
+    # Validate node
+    graph = _require_graph()
+    if req.node_id not in graph.nodes:
+        raise HTTPException(status_code=404, detail=f"Node '{req.node_id}' not found.")
+
+    try:
+        result = engine.init_traversal(session, req.node_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return result
 
 
 @app.get("/question", tags=["core"])
@@ -233,29 +266,101 @@ def get_question(
     node_id: str = Query(...),
     session_id: str = Query(...),
 ) -> dict[str, Any]:
-    """[Day 5-6] Serve a probe question for a given node."""
-    raise HTTPException(status_code=501, detail="Not implemented yet — Day 5.")
+    """
+    Serve a probe question for the given node in the context of a session.
+    """
+    engine = _require_engine()
+    session = _require_session(session_id)
+
+    graph = _require_graph()
+    if node_id not in graph.nodes:
+        raise HTTPException(status_code=404, detail=f"Node '{node_id}' not found.")
+
+    question = engine.get_probe_question(session, node_id)
+    if question is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No unasked questions remaining for node '{node_id}'.",
+        )
+
+    return {
+        "session_id": session_id,
+        **question,
+    }
 
 
 @app.post("/answer", tags=["core"])
 def submit_answer(req: AnswerRequest) -> dict[str, Any]:
-    """[Day 6] Score a student answer and update mastery."""
-    raise HTTPException(status_code=501, detail="Not implemented yet — Day 6.")
+    """
+    Score a student's answer and advance the diagnostic traversal.
+    """
+    engine = _require_engine()
+    session = _require_session(req.session_id)
+
+    # Validate answer format
+    if req.answer.strip().upper() not in {"A", "B", "C", "D"}:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Answer must be one of A, B, C, D. Got: '{req.answer}'.",
+        )
+
+    try:
+        result = engine.record_answer(session, req.node_id, req.question_id, req.answer)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return result
 
 
 @app.get("/diagnose", tags=["core"])
 def get_diagnosis(session_id: str = Query(...)) -> dict[str, Any]:
-    """[Day 7] Return the diagnosis summary card."""
-    raise HTTPException(status_code=501, detail="Not implemented yet — Day 7.")
+    """
+    Return the diagnostic summary card for a completed traversal.
+    """
+    engine = _require_engine()
+    session = _require_session(session_id)
+
+    if session["status"] not in ("diagnosed", "retesting", "complete"):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Diagnosis not ready. Session status is '{session['status']}'. "
+                f"Complete the traversal first."
+            ),
+        )
+
+    return engine.diagnose(session)
 
 
 @app.get("/remediate", tags=["core"])
 def get_remediation(node_id: str = Query(...)) -> dict[str, Any]:
-    """[Day 7] Return explanation + practice questions for the root cause node."""
-    raise HTTPException(status_code=501, detail="Not implemented yet — Day 7.")
+    """
+    Return explanation + practice questions for the root cause node.
+    """
+    engine = _require_engine()
+    graph = _require_graph()
+
+    if node_id not in graph.nodes:
+        raise HTTPException(status_code=404, detail=f"Node '{node_id}' not found.")
+
+    return engine.get_remediation(node_id)
 
 
 @app.post("/retest", tags=["core"])
 def retest(session_id: str = Query(...)) -> dict[str, Any]:
-    """[Day 8] Re-serve the original question after remediation passes."""
-    raise HTTPException(status_code=501, detail="Not implemented yet — Day 8.")
+    """
+    Re-serve a question for the root-cause node after remediation.
+    """
+    engine = _require_engine()
+    session = _require_session(session_id)
+
+    if session["status"] not in ("diagnosed", "retesting"):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Cannot retest. Session status is '{session['status']}'. "
+                f"Complete diagnosis first."
+            ),
+        )
+
+    return engine.prepare_retest(session)
