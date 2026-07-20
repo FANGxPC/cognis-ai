@@ -53,15 +53,16 @@ def embed_text(text: str) -> list[float]:
 
 def embed_texts(texts: list[str]) -> list[list[float]]:
     """
-    Embed a list of texts in a single batch call.
-    Returns a list of embedding vectors (one per input text).
+    Embed a list of texts (one vector per text).
+    Returns a list of embedding vectors.
     """
-    client = _get_client()
-    result = client.models.embed_content(
-        model=_EMBEDDING_MODEL,
-        contents=texts,
-    )
-    return [emb.values for emb in result.embeddings]
+    from concurrent.futures import ThreadPoolExecutor
+
+    def _embed_one(text: str) -> list[float]:
+        return embed_text(text)
+
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        return list(executor.map(_embed_one, texts))
 
 
 # ---------------------------------------------------------------------------
