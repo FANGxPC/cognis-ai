@@ -1,0 +1,214 @@
+{
+  "nodes": [
+    {
+      "id": "vectors_intro",
+      "label": "Vectors: Introduction",
+      "description": "A vector is an ordered list of numbers representing magnitude and direction. We represent vectors in R^n space and understand them geometrically as arrows.",
+      "order": 1,
+      "mastery": null
+    },
+    {
+      "id": "vector_operations",
+      "label": "Vector Operations",
+      "description": "Adding and subtracting vectors component-wise, and scaling vectors by a scalar (scalar multiplication). These are the fundamental arithmetic operations on vectors.",
+      "order": 2,
+      "mastery": null
+    },
+    {
+      "id": "dot_product",
+      "label": "Dot Product",
+      "description": "The dot product of two vectors is the sum of the products of their corresponding components. It tells us about the angle between vectors and is zero when they are orthogonal.",
+      "order": 3,
+      "mastery": null
+    },
+    {
+      "id": "linear_combinations",
+      "label": "Linear Combinations",
+      "description": "A linear combination of vectors is formed by multiplying each vector by a scalar and adding the results together. Any vector in the span can be written as a linear combination.",
+      "order": 4,
+      "mastery": null
+    },
+    {
+      "id": "span",
+      "label": "Span of Vectors",
+      "description": "The span of a set of vectors is the set of all possible linear combinations of those vectors. It represents all points reachable by combining the given vectors.",
+      "order": 5,
+      "mastery": null
+    },
+    {
+      "id": "linear_independence",
+      "label": "Linear Independence",
+      "description": "A set of vectors is linearly independent if no vector in the set can be written as a linear combination of the others. Otherwise the set is linearly dependent.",
+      "order": 6,
+      "mastery": null
+    },
+    {
+      "id": "matrices_intro",
+      "label": "Matrices: Introduction",
+      "description": "A matrix is a rectangular array of numbers organized in rows and columns. Matrices are used to represent systems of equations, transformations, and data.",
+      "order": 7,
+      "mastery": null
+    },
+    {
+      "id": "matrix_operations",
+      "label": "Matrix Operations",
+      "description": "Basic operations on matrices including addition, subtraction, and scalar multiplication performed element-wise. Also includes the transpose operation.",
+      "order": 8,
+      "mastery": null
+    },
+    {
+      "id": "matrix_multiplication",
+      "label": "Matrix Multiplication",
+      "description": "Multiplying two matrices by taking the dot product of rows from the first matrix with columns of the second. The result's dimensions depend on the input dimensions.",
+      "order": 9,
+      "mastery": null
+    },
+    {
+      "id": "systems_of_equations",
+      "label": "Systems of Linear Equations",
+      "description": "A collection of two or more linear equations involving the same variables. The solution is the set of values satisfying all equations simultaneously.",
+      "order": 10,
+      "mastery": null
+    },
+    {
+      "id": "gaussian_elimination",
+      "label": "Gaussian Elimination",
+      "description": "An algorithm for solving systems of linear equations by applying row operations to reduce the augmented matrix to row echelon form, then back-substituting.",
+      "order": 11,
+      "mastery": null
+    },
+    {
+      "id": "row_echelon_form",
+      "label": "Row Echelon Form",
+      "description": "A matrix is in row echelon form when all zero rows are at the bottom, and the leading entry (pivot) of each non-zero row is to the right of the pivot in the row above.",
+      "order": 12,
+      "mastery": null
+    },
+    {
+      "id": "matrix_rank",
+      "label": "Matrix Rank",
+      "description": "The rank of a matrix is the number of linearly independent rows (or columns), equal to the number of pivot positions in its row echelon form. It measures the 'true dimension' of the matrix.",
+      "order": 13,
+      "mastery": null
+    },
+    {
+      "id": "null_space",
+      "label": "Null Space (Kernel)",
+      "description": "The null space of a matrix A is the set of all vectors x such that Ax = 0. It represents the directions that are collapsed to zero by the transformation.",
+      "order": 14,
+      "mastery": null
+    },
+    {
+      "id": "column_space",
+      "label": "Column Space (Image)",
+      "description": "The column space of a matrix is the span of its column vectors — the set of all vectors that can be produced as Ax for some x. It represents the range of the linear transformation.",
+      "order": 15,
+      "mastery": null
+    },
+    {
+      "id": "determinants",
+      "label": "Determinants",
+      "description": "The determinant of a square matrix is a scalar that encodes how the matrix scales areas or volumes. A zero determinant means the matrix is singular and non-invertible.",
+      "order": 16,
+      "mastery": null
+    },
+    {
+      "id": "inverse_matrices",
+      "label": "Matrix Inverse",
+      "description": "The inverse of a square matrix A is the matrix A^-1 such that A * A^-1 = I. A matrix is invertible only if its determinant is non-zero (full rank).",
+      "order": 17,
+      "mastery": null
+    },
+    {
+      "id": "linear_transformations",
+      "label": "Linear Transformations",
+      "description": "A linear transformation is a function between vector spaces that preserves addition and scalar multiplication. Every linear transformation can be represented by a matrix.",
+      "order": 18,
+      "mastery": null
+    },
+    {
+      "id": "eigenvalues_intro",
+      "label": "Eigenvalues",
+      "description": "An eigenvalue of a matrix A is a scalar λ such that there exists a non-zero vector v where Av = λv. Found by solving the characteristic equation det(A - λI) = 0.",
+      "order": 19,
+      "mastery": null
+    },
+    {
+      "id": "eigenvectors",
+      "label": "Eigenvectors",
+      "description": "An eigenvector of a matrix A corresponding to eigenvalue λ is a non-zero vector v satisfying Av = λv. It represents a direction unchanged (only scaled) by the transformation.",
+      "order": 20,
+      "mastery": null
+    },
+    {
+      "id": "diagonalization",
+      "label": "Diagonalization",
+      "description": "A matrix A is diagonalizable if it can be written as A = PDP^-1 where D is diagonal. This requires A to have enough linearly independent eigenvectors.",
+      "order": 21,
+      "mastery": null
+    },
+    {
+      "id": "orthogonality",
+      "label": "Orthogonality",
+      "description": "Two vectors are orthogonal if their dot product is zero. An orthogonal set has all pairs of vectors mutually perpendicular. Orthonormal sets are also unit length.",
+      "order": 22,
+      "mastery": null
+    },
+    {
+      "id": "projections",
+      "label": "Orthogonal Projections",
+      "description": "The projection of a vector b onto a subspace W is the closest point in W to b. Computed using the projection formula involving dot products.",
+      "order": 23,
+      "mastery": null
+    },
+    {
+      "id": "gram_schmidt",
+      "label": "Gram-Schmidt Process",
+      "description": "An algorithm that takes a set of linearly independent vectors and produces an orthonormal basis for the same span by iteratively projecting and normalizing.",
+      "order": 24,
+      "mastery": null
+    },
+    {
+      "id": "svd_intro",
+      "label": "Singular Value Decomposition (SVD)",
+      "description": "SVD decomposes any matrix A into U * Σ * V^T, where U and V are orthogonal and Σ contains singular values. It generalizes eigendecomposition to non-square matrices.",
+      "order": 25,
+      "mastery": null
+    }
+  ],
+  "edges": [
+    { "from": "vectors_intro", "to": "vector_operations", "label": "requires" },
+    { "from": "vectors_intro", "to": "dot_product", "label": "requires" },
+    { "from": "vector_operations", "to": "linear_combinations", "label": "requires" },
+    { "from": "linear_combinations", "to": "span", "label": "requires" },
+    { "from": "span", "to": "linear_independence", "label": "requires" },
+    { "from": "vectors_intro", "to": "matrices_intro", "label": "requires" },
+    { "from": "matrices_intro", "to": "matrix_operations", "label": "requires" },
+    { "from": "matrix_operations", "to": "matrix_multiplication", "label": "requires" },
+    { "from": "dot_product", "to": "matrix_multiplication", "label": "requires" },
+    { "from": "matrix_multiplication", "to": "systems_of_equations", "label": "requires" },
+    { "from": "systems_of_equations", "to": "gaussian_elimination", "label": "requires" },
+    { "from": "gaussian_elimination", "to": "row_echelon_form", "label": "requires" },
+    { "from": "row_echelon_form", "to": "matrix_rank", "label": "requires" },
+    { "from": "linear_independence", "to": "matrix_rank", "label": "requires" },
+    { "from": "matrix_rank", "to": "null_space", "label": "requires" },
+    { "from": "matrix_rank", "to": "column_space", "label": "requires" },
+    { "from": "matrix_multiplication", "to": "determinants", "label": "requires" },
+    { "from": "matrix_rank", "to": "inverse_matrices", "label": "requires" },
+    { "from": "determinants", "to": "inverse_matrices", "label": "requires" },
+    { "from": "matrix_multiplication", "to": "linear_transformations", "label": "requires" },
+    { "from": "linear_transformations", "to": "eigenvalues_intro", "label": "requires" },
+    { "from": "determinants", "to": "eigenvalues_intro", "label": "requires" },
+    { "from": "eigenvalues_intro", "to": "eigenvectors", "label": "requires" },
+    { "from": "linear_independence", "to": "eigenvectors", "label": "requires" },
+    { "from": "eigenvectors", "to": "diagonalization", "label": "requires" },
+    { "from": "inverse_matrices", "to": "diagonalization", "label": "requires" },
+    { "from": "null_space", "to": "eigenvectors", "label": "requires" },
+    { "from": "dot_product", "to": "orthogonality", "label": "requires" },
+    { "from": "orthogonality", "to": "projections", "label": "requires" },
+    { "from": "linear_independence", "to": "projections", "label": "requires" },
+    { "from": "projections", "to": "gram_schmidt", "label": "requires" },
+    { "from": "gram_schmidt", "to": "svd_intro", "label": "requires" },
+    { "from": "diagonalization", "to": "svd_intro", "label": "requires" }
+  ]
+}
