@@ -11,6 +11,7 @@ Endpoints:
   GET  /diagnose     → diagnosis summary card
   GET  /remediate    → explanation + practice questions for root cause
   POST /retest       → re-serve question after remediation
+
 """
 
 from __future__ import annotations
