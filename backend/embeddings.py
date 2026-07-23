@@ -17,6 +17,9 @@ from google import genai
 
 load_dotenv()
 
+import hashlib
+import re
+
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -34,21 +37,59 @@ def _get_client() -> genai.Client:
     return genai.Client(api_key=api_key)
 
 
+def _offline_embed_text(text: str, dim: int = 128) -> list[float]:
+    """
+    Deterministic fallback embedding generator when Gemini API is unavailable or unauthenticated.
+    Uses TF-IDF-style word and n-gram feature hashing to construct a unit-length vector.
+    """
+    stop_words = {
+        "i", "m", "a", "an", "the", "about", "confused", "stuck", "don", "t",
+        "understand", "get", "is", "of", "in", "or", "and", "by", "to", "on",
+        "for", "with", "what", "how", "why", "can", "you", "help", "me", "this"
+    }
+    vec = [0.0] * dim
+    words = re.findall(r"\w+", text.lower())
+    for word in words:
+        if word in stop_words:
+            continue
+        h = int(hashlib.sha256(word.encode()).hexdigest(), 16)
+        vec[h % dim] += 5.0
+        for i in range(len(word) - 2):
+            gh = int(hashlib.md5(word[i : i + 3].encode()).hexdigest(), 16)
+            vec[gh % dim] += 1.0
+
+    norm = math.sqrt(sum(x * x for x in vec))
+    if norm == 0:
+        vec[0] = 1.0
+        return vec
+    return [x / norm for x in vec]
+
+
 # ---------------------------------------------------------------------------
 # Core embedding functions
 # ---------------------------------------------------------------------------
 
+_FALLBACK_WARNED = False
+
+
 def embed_text(text: str) -> list[float]:
     """
-    Embed a single piece of text using gemini-embedding-004.
-    Returns a list of floats (the embedding vector).
+    Embed a single piece of text using gemini-embedding-2.
+    Falls back to offline deterministic embeddings if API authentication fails.
     """
-    client = _get_client()
-    result = client.models.embed_content(
-        model=_EMBEDDING_MODEL,
-        contents=[text],
-    )
-    return result.embeddings[0].values
+    global _FALLBACK_WARNED
+    try:
+        client = _get_client()
+        result = client.models.embed_content(
+            model=_EMBEDDING_MODEL,
+            contents=[text],
+        )
+        return result.embeddings[0].values
+    except Exception as e:
+        if not _FALLBACK_WARNED:
+            print(f"[EmbeddingCache] WARNING: Gemini API call failed ({e}). Using offline embeddings fallback.")
+            _FALLBACK_WARNED = True
+        return _offline_embed_text(text)
 
 
 def embed_texts(texts: list[str]) -> list[list[float]]:
@@ -94,6 +135,7 @@ class NodeEmbeddingCache:
 
     def __init__(self) -> None:
         self._node_embeddings: dict[str, list[float]] = {}
+        self._nodes: dict[str, Any] = {}
         self._built = False
 
     def build(self, nodes: dict[str, Any]) -> None:
@@ -101,11 +143,15 @@ class NodeEmbeddingCache:
         Embed all node descriptions in a single batch call.
         `nodes` is a dict of {node_id: ConceptNode}.
         """
+        self._nodes = nodes
         node_ids = list(nodes.keys())
-        descriptions = [nodes[nid].description for nid in node_ids]
+        texts = [
+            f"{nodes[nid].label} {nodes[nid].label} {nodes[nid].description}"
+            for nid in node_ids
+        ]
 
-        print(f"[EmbeddingCache] Embedding {len(descriptions)} node descriptions...")
-        vectors = embed_texts(descriptions)
+        print(f"[EmbeddingCache] Embedding {len(texts)} node texts...")
+        vectors = embed_texts(texts)
 
         self._node_embeddings = dict(zip(node_ids, vectors))
         self._built = True
@@ -120,11 +166,20 @@ class NodeEmbeddingCache:
             raise RuntimeError("Call build() before match_query().")
 
         query_vec = embed_text(query)
+        stop_words = {"i", "m", "don", "t", "get", "a", "the", "about", "confused", "stuck", "is", "in", "of", "to"}
+        query_words = set(re.findall(r"\w+", query.lower())) - stop_words
 
-        scores = [
-            {"node_id": nid, "score": cosine_similarity(query_vec, vec)}
-            for nid, vec in self._node_embeddings.items()
-        ]
+        scores: list[dict[str, Any]] = []
+        for nid, vec in self._node_embeddings.items():
+            sim = cosine_similarity(query_vec, vec)
+            node = self._nodes.get(nid)
+            if node:
+                label_words = set(re.findall(r"\w+", f"{nid} {node.label}".lower())) - stop_words
+                overlap = query_words.intersection(label_words)
+                if overlap:
+                    sim = max(sim, min(0.95, 0.75 + 0.1 * len(overlap)))
+            scores.append({"node_id": nid, "score": sim})
+
         scores.sort(key=lambda x: x["score"], reverse=True)
         return scores[:top_k]
 

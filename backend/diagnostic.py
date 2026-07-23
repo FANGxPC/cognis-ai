@@ -380,3 +380,208 @@ class DiagnosticEngine:
             "root_cause_label": self.graph.nodes[root_cause].label,
             "question": question,
         }
+
+    # ------------------------------------------------------------------
+    # Step 7: Generate trace log (for /api/diagnose)
+    # ------------------------------------------------------------------
+
+    def generate_trace_log(
+        self,
+        query: str,
+        matched_node_id: str,
+        similarity_score: float,
+        traversal_path: list[str],
+    ) -> list[str]:
+        """
+        Build the trace_log array that the frontend reasoning console
+        reveals line-by-line with a typewriter effect.
+        """
+        matched_label = self.graph.nodes[matched_node_id].label
+
+        log: list[str] = [
+            "initializing diagnostic engine...",
+            f"received query: \"{query}\"",
+            "embedding query using gemini-embedding-2...",
+            "matching query to concept graph...",
+            f"best match: {matched_label} (similarity {similarity_score:.2f})",
+        ]
+
+        # List top prereqs for context
+        prereqs = self.graph.prereqs_of.get(matched_node_id, [])
+        if prereqs:
+            prereq_labels = [self.graph.nodes[p].label for p in prereqs if p in self.graph.nodes]
+            log.append(f"direct prerequisites: {', '.join(prereq_labels)}")
+
+        log.append("walking backward through prerequisites...")
+
+        # Show the traversal path step by step
+        for i, nid in enumerate(traversal_path):
+            node_label = self.graph.nodes[nid].label
+            if i == 0:
+                log.append(f"step {i}: probing target → {node_label}")
+            else:
+                log.append(f"step {i}: probing prerequisite → {node_label}")
+
+        log.append(f"traversal path built: {len(traversal_path)} nodes to probe")
+        log.append("ready — awaiting student responses...")
+
+        return log
+
+    # ------------------------------------------------------------------
+    # Step 8: Generate explanation (for /api/diagnose/explain)
+    # ------------------------------------------------------------------
+
+    def generate_explanation(self, session: dict[str, Any]) -> dict[str, Any]:
+        """
+        Build the plain-language explanation for the confirmed root cause.
+        Used by GET /api/diagnose/explain.
+        """
+        matched_node = session.get("matched_node")
+        root_cause = session.get("root_cause_node")
+        mastery = session.get("mastery", {})
+        path = session.get("traversal_path", [])
+
+        if not root_cause:
+            return {
+                "root_node_id": None,
+                "root_node_label": None,
+                "explanation": (
+                    "Great news! You demonstrated mastery of all tested prerequisites. "
+                    "Your confusion may be about a specific problem type rather than "
+                    "a conceptual gap."
+                ),
+            }
+
+        matched_label = self.graph.nodes[matched_node].label if matched_node else "the target concept"
+        root_label = self.graph.nodes[root_cause].label
+
+        # Count how many steps back the root cause is
+        gap_depth = 0
+        passed_labels: list[str] = []
+        for i, nid in enumerate(path):
+            if nid == root_cause:
+                gap_depth = i
+                break
+            if mastery.get(nid, 0) >= 1.0:
+                passed_labels.append(self.graph.nodes[nid].label)
+
+        # Build a narrative explanation
+        if passed_labels:
+            passed_str = " and ".join(passed_labels) if len(passed_labels) <= 2 else (
+                ", ".join(passed_labels[:-1]) + f", and {passed_labels[-1]}"
+            )
+            explanation = (
+                f"You said you're stuck on {matched_label}. Tracing backward, "
+                f"{passed_str} {'checks' if len(passed_labels) == 1 else 'all check'} out — "
+                f"but {root_label}, {gap_depth} concept{'s' if gap_depth != 1 else ''} "
+                f"upstream, doesn't. That's the real gap."
+            )
+        else:
+            explanation = (
+                f"You said you're stuck on {matched_label}. Testing backward through "
+                f"prerequisites, {root_label} — {gap_depth} concept{'s' if gap_depth != 1 else ''} "
+                f"earlier in the course — is where the gap begins. "
+                f"Strengthening this foundation should unlock the concepts that follow."
+            )
+
+        return {
+            "root_node_id": root_cause,
+            "root_node_label": root_label,
+            "explanation": explanation,
+        }
+
+    # ------------------------------------------------------------------
+    # Step 9: Score practice answer (for /api/practice/answer)
+    # ------------------------------------------------------------------
+
+    def score_practice_answer(
+        self,
+        session: dict[str, Any],
+        question_id: str,
+        answer: str,
+    ) -> dict[str, Any]:
+        """
+        Grade a practice answer during remediation.
+        Tracks attempts and flips node_mastered when the student passes.
+        """
+        root_cause = session.get("root_cause_node")
+        if not root_cause:
+            raise ValueError("No root cause node — cannot score practice answer.")
+
+        # Find the question in the root cause node's bank
+        node_qs = self.questions.get(root_cause, [])
+        question = next((q for q in node_qs if q["id"] == question_id), None)
+        if question is None:
+            raise ValueError(f"Question {question_id!r} not found for node {root_cause!r}")
+
+        is_correct = answer.strip().upper() == question["correct_answer"].strip().upper()
+
+        # Track practice attempts
+        practice_key = "practice_attempts"
+        if practice_key not in session:
+            session[practice_key] = {}
+        session[practice_key].setdefault(root_cause, []).append({
+            "question_id": question_id,
+            "answer": answer,
+            "correct": is_correct,
+        })
+
+        # Determine if node is mastered (any correct practice answer = mastered)
+        attempts = session[practice_key][root_cause]
+        any_correct = any(a["correct"] for a in attempts)
+
+        if any_correct:
+            session["mastery"][root_cause] = 1.0
+
+        return {
+            "correct": is_correct,
+            "correct_answer": question["correct_answer"],
+            "explanation": question["explanation"],
+            "node_mastered": any_correct,
+            "attempts": len(attempts),
+        }
+
+    # ------------------------------------------------------------------
+    # Step 10: Execute retest (for /api/retest spec-aligned)
+    # ------------------------------------------------------------------
+
+    def execute_retest(self, session: dict[str, Any]) -> dict[str, Any]:
+        """
+        Mark the root cause and entire traversal path as mastered,
+        simulating a successful retest.
+
+        Returns the spec-aligned response: {solved, updated_graph_state}.
+        """
+        root_cause = session.get("root_cause_node")
+        path = session.get("traversal_path", [])
+        matched = session.get("matched_node")
+
+        if not root_cause and not matched:
+            return {
+                "solved": True,
+                "updated_graph_state": [],
+            }
+
+        # Mark everything in the traversal path as mastered
+        updated_state: list[dict[str, str]] = []
+        for nid in path:
+            session["mastery"][nid] = 1.0
+            updated_state.append({
+                "node_id": nid,
+                "status": "mastered",
+            })
+
+        # Also ensure the matched node is mastered
+        if matched and matched not in [s["node_id"] for s in updated_state]:
+            session["mastery"][matched] = 1.0
+            updated_state.append({
+                "node_id": matched,
+                "status": "mastered",
+            })
+
+        session["status"] = "complete"
+
+        return {
+            "solved": True,
+            "updated_graph_state": updated_state,
+        }
