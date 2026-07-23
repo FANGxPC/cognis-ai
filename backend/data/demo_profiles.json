@@ -1,0 +1,101 @@
+{
+  "profiles": [
+    {
+      "name": "eigenvectors_deep_dive",
+      "description": "A student stuck on Eigenvectors — root cause traced back to Matrix Rank, three concepts upstream. The classic 'wow moment' demo path.",
+      "query": "I don't understand eigenvectors",
+      "matched_node": "eigenvectors",
+      "traversal_path": [
+        "eigenvectors",
+        "eigenvalues_intro",
+        "linear_transformations",
+        "determinants",
+        "linear_independence",
+        "null_space",
+        "matrix_rank",
+        "row_echelon_form",
+        "gaussian_elimination"
+      ],
+      "mastery": {
+        "eigenvectors": 0.0,
+        "eigenvalues_intro": 1.0,
+        "linear_transformations": 1.0,
+        "determinants": 1.0,
+        "linear_independence": 1.0,
+        "null_space": 1.0,
+        "matrix_rank": 0.0
+      },
+      "root_cause_node": "matrix_rank",
+      "asked_questions": {
+        "eigenvectors": ["eigenvectors_q1"],
+        "eigenvalues_intro": ["eigenvalues_intro_q1"],
+        "linear_transformations": ["linear_transformations_q1"],
+        "determinants": ["determinants_q1"],
+        "linear_independence": ["linear_independence_q1"],
+        "null_space": ["null_space_q1"],
+        "matrix_rank": ["matrix_rank_q1"]
+      },
+      "status": "diagnosed"
+    },
+    {
+      "name": "svd_full_path",
+      "description": "A student stuck on SVD — long traversal path touching many prerequisites. Shows the system handling a complex, wide dependency tree.",
+      "query": "I can't figure out singular value decomposition",
+      "matched_node": "svd_intro",
+      "traversal_path": [
+        "svd_intro",
+        "diagonalization",
+        "gram_schmidt",
+        "eigenvectors",
+        "eigenvalues_intro",
+        "projections",
+        "inverse_matrices",
+        "linear_transformations",
+        "determinants",
+        "orthogonality",
+        "linear_independence",
+        "null_space",
+        "column_space",
+        "matrix_rank"
+      ],
+      "mastery": {
+        "svd_intro": 0.0,
+        "diagonalization": 1.0,
+        "gram_schmidt": 1.0,
+        "eigenvectors": 1.0,
+        "eigenvalues_intro": 1.0,
+        "projections": 0.0
+      },
+      "root_cause_node": "projections",
+      "asked_questions": {
+        "svd_intro": ["svd_intro_q1"],
+        "diagonalization": ["diagonalization_q1"],
+        "gram_schmidt": ["gram_schmidt_q1"],
+        "eigenvectors": ["eigenvectors_q2"],
+        "eigenvalues_intro": ["eigenvalues_intro_q2"],
+        "projections": ["projections_q1"]
+      },
+      "status": "diagnosed"
+    },
+    {
+      "name": "all_clear_vectors",
+      "description": "A student who actually knows their stuff — all prerequisites pass. Demonstrates the 'no gap found' all-clear result.",
+      "query": "I'm confused about vector operations",
+      "matched_node": "vector_operations",
+      "traversal_path": [
+        "vector_operations",
+        "vectors_intro"
+      ],
+      "mastery": {
+        "vector_operations": 1.0,
+        "vectors_intro": 1.0
+      },
+      "root_cause_node": null,
+      "asked_questions": {
+        "vector_operations": ["vector_operations_q1"],
+        "vectors_intro": ["vectors_intro_q1"]
+      },
+      "status": "diagnosed"
+    }
+  ]
+}
