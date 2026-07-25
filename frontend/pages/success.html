@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Success</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<link rel="stylesheet" href="../css/components.css">
+
+<link rel="stylesheet" href="../css/animations.css">
+
+</head>
+
+<body>
+
+<div class="noise-layer"></div>
+
+<div class="grid-layer"></div>
+
+<canvas id="particles"></canvas>
+
+<section class="min-h-screen flex items-center justify-center px-8">
+
+<div class="max-w-4xl w-full">
+
+<div class="cta-panel text-center">
+
+<div class="mx-auto w-40 h-40 rounded-full bg-lime-300/10 border border-lime-300 flex items-center justify-center animate-pulse">
+
+<i data-lucide="check-circle-2" class="w-24 h-24 text-lime-300"></i>
+
+</div>
+
+<span class="status-chip mt-10 inline-flex">
+
+MISSION COMPLETE
+
+</span>
+
+<h1 class="hero-title mt-10">
+
+CONCEPT
+
+MASTERED
+
+</h1>
+
+<p class="hero-description mt-8 mx-auto">
+
+Congratulations! The diagnostic engine has verified your understanding. You are now ready to continue to the next concept.
+
+</p>
+
+<div class="grid lg:grid-cols-3 gap-6 mt-20">
+
+<div class="stat-card">
+
+<span class="counter">
+
+98%
+
+</span>
+
+<p>
+
+Confidence
+
+</p>
+
+</div>
+
+<div class="stat-card">
+
+<span class="counter" id="quizScore">
+
+0/5
+
+</span>
+
+<p>
+
+Questions
+
+</p>
+
+</div>
+
+<div class="stat-card">
+
+<span class="counter">
+
+100%
+
+</span>
+
+<p>
+
+Recovery
+
+</p>
+
+</div>
+
+</div>
+
+<div class="flex justify-center gap-6 mt-20">
+
+<a href="../index.html" class="secondary-button">
+
+HOME
+
+</a>
+
+<a href="scan.html" class="primary-button">
+
+SCAN NEXT CONCEPT
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<script>
+
+lucide.createIcons();
+
+const score = Number(sessionStorage.getItem("quizScore") || 0);
+
+document.getElementById("quizScore").textContent = `${score}/5`;
+
+</script>
+
+<script src="../js/ui-polish.js"></script>
+<script src="../js/particles.js"></script>
+
+</body>
+
+</html>

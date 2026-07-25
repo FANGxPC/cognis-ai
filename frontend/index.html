@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Concept Prerequisite X-Ray</title>
+
+    <!-- ========================================================= -->
+    <!-- GOOGLE FONTS -->
+    <!-- ========================================================= -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- ========================================================= -->
+    <!-- TAILWIND -->
+    <!-- ========================================================= -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+
+                    colors: {
+
+                        background: "#0D0A14",
+
+                        panel: "#181228",
+
+                        primary: "#B98BFF",
+
+                        accent: "#C5FF6B",
+
+                        text: "#EDE6F5",
+
+                        border: "#2C2442",
+
+                        muted: "#7D7396",
+
+                        danger: "#FF5F6D"
+
+                    },
+
+                    fontFamily: {
+
+                        terminal: ["VT323"],
+
+                        mono: ["JetBrains Mono"]
+
+                    },
+
+                    boxShadow: {
+
+                        glow: "0 0 35px rgba(185,139,255,.25)",
+
+                        lime: "0 0 30px rgba(197,255,107,.3)"
+
+                    }
+
+                }
+            }
+        }
+    </script>
+
+    <!-- ========================================================= -->
+    <!-- ICONS -->
+    <!-- ========================================================= -->
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- ========================================================= -->
+    <!-- CSS -->
+    <!-- ========================================================= -->
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <link rel="stylesheet"
+          href="css/components.css">
+
+    <link rel="stylesheet"
+          href="css/animations.css">
+
+</head>
+
+<body class="bg-background text-text overflow-x-hidden">
+
+    <!-- ========================================================= -->
+    <!-- CUSTOM CURSOR -->
+    <!-- ========================================================= -->
+
+    <div id="cursor-dot"></div>
+
+    <div id="cursor-ring"></div>
+
+    <!-- ========================================================= -->
+    <!-- NOISE -->
+    <!-- ========================================================= -->
+
+    <div class="noise-layer"></div>
+
+    <!-- ========================================================= -->
+    <!-- GRID -->
+    <!-- ========================================================= -->
+
+    <div class="grid-layer"></div>
+
+    <!-- ========================================================= -->
+    <!-- PARTICLES -->
+    <!-- ========================================================= -->
+
+    <canvas id="particles"></canvas>
+
+    <!-- ========================================================= -->
+    <!-- PAGE WRAPPER -->
+    <!-- ========================================================= -->
+
+    <div class="relative z-10 min-h-screen">
+
+        <!-- ===================================================== -->
+        <!-- NAVBAR -->
+        <!-- ===================================================== -->
+
+        <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/20 border-b border-white/5">
+
+            <div class="max-w-7xl mx-auto px-8">
+
+                <div class="h-20 flex items-center justify-between">
+
+                    <!-- LOGO -->
+
+                    <div class="flex items-center gap-4">
+
+                        <div class="logo-square">
+
+                            XR
+
+                        </div>
+
+                        <div>
+
+                            <h1 class="font-terminal text-4xl tracking-widest text-accent">
+
+                                X-RAY
+
+                            </h1>
+
+                            <p class="text-[10px] uppercase tracking-[0.35em] text-muted">
+
+                                Concept Prerequisite Scanner
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!-- LINKS -->
+
+                    <div class="hidden lg:flex items-center gap-10">
+
+                        <a href="#home"
+                           class="nav-link"
+                           data-tooltip="Jump to hero">
+
+                            Home
+
+                        </a>
+
+                        <a href="#features"
+                           class="nav-link"
+                           data-tooltip="See capabilities">
+
+                            Features
+
+                        </a>
+
+                        <a href="pages/about.html"
+                           class="nav-link"
+                           data-tooltip="Project overview">
+
+                            About
+
+                        </a>
+
+                        <a href="pages/scan.html"
+                           class="scan-button"
+                           data-tooltip="Start interactive scan">
+
+                            INITIALIZE
+
+                        </a>
+
+                    </div>
+
+                    <!-- MOBILE -->
+
+                    <button class="lg:hidden">
+
+                        <i data-lucide="menu"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+        <!-- ===================================================== -->
+        <!-- HERO -->
+        <!-- ===================================================== -->
+
+        <section id="home"
+                 class="min-h-screen flex items-center pt-24">
+
+            <div class="max-w-7xl mx-auto px-8 w-full">
+
+                <div class="grid lg:grid-cols-2 gap-24 items-center">
+
+                    <!-- ============================================= -->
+                    <!-- LEFT -->
+                    <!-- ============================================= -->
+
+                    <div>
+
+                        <span class="status-chip">
+
+                            SYSTEM READY
+
+                        </span>
+
+                        <h1 class="hero-title mt-8">
+
+                            FIND THE
+
+                            <span class="text-accent">
+
+                                REAL
+
+                            </span>
+
+                            CONCEPT
+
+                            <br>
+
+                            YOU ARE
+
+                            <span class="text-primary">
+
+                                MISSING
+
+                            </span>
+
+                        </h1>
+
+                        <p class="hero-description mt-8">
+
+                            Concept Prerequisite X-Ray traces your learning path,
+                            diagnoses hidden prerequisite gaps,
+                            and reveals the exact concept preventing your understanding.
+
+                        </p>
+
+                        <!-- BUTTONS -->
+
+                        <div class="flex flex-wrap gap-6 mt-12">
+
+                            <a href="pages/scan.html"
+                               class="primary-button"
+                               data-tooltip="Open scanner workspace">
+
+                                INITIALIZE SCAN
+
+                            </a>
+
+                            <a href="#features"
+                               class="secondary-button"
+                               data-tooltip="View process timeline">
+
+                                HOW IT WORKS
+
+                            </a>
+
+                        </div>
+
+                        <!-- TERMINAL -->
+
+                        <div class="terminal-window mt-16">
+
+                            <div class="terminal-header">
+
+                                <span class="terminal-dot red"></span>
+
+                                <span class="terminal-dot yellow"></span>
+
+                                <span class="terminal-dot green"></span>
+
+                                <span class="terminal-title">
+
+                                    XRAY_TERMINAL.exe
+
+                                </span>
+
+                            </div>
+
+                            <div class="terminal-body">
+
+                                <div id="terminal-output">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ============================================= -->
+                    <!-- RIGHT -->
+                    <!-- ============================================= -->
+
+                    <div class="relative">
+
+                        <!-- MAIN PANEL -->
+
+                        <div class="scanner-panel">
+
+                            <!-- HEADER -->
+
+                            <div class="panel-top">
+
+                                <span>
+
+                                    LIVE KNOWLEDGE GRAPH
+
+                                </span>
+
+                                <span class="text-accent">
+
+                                    ONLINE
+
+                                </span>
+
+                            </div>
+
+                            <!-- GRAPH -->
+
+                            <div id="graph-preview">
+
+                            </div>
+
+                            <!-- SCAN BAR -->
+
+                            <div class="scan-line"></div>
+
+                        </div>
+
+                        <!-- FLOATING CARD -->
+
+                        <div class="floating-card card-one">
+
+                            <p>
+
+                                SEARCHING...
+
+                            </p>
+
+                        </div>
+
+                        <div class="floating-card card-two">
+
+                            <p>
+
+                                BUILDING GRAPH...
+
+                            </p>
+
+                        </div>
+
+                        <div class="floating-card card-three">
+
+                            <p>
+
+                                PREREQUISITES FOUND
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+                <!-- ===================================================== -->
+        <!-- FEATURES -->
+        <!-- ===================================================== -->
+
+        <section id="features"
+                 class="py-32 relative">
+
+            <div class="max-w-7xl mx-auto px-8">
+
+                <div class="text-center mb-20">
+
+                    <span class="status-chip">
+
+                        SYSTEM CAPABILITIES
+
+                    </span>
+
+                    <h2 class="section-title mt-6">
+
+                        HOW THE ENGINE WORKS
+
+                    </h2>
+
+                    <p class="section-description">
+
+                        Trace dependencies, isolate prerequisite failures,
+                        and rebuild conceptual understanding.
+
+                    </p>
+
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+
+                            <i data-lucide="search-check"></i>
+
+                        </div>
+
+                        <h3>
+
+                            Detect Hidden Gaps
+
+                        </h3>
+
+                        <p>
+
+                            Go beyond incorrect answers and identify the exact prerequisite concept causing failure.
+
+                        </p>
+
+                    </div>
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+
+                            <i data-lucide="network"></i>
+
+                        </div>
+
+                        <h3>
+
+                            Knowledge Dependency Graph
+
+                        </h3>
+
+                        <p>
+
+                            Visualize every prerequisite relationship through an interactive concept graph.
+
+                        </p>
+
+                    </div>
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+
+                            <i data-lucide="brain-circuit"></i>
+
+                        </div>
+
+                        <h3>
+
+                            Personalized Recovery
+
+                        </h3>
+
+                        <p>
+
+                            Receive explanations, practice problems and recovery paths tailored to your weak concepts.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- TIMELINE -->
+        <!-- ===================================================== -->
+
+        <section class="py-32">
+
+            <div class="max-w-7xl mx-auto px-8">
+
+                <div class="text-center mb-20">
+
+                    <span class="status-chip">
+
+                        PIPELINE
+
+                    </span>
+
+                    <h2 class="section-title mt-6">
+
+                        DIAGNOSTIC PROCESS
+
+                    </h2>
+
+                </div>
+
+                <div class="timeline">
+
+                    <div class="timeline-line"></div>
+
+                    <div class="timeline-step">
+
+                        <div class="timeline-number">
+
+                            01
+
+                        </div>
+
+                        <div class="timeline-card">
+
+                            <h3>
+
+                                Input Problem
+
+                            </h3>
+
+                            <p>
+
+                                User enters a concept they struggle with.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-step">
+
+                        <div class="timeline-number">
+
+                            02
+
+                        </div>
+
+                        <div class="timeline-card">
+
+                            <h3>
+
+                                Dependency Scan
+
+                            </h3>
+
+                            <p>
+
+                                The prerequisite graph is traversed backwards.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-step">
+
+                        <div class="timeline-number">
+
+                            03
+
+                        </div>
+
+                        <div class="timeline-card">
+
+                            <h3>
+
+                                Knowledge Test
+
+                            </h3>
+
+                            <p>
+
+                                Quick diagnostic questions validate understanding.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-step">
+
+                        <div class="timeline-number">
+
+                            04
+
+                        </div>
+
+                        <div class="timeline-card">
+
+                            <h3>
+
+                                Root Cause Found
+
+                            </h3>
+
+                            <p>
+
+                                The weakest prerequisite is highlighted.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-step">
+
+                        <div class="timeline-number">
+
+                            05
+
+                        </div>
+
+                        <div class="timeline-card">
+
+                            <h3>
+
+                                Recovery Path
+
+                            </h3>
+
+                            <p>
+
+                                Learn → Practice → Verify → Continue.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- LIVE STATS -->
+        <!-- ===================================================== -->
+
+        <section class="pb-32">
+
+            <div class="max-w-7xl mx-auto px-8">
+
+                <div class="grid lg:grid-cols-4 gap-8">
+
+                    <div class="stat-card">
+
+                        <span class="counter"
+                              data-target="250">
+
+                            0
+
+                        </span>
+
+                        <p>
+
+                            Knowledge Nodes
+
+                        </p>
+
+                    </div>
+
+                    <div class="stat-card">
+
+                        <span class="counter"
+                              data-target="820">
+
+                            0
+
+                        </span>
+
+                        <p>
+
+                            Dependency Links
+
+                        </p>
+
+                    </div>
+
+                    <div class="stat-card">
+
+                        <span class="counter"
+                              data-target="98">
+
+                            0
+
+                        </span>
+
+                        <p>
+
+                            Diagnostic Accuracy %
+
+                        </p>
+
+                    </div>
+
+                    <div class="stat-card">
+
+                        <span class="counter"
+                              data-target="1000">
+
+                            0
+
+                        </span>
+
+                        <p>
+
+                            Practice Questions
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- CTA -->
+        <!-- ===================================================== -->
+
+        <section class="pb-32">
+
+            <div class="max-w-5xl mx-auto px-8">
+
+                <div class="cta-panel">
+
+                    <span class="status-chip">
+
+                        READY
+
+                    </span>
+
+                    <h2 class="section-title mt-6">
+
+                        START YOUR FIRST DIAGNOSTIC
+
+                    </h2>
+
+                    <p class="section-description">
+
+                        Discover the concept preventing your understanding in minutes.
+
+                    </p>
+
+                    <div class="flex justify-center mt-10">
+
+                        <a href="pages/scan.html"
+                           class="primary-button">
+
+                            BEGIN SCAN
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- FOOTER -->
+        <!-- ===================================================== -->
+
+        <footer class="border-t border-white/10">
+
+            <div class="max-w-7xl mx-auto px-8 py-12">
+
+                <div class="grid lg:grid-cols-4 gap-12">
+
+                    <div>
+
+                        <h3 class="font-terminal text-4xl text-accent">
+
+                            XRAY
+
+                        </h3>
+
+                        <p class="mt-4 text-sm text-muted">
+
+                            Concept Prerequisite Diagnostic System
+
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <h4 class="footer-heading">
+
+                            Navigation
+
+                        </h4>
+
+                        <ul class="footer-links">
+
+                            <li><a href="#">Home</a></li>
+
+                            <li><a href="#">Features</a></li>
+
+                            <li><a href="#">About</a></li>
+
+                        </ul>
+
+                    </div>
+
+                    <div>
+
+                        <h4 class="footer-heading">
+
+                            Resources
+
+                        </h4>
+
+                        <ul class="footer-links">
+
+                            <li><a href="#">Documentation</a></li>
+
+                            <li><a href="#">API</a></li>
+
+                            <li><a href="#">Research</a></li>
+
+                        </ul>
+
+                    </div>
+
+                    <div>
+
+                        <h4 class="footer-heading">
+
+                            Connect
+
+                        </h4>
+
+                        <div class="flex gap-4 mt-5">
+
+                            <a class="social-icon">
+
+                                <i data-lucide="github"></i>
+
+                            </a>
+
+                            <a class="social-icon">
+
+                                <i data-lucide="mail"></i>
+
+                            </a>
+
+                            <a class="social-icon">
+
+                                <i data-lucide="linkedin"></i>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-16 pt-8 border-t border-white/5 flex justify-between items-center text-xs text-muted">
+
+                    <span>
+
+                        © 2026 Concept Prerequisite X-Ray
+
+                    </span>
+
+                    <span>
+
+                        Built for Hackathons • Frontend Prototype
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/terminal.js"></script>
+    <script src="js/cursor.js"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/ui-polish.js"></script>
+    <script src="js/particles.js"></script>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
+</body>
+
+</html>

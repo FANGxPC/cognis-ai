@@ -33,12 +33,14 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+import database
+import auth
 from graph import load_graph, load_questions, ConceptGraph
-from embeddings import node_cache
+from embeddings import NodeEmbeddingCache
 from diagnostic import DiagnosticEngine
 
 
@@ -46,9 +48,13 @@ from diagnostic import DiagnosticEngine
 # App lifespan: load data + build embedding cache at startup
 # ---------------------------------------------------------------------------
 
-_graph: ConceptGraph | None = None
-_questions: dict[str, list[dict[str, Any]]] | None = None
-_engine: DiagnosticEngine | None = None
+_graphs: dict[str, ConceptGraph] = {}
+_questions_db: dict[str, dict[str, list[dict[str, Any]]]] = {}
+_engines: dict[str, DiagnosticEngine] = {}
+_node_caches: dict[str, Any] = {}
+
+from graph import SUBJECTS_CONFIG
+from embeddings import NodeEmbeddingCache
 
 # In-memory session store  {session_id: session_dict}
 _sessions: dict[str, dict[str, Any]] = {}
@@ -56,22 +62,24 @@ _sessions: dict[str, dict[str, Any]] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _graph, _questions, _engine
+    global _graphs, _questions_db, _engines, _node_caches
 
-    print("[startup] Loading concept graph...")
-    _graph = load_graph()
-    print(f"[startup] Graph loaded: {len(_graph.nodes)} nodes, {len(_graph.edges)} edges")
+    print("[startup] Initializing database...")
+    await database.init_db()
+    print("[startup] Database initialized.")
 
-    print("[startup] Loading question bank...")
-    _questions = load_questions()
-    print(f"[startup] Questions loaded for {len(_questions)} nodes")
-
-    print("[startup] Building node embedding cache...")
-    node_cache.build(_graph.nodes)
-    print("[startup] Embedding cache ready.")
-
-    _engine = DiagnosticEngine(_graph, _questions)
-    print("[startup] Diagnostic engine initialized. Ready.")
+    for subject_id, conf in SUBJECTS_CONFIG.items():
+        print(f"[startup] Loading subject: {subject_id}...")
+        _graphs[subject_id] = load_graph(subject_id)
+        _questions_db[subject_id] = load_questions(subject_id)
+        
+        cache = NodeEmbeddingCache()
+        cache.build(_graphs[subject_id].nodes)
+        _node_caches[subject_id] = cache
+        
+        _engines[subject_id] = DiagnosticEngine(_graphs[subject_id], _questions_db[subject_id])
+    
+    print("[startup] All subjects loaded. Ready.")
 
     yield
 
@@ -103,6 +111,33 @@ app.add_middleware(
 # Request / Response models
 # ---------------------------------------------------------------------------
 
+class UserRegister(BaseModel):
+    email: str
+    username: str
+    password: str
+
+
+def _require_node_cache(subject_id: str = "linear_algebra") -> NodeEmbeddingCache:
+    if subject_id not in _node_caches:
+        raise HTTPException(status_code=404, detail=f"Subject {subject_id} not found.")
+    return _node_caches[subject_id]
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+class AuthResponse(BaseModel):
+    user_id: str
+    username: str
+    token: str
+
+class UserResponse(BaseModel):
+    id: str
+    email: str
+    username: str
+    created_at: str
+
+
 class MatchRequest(BaseModel):
     query: str
     session_id: str | None = None  # If provided, associates match with session
@@ -117,6 +152,7 @@ class MatchResponse(BaseModel):
 
 
 class TraverseRequest(BaseModel):
+    subject: str = "linear_algebra"
     session_id: str
     node_id: str
 
@@ -127,10 +163,77 @@ class AnswerRequest(BaseModel):
     question_id: str
     answer: str
 
+# ---------------------------------------------------------------------------
+# Subjects endpoint
+# ---------------------------------------------------------------------------
+
+@app.get("/api/subjects")
+async def list_subjects():
+    subjects = []
+    for sid, conf in SUBJECTS_CONFIG.items():
+        subjects.append({
+            "id": sid,
+            "title": conf["title"],
+            "description": conf["description"]
+        })
+    return {"subjects": subjects}
+
+# ---------------------------------------------------------------------------
+# Auth endpoints
+# ---------------------------------------------------------------------------
+
+@app.post("/api/auth/register", response_model=AuthResponse)
+async def register(user: UserRegister):
+    existing = await database.get_user_by_email(user.email)
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    password_hash = auth.hash_password(user.password)
+    user_id = await database.create_user(user.email, user.username, password_hash)
+    
+    token = auth.create_access_token({"sub": user_id, "email": user.email})
+    return AuthResponse(user_id=user_id, username=user.username, token=token)
+
+@app.post("/api/auth/login", response_model=AuthResponse)
+async def login(user: UserLogin):
+    db_user = await database.get_user_by_email(user.email)
+    if not db_user:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+        
+    if not auth.verify_password(user.password, db_user["password"]):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+        
+    token = auth.create_access_token({"sub": db_user["id"], "email": db_user["email"]})
+    return AuthResponse(user_id=db_user["id"], username=db_user["username"], token=token)
+
+@app.get("/api/auth/me", response_model=UserResponse)
+async def get_me(current_user: dict = Depends(auth.get_current_user)):
+    return UserResponse(
+        id=current_user["id"],
+        email=current_user["email"],
+        username=current_user["username"],
+        created_at=current_user["created_at"]
+    )
+
+# ---------------------------------------------------------------------------
+# Internal endpoints (Legacy / for testing)
+# ---------------------------------------------------------------------------
+
+
+
+@app.get("/api/sessions")
+async def list_sessions(current_user: dict = Depends(auth.get_current_user)):
+    sessions = await database.list_user_sessions(current_user["id"])
+    return sessions
+
+@app.get("/api/sessions/{session_id}")
+async def get_session_detail(session_id: str, current_user: dict = Depends(auth.get_current_user)):
+    return await _require_session(session_id, current_user)
 
 # --- Spec-aligned request models ---
 
 class DiagnoseRequest(BaseModel):
+    subject: str = "linear_algebra"
     session_id: str | None = None
     query: str
 
@@ -155,52 +258,73 @@ class RetestRequest(BaseModel):
 class SessionResetRequest(BaseModel):
     session_id: str
 
+class ExplainRequest(BaseModel):
+    session_id: str
+
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _require_graph() -> ConceptGraph:
-    if _graph is None:
-        raise HTTPException(status_code=503, detail="Graph not loaded yet.")
-    return _graph
+def _require_graph(subject_id: str = "linear_algebra") -> ConceptGraph:
+    if subject_id not in _graphs:
+        raise HTTPException(status_code=404, detail=f"Subject {subject_id} not found.")
+    return _graphs[subject_id]
+
+def _require_questions(subject_id: str = "linear_algebra") -> dict[str, list[dict]]:
+    if subject_id not in _questions_db:
+        raise HTTPException(status_code=404, detail=f"Subject {subject_id} not found.")
+    return _questions_db[subject_id]
+
+def _require_engine(subject_id: str = "linear_algebra") -> DiagnosticEngine:
+    if subject_id not in _engines:
+        raise HTTPException(status_code=404, detail=f"Subject {subject_id} not found.")
+    return _engines[subject_id]
 
 
-def _require_questions() -> dict[str, list[dict]]:
-    if _questions is None:
-        raise HTTPException(status_code=503, detail="Questions not loaded yet.")
-    return _questions
+async def _require_session(session_id: str, current_user: dict | None = None) -> dict[str, Any]:
+    session = _sessions.get(session_id)
+    if not session:
+        session = await database.load_session(session_id)
+        if not session:
+            raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found.")
+        _sessions[session_id] = session
+
+    if current_user and session.get("user_id") and session["user_id"] != current_user["id"]:
+        raise HTTPException(status_code=403, detail="Not authorized to access this session")
+    return session
 
 
-def _require_engine() -> DiagnosticEngine:
-    if _engine is None:
-        raise HTTPException(status_code=503, detail="Diagnostic engine not initialized.")
-    return _engine
-
-
-def _require_session(session_id: str) -> dict[str, Any]:
-    if session_id not in _sessions:
-        raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found.")
-    return _sessions[session_id]
-
-
-def _get_or_create_session(session_id: str | None) -> tuple[str, dict]:
+async def _get_or_create_session(session_id: str | None, current_user: dict | None = None) -> tuple[str, dict]:
     """Return (session_id, session_dict) — creating a new session if needed."""
-    if session_id and session_id in _sessions:
-        return session_id, _sessions[session_id]
+    if session_id:
+        session = _sessions.get(session_id)
+        if not session:
+            session = await database.load_session(session_id)
+        if session:
+            if current_user and session.get("user_id") and session["user_id"] != current_user["id"]:
+                raise HTTPException(status_code=403, detail="Not authorized to access this session")
+            _sessions[session_id] = session
+            return session_id, session
+
     sid = session_id or str(uuid.uuid4())
     session: dict[str, Any] = {
         "session_id": sid,
+        "user_id": current_user["id"] if current_user else None,
         "original_query": None,
         "matched_node": None,
+        "subject": "linear_algebra",
         "traversal_path": [],
-        "traversal_index": 0,       # which step of the path we're probing
-        "mastery": {},               # {node_id: float}
-        "asked_questions": {},       # {node_id: [question_id, ...]}
+        "traversal_index": 0,
+        "mastery": {},
+        "asked_questions": {},
         "root_cause_node": None,
-        "status": "idle",            # idle | matched | traversing | diagnosed | retesting | complete
+        "status": "idle",
+        "practice_attempts": {},
     }
     _sessions[sid] = session
+    if current_user:
+        await database.save_session(session)
     return sid, session
 
 
@@ -221,12 +345,12 @@ def _mastery_to_status(mastery_val: float | None) -> str:
 @app.get("/health", tags=["system"])
 def health_check() -> dict[str, str]:
     """Verify the server is up and data is loaded."""
-    graph = _require_graph()
+    graph = _require_graph(session.get('subject', 'linear_algebra') if 'session' in locals() else 'linear_algebra')
     return {
         "status": "ok",
         "nodes": str(len(graph.nodes)),
         "edges": str(len(graph.edges)),
-        "embeddings_ready": str(node_cache.is_built),
+        "embeddings_ready": str(_require_node_cache("linear_algebra").is_built),
     }
 
 
@@ -236,7 +360,7 @@ def get_graph(session_id: str | None = Query(default=None)) -> dict[str, Any]:
     Return the full concept graph (nodes + edges).
     If a session_id is given, mastery state from that session is overlaid.
     """
-    graph = _require_graph()
+    graph = _require_graph(session.get('subject', 'linear_algebra') if 'session' in locals() else 'linear_algebra')
     graph_dict = graph.to_dict()
 
     if session_id and session_id in _sessions:
@@ -249,7 +373,7 @@ def get_graph(session_id: str | None = Query(default=None)) -> dict[str, Any]:
 
 
 @app.post("/match", response_model=MatchResponse, tags=["core"])
-def match_query(req: MatchRequest) -> MatchResponse:
+async def match_query(req: MatchRequest, current_user: dict = Depends(auth.get_current_user)) -> MatchResponse:
     """
     Embed the student's free-text query and find the best matching concept node.
     Creates or updates a session.
@@ -257,14 +381,14 @@ def match_query(req: MatchRequest) -> MatchResponse:
     if not req.query.strip():
         raise HTTPException(status_code=400, detail="Query cannot be empty.")
 
-    if not node_cache.is_built:
+    if not _require_node_cache('linear_algebra').is_built:
         raise HTTPException(status_code=503, detail="Embedding cache not ready.")
 
-    top_matches = node_cache.match_query(req.query, top_k=3)
+    top_matches = _require_node_cache("linear_algebra").match_query(req.query, top_k=3)
     best = top_matches[0]
 
-    graph = _require_graph()
-    sid, session = _get_or_create_session(req.session_id)
+    graph = _require_graph(session.get('subject', 'linear_algebra') if 'session' in locals() else 'linear_algebra')
+    sid, session = await _get_or_create_session(req.session_id, current_user)
 
     # Reset session state for a fresh diagnosis
     session["original_query"] = req.query
@@ -277,6 +401,7 @@ def match_query(req: MatchRequest) -> MatchResponse:
     session["status"] = "matched"
 
     matched_node = graph.get_node(best["node_id"])
+    await database.save_session(session)
 
     return MatchResponse(
         session_id=sid,
@@ -291,17 +416,49 @@ def match_query(req: MatchRequest) -> MatchResponse:
 # Routes: Diagnostic Flow
 # ---------------------------------------------------------------------------
 
+@app.post("/api/diagnose/explain", tags=["api-spec"])
+async def api_diagnose_explain(req: ExplainRequest, current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
+    """
+    Returns the final diagnostic explanation.
+    Fails if the session hasn't completed diagnosis yet.
+    """
+    sid, session = await _get_or_create_session(req.session_id, current_user)
+    if session["status"] != "diagnosed":
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot generate explanation before diagnosis is complete. Current status: {session['status']}",
+        )
+
+    engine = _require_engine(session.get("subject", "linear_algebra"))
+    return engine.generate_explanation(session)
+
+
+@app.post("/api/explain/ai", tags=["api-spec"])
+async def api_explain_ai(req: ExplainRequest, current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
+    """
+    Returns the AI-generated diagnostic explanation.
+    """
+    sid, session = await _get_or_create_session(req.session_id, current_user)
+    if session["status"] != "diagnosed":
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot generate explanation before diagnosis is complete. Current status: {session['status']}",
+        )
+
+    engine = _require_engine(session.get("subject", "linear_algebra"))
+    return await engine.generate_ai_explanation(session)
+
 @app.post("/traverse", tags=["core"])
-def traverse(req: TraverseRequest) -> dict[str, Any]:
+async def traverse(req: TraverseRequest, current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
     """
     Build a backward traversal path from the matched node and
     initialize the probing session.
     """
-    engine = _require_engine()
-    session = _require_session(req.session_id)
+    session = await _require_session(req.session_id, current_user)
+    engine = _require_engine(session.get('subject', 'linear_algebra'))
 
     # Validate node
-    graph = _require_graph()
+    graph = _require_graph(session.get('subject', 'linear_algebra') if 'session' in locals() else 'linear_algebra')
     if req.node_id not in graph.nodes:
         raise HTTPException(status_code=404, detail=f"Node '{req.node_id}' not found.")
 
@@ -309,22 +466,24 @@ def traverse(req: TraverseRequest) -> dict[str, Any]:
         result = engine.init_traversal(session, req.node_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    await database.save_session(session)
 
     return result
 
 
 @app.get("/question", tags=["core"])
-def get_question(
+async def get_question(
     node_id: str = Query(...),
     session_id: str = Query(...),
+    current_user: dict = Depends(auth.get_current_user)
 ) -> dict[str, Any]:
     """
     Serve a probe question for the given node in the context of a session.
     """
-    engine = _require_engine()
-    session = _require_session(session_id)
+    session = await _require_session(session_id, current_user)
+    engine = _require_engine(session.get('subject', 'linear_algebra'))
 
-    graph = _require_graph()
+    graph = _require_graph(session.get('subject', 'linear_algebra') if 'session' in locals() else 'linear_algebra')
     if node_id not in graph.nodes:
         raise HTTPException(status_code=404, detail=f"Node '{node_id}' not found.")
 
@@ -342,12 +501,12 @@ def get_question(
 
 
 @app.post("/answer", tags=["core"])
-def submit_answer(req: AnswerRequest) -> dict[str, Any]:
+async def submit_answer(req: AnswerRequest, current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
     """
     Score a student's answer and advance the diagnostic traversal.
     """
-    engine = _require_engine()
-    session = _require_session(req.session_id)
+    session = await _require_session(req.session_id, current_user)
+    engine = _require_engine(session.get('subject', 'linear_algebra'))
 
     # Validate answer format
     if req.answer.strip().upper() not in {"A", "B", "C", "D"}:
@@ -360,17 +519,18 @@ def submit_answer(req: AnswerRequest) -> dict[str, Any]:
         result = engine.record_answer(session, req.node_id, req.question_id, req.answer)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    await database.save_session(session)
 
     return result
 
 
 @app.get("/diagnose", tags=["core"])
-def get_diagnosis(session_id: str = Query(...)) -> dict[str, Any]:
+async def get_diagnosis(session_id: str = Query(...), current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
     """
     Return the diagnostic summary card for a completed traversal.
     """
-    engine = _require_engine()
-    session = _require_session(session_id)
+    session = await _require_session(session_id, current_user)
+    engine = _require_engine(session.get('subject', 'linear_algebra'))
 
     if session["status"] not in ("diagnosed", "retesting", "complete"):
         raise HTTPException(
@@ -385,12 +545,13 @@ def get_diagnosis(session_id: str = Query(...)) -> dict[str, Any]:
 
 
 @app.get("/remediate", tags=["core"])
-def get_remediation(node_id: str = Query(...)) -> dict[str, Any]:
+async def get_remediation(node_id: str = Query(...)) -> dict[str, Any]:
     """
     Return explanation + practice questions for the root cause node.
     """
-    engine = _require_engine()
-    graph = _require_graph()
+    engine = _require_engine("linear_algebra")
+
+    graph = _require_graph("linear_algebra")
 
     if node_id not in graph.nodes:
         raise HTTPException(status_code=404, detail=f"Node '{node_id}' not found.")
@@ -399,12 +560,12 @@ def get_remediation(node_id: str = Query(...)) -> dict[str, Any]:
 
 
 @app.post("/retest", tags=["core"])
-def retest(session_id: str = Query(...)) -> dict[str, Any]:
+async def retest(session_id: str = Query(...), current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
     """
     Re-serve a question for the root-cause node after remediation.
     """
-    engine = _require_engine()
-    session = _require_session(session_id)
+    session = await _require_session(session_id, current_user)
+    engine = _require_engine(session.get('subject', 'linear_algebra'))
 
     if session["status"] not in ("diagnosed", "retesting"):
         raise HTTPException(
@@ -431,7 +592,7 @@ def api_get_graph(
     Spec-aligned graph endpoint.
     Returns nodes with `status` field (untested/weak/mastered) instead of raw mastery float.
     """
-    graph = _require_graph()
+    graph = _require_graph(session.get('subject', 'linear_algebra') if 'session' in locals() else 'linear_algebra')
     graph_dict = graph.to_dict()
 
     mastery: dict[str, float] = {}
@@ -447,7 +608,7 @@ def api_get_graph(
 
 
 @app.post("/api/diagnose", tags=["api-spec"])
-def api_diagnose(req: DiagnoseRequest) -> dict[str, Any]:
+async def api_diagnose(req: DiagnoseRequest, current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
     """
     Spec-aligned combined diagnose endpoint.
     Embeds the query, matches to nearest node, builds traversal path,
@@ -456,20 +617,20 @@ def api_diagnose(req: DiagnoseRequest) -> dict[str, Any]:
     if not req.query.strip():
         raise HTTPException(status_code=400, detail="Query cannot be empty.")
 
-    if not node_cache.is_built:
+    if not _require_node_cache('linear_algebra').is_built:
         raise HTTPException(status_code=503, detail="Embedding cache not ready.")
 
-    engine = _require_engine()
-    graph = _require_graph()
+    engine = _require_engine(req.subject if hasattr(req, 'subject') and req.subject else 'linear_algebra')
+    graph = _require_graph(session.get('subject', 'linear_algebra') if 'session' in locals() else 'linear_algebra')
 
     # 1. Match query to node
-    top_matches = node_cache.match_query(req.query, top_k=3)
+    top_matches = _require_node_cache("linear_algebra").match_query(req.query, top_k=3)
     best = top_matches[0]
     matched_node_id = best["node_id"]
     similarity_score = round(best["score"], 4)
 
     # 2. Get or create session
-    sid, session = _get_or_create_session(req.session_id)
+    sid, session = await _get_or_create_session(req.session_id, current_user)
     session["original_query"] = req.query
     session["matched_node"] = matched_node_id
     session["status"] = "matched"
@@ -482,6 +643,7 @@ def api_diagnose(req: DiagnoseRequest) -> dict[str, Any]:
     trace_log = engine.generate_trace_log(
         req.query, matched_node_id, similarity_score, traversal_path
     )
+    await database.save_session(session)
 
     return {
         "session_id": sid,
@@ -493,17 +655,18 @@ def api_diagnose(req: DiagnoseRequest) -> dict[str, Any]:
 
 
 @app.get("/api/probe/next", tags=["api-spec"])
-def api_probe_next(
+async def api_probe_next(
     session_id: str = Query(...),
     node_id: str = Query(...),
+    current_user: dict = Depends(auth.get_current_user)
 ) -> dict[str, Any]:
     """
     Spec-aligned probe question endpoint.
     Returns the next unasked question for a node.
     """
-    engine = _require_engine()
-    session = _require_session(session_id)
-    graph = _require_graph()
+    session = await _require_session(session_id, current_user)
+    engine = _require_engine(session.get('subject', 'linear_algebra'))
+    graph = _require_graph(session.get('subject', 'linear_algebra') if 'session' in locals() else 'linear_algebra')
 
     if node_id not in graph.nodes:
         raise HTTPException(status_code=404, detail=f"Node '{node_id}' not found.")
@@ -525,14 +688,14 @@ def api_probe_next(
 
 
 @app.post("/api/probe/answer", tags=["api-spec"])
-def api_probe_answer(req: ProbeAnswerRequest) -> dict[str, Any]:
+async def api_probe_answer(req: ProbeAnswerRequest, current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
     """
     Spec-aligned probe answer endpoint.
     Scores the answer and returns next_action as
     'continue_traversal' or 'root_confirmed'.
     """
-    engine = _require_engine()
-    session = _require_session(req.session_id)
+    session = await _require_session(req.session_id, current_user)
+    engine = _require_engine(session.get('subject', 'linear_algebra'))
 
     # Normalize answer: accept int (index) or letter
     answer = str(req.answer).strip()
@@ -561,6 +724,8 @@ def api_probe_answer(req: ProbeAnswerRequest) -> dict[str, Any]:
     internal_action = result.get("next_action", "continue")
     if internal_action == "diagnosed":
         spec_action = "root_confirmed"
+    elif internal_action == "continue_node":
+        spec_action = "continue_node"
     else:
         spec_action = "continue_traversal"
 
@@ -576,13 +741,13 @@ def api_probe_answer(req: ProbeAnswerRequest) -> dict[str, Any]:
 
 
 @app.get("/api/diagnose/explain", tags=["api-spec"])
-def api_diagnose_explain(session_id: str = Query(...)) -> dict[str, Any]:
+async def api_diagnose_explain(session_id: str = Query(...), current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
     """
     Spec-aligned explanation endpoint.
     Returns the plain-language explanation of the confirmed root cause.
     """
-    engine = _require_engine()
-    session = _require_session(session_id)
+    session = await _require_session(session_id, current_user)
+    engine = _require_engine(session.get('subject', 'linear_algebra'))
 
     if session["status"] not in ("diagnosed", "retesting", "complete"):
         raise HTTPException(
@@ -602,8 +767,8 @@ def api_get_remediation(node_id: str) -> dict[str, Any]:
     Spec-aligned remediation endpoint (path parameter).
     Returns explanation + practice questions for a node.
     """
-    engine = _require_engine()
-    graph = _require_graph()
+    engine = _require_engine("linear_algebra")
+    graph = _require_graph("linear_algebra")
 
     if node_id not in graph.nodes:
         raise HTTPException(status_code=404, detail=f"Node '{node_id}' not found.")
@@ -625,13 +790,13 @@ def api_get_remediation(node_id: str) -> dict[str, Any]:
 
 
 @app.post("/api/practice/answer", tags=["api-spec"])
-def api_practice_answer(req: PracticeAnswerRequest) -> dict[str, Any]:
+async def api_practice_answer(req: PracticeAnswerRequest, current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
     """
     Spec-aligned practice answer endpoint.
     Scores a practice answer during remediation.
     """
-    engine = _require_engine()
-    session = _require_session(req.session_id)
+    session = await _require_session(req.session_id, current_user)
+    engine = _require_engine(session.get('subject', 'linear_algebra'))
 
     if session["status"] not in ("diagnosed", "retesting", "complete"):
         raise HTTPException(
@@ -662,14 +827,14 @@ def api_practice_answer(req: PracticeAnswerRequest) -> dict[str, Any]:
 
 
 @app.post("/api/retest", tags=["api-spec"])
-def api_retest(req: RetestRequest) -> dict[str, Any]:
+async def api_retest(req: RetestRequest, current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
     """
     Spec-aligned retest endpoint.
     Marks the root cause and traversal path as mastered.
     Returns {solved, updated_graph_state}.
     """
-    engine = _require_engine()
-    session = _require_session(req.session_id)
+    session = await _require_session(req.session_id, current_user)
+    engine = _require_engine(session.get('subject', 'linear_algebra'))
 
     if session["status"] not in ("diagnosed", "retesting", "complete"):
         raise HTTPException(
@@ -684,17 +849,13 @@ def api_retest(req: RetestRequest) -> dict[str, Any]:
 
 
 @app.post("/api/session/reset", tags=["api-spec"])
-def api_session_reset(req: SessionResetRequest) -> dict[str, Any]:
+async def api_session_reset(req: SessionResetRequest, current_user: dict = Depends(auth.get_current_user)) -> dict[str, Any]:
     """
     Spec-aligned session reset.
     Wipes mastery state back to untested for a fresh run.
     """
-    if req.session_id not in _sessions:
-        # Create a fresh session
-        sid, session = _get_or_create_session(req.session_id)
-        return {"session_id": sid, "status": "reset"}
+    sid, session = await _get_or_create_session(req.session_id, current_user)
 
-    session = _sessions[req.session_id]
     session["original_query"] = None
     session["matched_node"] = None
     session["traversal_path"] = []
@@ -705,7 +866,8 @@ def api_session_reset(req: SessionResetRequest) -> dict[str, Any]:
     session["status"] = "idle"
     session.pop("practice_attempts", None)
 
-    return {"session_id": req.session_id, "status": "reset"}
+    await database.save_session(session)
+    return {"session_id": sid, "status": "reset"}
 
 
 # ---------------------------------------------------------------------------

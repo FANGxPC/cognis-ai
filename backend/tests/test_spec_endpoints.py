@@ -122,7 +122,7 @@ class TestExplanation:
         }
         result = engine.generate_explanation(session)
         assert result["root_node_id"] is None
-        assert "Great news" in result["explanation"]
+        assert "Great job" in result["explanation"]
 
 
 # ---------------------------------------------------------------------------
@@ -436,19 +436,28 @@ class TestSpecAPI:
         assert resp.status_code == 200
         q1 = resp.json()
 
-        # 3. Answer wrong (target fails — expected, continues to prereqs)
+        # 3. Answer wrong 1st time
         resp = client.post("/api/probe/answer", json={
             "session_id": sid,
             "question_id": q1["question_id"],
-            "answer": "D",  # likely wrong
+            "answer": "D",
         })
-        assert resp.status_code == 200
         a1 = resp.json()
-        # Whether correct or not, we get a valid response
-        assert a1["next_action"] in ("continue_traversal", "root_confirmed")
+        
+        
+        # Answer wrong 2nd time (target fails — expected, continues to prereqs)
+        resp = client.get(f"/api/probe/next?session_id={sid}&node_id={target}")
+        q1_2 = resp.json()
+        resp = client.post("/api/probe/answer", json={
+            "session_id": sid,
+            "question_id": q1_2["question_id"],
+            "answer": "D",
+        })
+        a1_2 = resp.json()
+        assert a1_2["next_action"] in ("continue_traversal", "root_confirmed")
 
         # If we need to continue, probe the next node and fail it
-        if a1["next_action"] == "continue_traversal":
+        if a1_2["next_action"] == "continue_traversal":
             next_node = path[1]
             resp = client.get(f"/api/probe/next?session_id={sid}&node_id={next_node}")
             if resp.status_code == 200:

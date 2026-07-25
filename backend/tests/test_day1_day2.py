@@ -31,7 +31,7 @@ import pytest
 # Allow imports from backend root
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from graph import load_graph, ConceptGraph, GRAPH_FILE, QUESTIONS_FILE
+from graph import load_graph, load_questions, ConceptGraph
 from embeddings import cosine_similarity, embed_text, NodeEmbeddingCache
 
 
@@ -46,7 +46,7 @@ def graph() -> ConceptGraph:
 
 @pytest.fixture(scope="session")
 def questions() -> dict:
-    with open(QUESTIONS_FILE) as f:
+    with open(Path(__file__).parent.parent / 'data' / 'questions.json') as f:
         return json.load(f)
 
 
