@@ -189,4 +189,4 @@ class NodeEmbeddingCache:
 
 
 # Singleton instance used by the FastAPI app
-node_cache = NodeEmbeddingCache()
+

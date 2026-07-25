@@ -13,8 +13,14 @@ from typing import Any
 # Data paths
 # ---------------------------------------------------------------------------
 DATA_DIR = Path(__file__).parent / "data"
-GRAPH_FILE = DATA_DIR / "graph.json"
-QUESTIONS_FILE = DATA_DIR / "questions.json"
+SUBJECTS_CONFIG = {
+    "linear_algebra": {
+        "title": "Linear Algebra",
+        "description": "Vectors, matrices, eigenvectors, and more.",
+        "graph_file": "graph.json",
+        "questions_file": "questions.json"
+    }
+}
 
 
 # ---------------------------------------------------------------------------
@@ -154,14 +160,22 @@ class ConceptGraph:
 # Factory
 # ---------------------------------------------------------------------------
 
-def load_graph() -> ConceptGraph:
-    """Load the concept graph from the JSON data file."""
-    with open(GRAPH_FILE, "r", encoding="utf-8") as f:
+def load_graph(subject_id: str = "linear_algebra") -> ConceptGraph:
+    """Load the concept graph from the JSON data file for a specific subject."""
+    conf = SUBJECTS_CONFIG.get(subject_id)
+    if not conf:
+        raise ValueError(f"Unknown subject: {subject_id}")
+    file_path = DATA_DIR / conf["graph_file"]
+    with open(file_path, "r", encoding="utf-8") as f:
         raw = json.load(f)
     return ConceptGraph(raw)
 
 
-def load_questions() -> dict[str, list[dict[str, Any]]]:
+def load_questions(subject_id: str = "linear_algebra") -> dict[str, list[dict[str, Any]]]:
     """Load the question bank from JSON. Keyed by node_id."""
-    with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
+    conf = SUBJECTS_CONFIG.get(subject_id)
+    if not conf:
+        raise ValueError(f"Unknown subject: {subject_id}")
+    file_path = DATA_DIR / conf["questions_file"]
+    with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
