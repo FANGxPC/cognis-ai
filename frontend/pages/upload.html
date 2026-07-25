@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>Upload Notes</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap"
+rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet"
+href="../css/style.css">
+
+<link rel="stylesheet"
+href="../css/components.css">
+
+<link rel="stylesheet"
+href="../css/animations.css">
+
+</head>
+
+<body>
+
+<div class="noise-layer"></div>
+
+<div class="grid-layer"></div>
+
+<canvas id="particles"></canvas>
+
+<section class="min-h-screen flex items-center justify-center px-8">
+
+<div class="max-w-5xl w-full scanner-panel p-14">
+
+<div class="text-center">
+
+<span class="status-chip">
+
+UPLOAD MATERIAL
+
+</span>
+
+<h1 class="hero-title mt-8">
+
+UPLOAD
+
+YOUR
+
+NOTES
+
+</h1>
+
+<p class="hero-description mt-8 mx-auto">
+
+Upload PDFs, PPTs or handwritten notes for AI analysis.
+
+</p>
+
+</div>
+
+<div
+id="dropZone"
+class="mt-16 border-2 border-dashed border-white/10 rounded-3xl p-20 text-center transition">
+
+<i
+data-lucide="cloud-upload"
+class="mx-auto w-20 h-20 text-lime-300">
+
+</i>
+
+<h2 class="mt-8 text-3xl">
+
+Drag & Drop Files
+
+</h2>
+
+<p class="text-muted mt-4">
+
+or click below
+
+</p>
+
+<input
+type="file"
+id="fileInput"
+hidden
+data-tooltip="Accepted: PDF, PPT, DOC, images"
+accept=".pdf,.ppt,.pptx,.doc,.docx,.png,.jpg,.jpeg">
+
+<button
+id="browseBtn"
+data-tooltip="Select notes from your device"
+class="primary-button mt-10">
+
+Browse Files
+
+</button>
+
+</div>
+
+<div
+id="fileCard"
+class="feature-card mt-10 hidden">
+
+<div class="flex justify-between items-center">
+
+<div>
+
+<h3 id="fileName">
+
+notes.pdf
+
+</h3>
+
+<p class="text-muted">
+
+Ready for analysis
+
+</p>
+
+</div>
+
+<i
+data-lucide="file-check"
+class="text-lime-300">
+
+</i>
+
+</div>
+
+</div>
+
+<div class="flex justify-center mt-12">
+
+<button
+id="analyzeBtn"
+data-tooltip="Run preprocessing and quiz generation"
+class="primary-button hidden">
+
+ANALYZE NOTES
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<script>
+
+lucide.createIcons();
+
+const browse=document.getElementById("browseBtn");
+
+const input=document.getElementById("fileInput");
+
+const fileCard=document.getElementById("fileCard");
+
+const fileName=document.getElementById("fileName");
+
+const analyze=document.getElementById("analyzeBtn");
+const drop=document.getElementById("dropZone");
+
+browse.onclick=()=>input.click();
+
+input.onchange=()=>{
+
+const file=input.files[0];
+
+if(!file)return;
+
+fileCard.classList.remove("hidden");
+
+analyze.classList.remove("hidden");
+
+fileName.innerHTML=file.name;
+
+};
+
+drop.ondragover=e=>{
+
+e.preventDefault();
+
+drop.style.borderColor="#C5FF6B";
+
+};
+
+drop.ondragleave=()=>{
+
+drop.style.borderColor="rgba(255,255,255,.1)";
+
+};
+
+drop.ondrop=e=>{
+
+e.preventDefault();
+
+drop.style.borderColor="rgba(255,255,255,.1)";
+
+const file=e.dataTransfer.files[0];
+
+if(!file)return;
+
+fileCard.classList.remove("hidden");
+
+analyze.classList.remove("hidden");
+
+fileName.innerHTML=file.name;
+
+};
+
+analyze.onclick=()=>{
+
+analyze.innerHTML="ANALYZING...";
+analyze.disabled=true;
+analyze.style.opacity=".85";
+
+setTimeout(()=>{
+window.location.href="quiz.html";
+},900);
+
+};
+
+</script>
+
+<script src="../js/ui-polish.js"></script>
+<script src="../js/particles.js"></script>
+
+</body>
+
+</html>

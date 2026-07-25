@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Concept Scan</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap"
+rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet"
+href="../css/style.css">
+
+<link rel="stylesheet"
+href="../css/components.css">
+
+<link rel="stylesheet"
+href="../css/animations.css">
+
+</head>
+
+<body
+class="bg-background text-text overflow-x-hidden"
+data-disable-auto-scroll="true">
+
+<div class="noise-layer"></div>
+
+<div class="grid-layer"></div>
+
+<canvas id="particles"></canvas>
+
+<nav class="fixed top-0 w-full z-50 px-8 py-5">
+
+<div class="max-w-7xl mx-auto flex justify-between items-center">
+
+<a href="../index.html"
+class="logo-square">
+
+XR
+
+</a>
+
+<a href="../index.html"
+class="secondary-button">
+
+← HOME
+
+</a>
+
+</div>
+
+</nav>
+
+<section class="min-h-screen flex items-start lg:items-center justify-center px-8 pt-36 lg:pt-28 pb-16">
+
+<div class="max-w-6xl w-full grid lg:grid-cols-2 gap-16">
+
+<div>
+
+<span class="status-chip">
+
+CONCEPT INPUT
+
+</span>
+
+<h1
+class="hero-title mt-8"
+style="font-size:clamp(3.3rem,8vw,5.9rem);line-height:.88;">
+
+SCAN
+
+ENGINE
+
+</h1>
+
+<p class="hero-description mt-8">
+
+Enter the concept you're struggling with and let the engine trace every missing prerequisite.
+
+</p>
+
+</div>
+
+<div class="scanner-panel p-10 flex flex-col justify-center">
+
+<label class="mb-4 uppercase tracking-[4px] text-sm text-accent">
+
+Concept Name
+
+</label>
+
+<input
+id="conceptInput"
+type="text"
+placeholder="Example: Binary Search Trees"
+data-command-focus
+data-hotkey-hint="Ctrl/Cmd + K"
+data-tooltip="Quick focus: Ctrl/Cmd + K"
+class="concept-field w-full rounded-xl bg-black/30 border border-white/10 p-5 outline-none mb-8">
+
+<label class="mb-4 uppercase tracking-[4px] text-sm text-accent">
+
+Subject
+
+</label>
+
+<select
+data-tooltip="Choose your subject domain"
+class="subject-field w-full rounded-xl bg-black/30 border border-white/10 p-5 outline-none mb-8">
+
+<option>Data Structures</option>
+
+<option>Algorithms</option>
+
+<option>Operating Systems</option>
+
+<option>Database Systems</option>
+
+<option>Computer Networks</option>
+
+<option>Machine Learning</option>
+
+</select>
+
+<button
+id="startScan"
+data-tooltip="Run AI prerequisite scanner"
+class="primary-button w-full">
+
+INITIALIZE SCAN
+
+</button>
+
+<div
+id="scanStatus"
+class="mt-10 text-accent font-terminal text-3xl">
+
+READY_
+
+</div>
+
+<div id="scanHud" class="hud-status">
+SCANNING CONCEPT GRAPH
+</div>
+
+<div id="radarLoader" class="loader-radar"></div>
+
+<div
+class="mt-8 h-2 bg-white/10 rounded-full overflow-hidden">
+
+<div
+id="progressBar"
+class="h-full bg-lime-300 w-0">
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<script>
+
+lucide.createIcons();
+
+const btn=document.getElementById("startScan");
+
+const progress=document.getElementById("progressBar");
+
+const status=document.getElementById("scanStatus");
+const hud=document.getElementById("scanHud");
+const radar=document.getElementById("radarLoader");
+
+btn.onclick=()=>{
+
+let value=0;
+let messageIndex=0;
+const statusMessages=[
+    "TRACING DEPENDENCIES...",
+    "MATCHING PREREQUISITES...",
+    "COMPUTING WEAK NODES...",
+    "FINALIZING RECOVERY PATH..."
+];
+
+btn.disabled=true;
+btn.style.opacity=".8";
+btn.style.pointerEvents="none";
+
+status.innerHTML="SCANNING...";
+hud.classList.add("is-active");
+radar.classList.add("is-active");
+
+const timer=setInterval(()=>{
+
+value++;
+
+progress.style.width=value+"%";
+
+if(value>=100){
+
+clearInterval(timer);
+
+status.innerHTML="SCAN COMPLETE";
+hud.innerHTML="ENGINE READY";
+radar.classList.remove("is-active");
+
+setTimeout(()=>{
+
+window.location.href="lesson.html";
+
+},1200);
+
+}
+
+if(value%25===0&&value<100){
+status.innerHTML=statusMessages[messageIndex];
+messageIndex=(messageIndex+1)%statusMessages.length;
+}
+
+},30);
+
+};
+
+</script>
+
+<script src="../js/ui-polish.js"></script>
+<script src="../js/particles.js"></script>
+
+</body>
+
+</html>

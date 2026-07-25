@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Diagnostic Quiz</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<link rel="stylesheet" href="../css/components.css">
+
+<link rel="stylesheet" href="../css/animations.css">
+
+</head>
+
+<body>
+
+<div class="noise-layer"></div>
+
+<div class="grid-layer"></div>
+
+<canvas id="particles"></canvas>
+
+<section class="min-h-screen flex items-center justify-center px-8">
+
+<div class="max-w-4xl w-full scanner-panel p-12">
+
+<div class="flex justify-between items-center">
+
+<div>
+
+<span class="status-chip">
+
+DIAGNOSTIC QUESTION
+
+</span>
+
+<h1 class="hero-title mt-8">
+
+QUESTION
+
+01
+
+</h1>
+
+</div>
+
+<div class="text-right">
+
+<div class="counter">
+
+01/05
+
+</div>
+
+</div>
+
+</div>
+
+<div class="mt-16">
+
+<h2 class="text-3xl mb-10">
+
+Which traversal visits the root node before its children?
+
+</h2>
+
+<div class="grid gap-5">
+
+<button class="secondary-button answer">
+
+Inorder Traversal
+
+</button>
+
+<button class="secondary-button answer">
+
+Preorder Traversal
+
+</button>
+
+<button class="secondary-button answer">
+
+Postorder Traversal
+
+</button>
+
+<button class="secondary-button answer">
+
+Level Order Traversal
+
+</button>
+
+</div>
+
+</div>
+
+<div class="flex justify-between mt-16">
+
+<a href="scan.html" class="secondary-button">
+
+BACK
+
+</a>
+
+<button id="nextQuestion" class="primary-button">
+
+NEXT →
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<script>
+
+lucide.createIcons();
+
+document.querySelectorAll(".answer").forEach(btn=>{
+
+btn.onclick=()=>{
+
+document.querySelectorAll(".answer").forEach(x=>{
+
+x.style.borderColor="rgba(255,255,255,.08)";
+x.style.background="rgba(255,255,255,.03)";
+
+});
+
+btn.style.borderColor="#C5FF6B";
+btn.style.background="rgba(197,255,107,.12)";
+
+};
+
+});
+
+document.getElementById("nextQuestion").onclick=()=>{
+
+window.location="rootcause.html";
+
+};
+
+</script>
+
+<script>
+
+lucide.createIcons();
+
+const questions=[
+
+{
+question:"Which traversal visits the root node before its children?",
+options:[
+"Inorder Traversal",
+"Preorder Traversal",
+"Postorder Traversal",
+"Level Order Traversal"
+],
+answer:1
+},
+
+{
+question:"Which data structure uses LIFO?",
+options:[
+"Queue",
+"Stack",
+"Tree",
+"Heap"
+],
+answer:1
+},
+
+{
+question:"A recursive function must always have a:",
+options:[
+"Loop",
+"Pointer",
+"Base Case",
+"Queue"
+],
+answer:2
+},
+
+{
+question:"Binary Search Tree search complexity is average:",
+options:[
+"O(n²)",
+"O(log n)",
+"O(n)",
+"O(1)"
+],
+answer:1
+},
+
+{
+question:"Which traversal returns sorted order in a BST?",
+options:[
+"Preorder",
+"Postorder",
+"Level Order",
+"Inorder"
+],
+answer:3
+}
+
+];
+
+let current=0;
+let selected=-1;
+let score=0;
+
+const title=document.querySelector(".hero-title");
+const question=document.querySelector("h2");
+const progress=document.querySelector(".counter");
+const buttons=document.querySelectorAll(".answer");
+const next=document.getElementById("nextQuestion");
+
+function loadQuestion(){
+
+selected=-1;
+
+progress.innerHTML=`0${current+1}/05`;
+
+title.innerHTML=`QUESTION<br>0${current+1}`;
+
+question.innerHTML=questions[current].question;
+
+buttons.forEach((btn,index)=>{
+
+btn.innerHTML=questions[current].options[index];
+
+btn.style.borderColor="rgba(255,255,255,.08)";
+btn.style.background="rgba(255,255,255,.03)";
+
+});
+
+}
+
+buttons.forEach((btn,index)=>{
+
+btn.onclick=()=>{
+
+selected=index;
+
+buttons.forEach(x=>{
+
+x.style.borderColor="rgba(255,255,255,.08)";
+x.style.background="rgba(255,255,255,.03)";
+
+});
+
+btn.style.borderColor="#C5FF6B";
+btn.style.background="rgba(197,255,107,.12)";
+
+};
+
+});
+
+next.onclick=()=>{
+
+if(selected===-1)return;
+
+if(selected===questions[current].answer){
+
+score++;
+
+}
+
+current++;
+
+if(current<questions.length){
+
+loadQuestion();
+
+}
+
+else{
+
+sessionStorage.setItem("quizScore",score);
+
+window.location="rootcause.html";
+
+}
+
+};
+
+loadQuestion();
+
+</script>
+
+<script src="../js/ui-polish.js"></script>
+<script src="../js/particles.js"></script>
+
+</body>
+
+</html>
