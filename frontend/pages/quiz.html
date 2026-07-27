@@ -2,7 +2,19 @@
 <html lang="en">
 
 <head>
+<script>
 
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -26,18 +38,34 @@
 <link rel="stylesheet" href="../css/animations.css">
 
 </head>
-
+<script src="../js/theme.js"></script>
 <body>
 
 <div class="noise-layer"></div>
+<div class="theme-switch">
 
+    <span>☀️</span>
+
+    <label class="switch">
+
+        <input
+            id="themeToggle"
+            type="checkbox">
+
+        <span class="slider"></span>
+
+    </label>
+
+    <span>🌙</span>
+
+</div>
 <div class="grid-layer"></div>
 
 <canvas id="particles"></canvas>
 
-<section class="min-h-screen flex items-center justify-center px-8">
+<section class="min-h-screen flex items-start justify-center px-8 py-20">
 
-<div class="max-w-4xl w-full scanner-panel p-12">
+<div class="max-w-4xl w-full scanner-panel p-12 my-10">
 
 <div class="flex justify-between items-center">
 
@@ -131,38 +159,11 @@ NEXT →
 
 <script>
 
-lucide.createIcons();
+const selectedConcept =
+    sessionStorage.getItem("selectedConcept") || "";
 
-document.querySelectorAll(".answer").forEach(btn=>{
-
-btn.onclick=()=>{
-
-document.querySelectorAll(".answer").forEach(x=>{
-
-x.style.borderColor="rgba(255,255,255,.08)";
-x.style.background="rgba(255,255,255,.03)";
-
-});
-
-btn.style.borderColor="#C5FF6B";
-btn.style.background="rgba(197,255,107,.12)";
-
-};
-
-});
-
-document.getElementById("nextQuestion").onclick=()=>{
-
-window.location="rootcause.html";
-
-};
-
-</script>
-
-<script>
-
-lucide.createIcons();
-
+const selectedSubject =
+    sessionStorage.getItem("selectedSubject") || "";
 const questions=[
 
 {
@@ -302,7 +303,9 @@ window.location="rootcause.html";
 };
 
 loadQuestion();
-
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
 </script>
 
 <script src="../js/ui-polish.js"></script>

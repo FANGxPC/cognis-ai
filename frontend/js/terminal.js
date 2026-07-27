@@ -102,7 +102,7 @@ setInterval(()=>{
 
     const status=document.createElement("div");
 
-    status.className = "stream-line text-muted text-2xl";
+    status.className = "stream-line text-2xl";
     status.innerHTML="> "+random;
 
     terminal.appendChild(status);

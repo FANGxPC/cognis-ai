@@ -273,7 +273,7 @@
 
         transform:translateX(-120%);
 
-    }
+    }}
 
     @keyframes statusPulse{
         0%{
@@ -316,7 +316,6 @@
             opacity:1;
             transform:translateX(0);
         }
-    }
 
     100%{
 
@@ -534,4 +533,13 @@
 
     transform:scale(1.01);
 
+}
+.timeline-step:hover .timeline-line{
+
+background:
+linear-gradient(
+180deg,
+var(--accent),
+var(--primary)
+);
 }

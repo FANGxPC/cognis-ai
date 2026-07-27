@@ -195,3 +195,10 @@ document.querySelectorAll(
     });
 
 });
+document.getElementById("logoutBtn").onclick=()=>{
+
+sessionStorage.clear();
+
+location.href="login.html";
+
+}

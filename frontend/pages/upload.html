@@ -2,7 +2,19 @@
 <html lang="en">
 
 <head>
+<script>
 
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -34,11 +46,27 @@ href="../css/components.css">
 href="../css/animations.css">
 
 </head>
-
+<script src="../js/theme.js"></script>
 <body>
 
 <div class="noise-layer"></div>
+<div class="theme-switch">
 
+    <span>☀️</span>
+
+    <label class="switch">
+
+        <input
+            id="themeToggle"
+            type="checkbox">
+
+        <span class="slider"></span>
+
+    </label>
+
+    <span>🌙</span>
+
+</div>
 <div class="grid-layer"></div>
 
 <canvas id="particles"></canvas>
@@ -164,7 +192,9 @@ ANALYZE NOTES
 
 <script>
 
-lucide.createIcons();
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
 
 const browse=document.getElementById("browseBtn");
 

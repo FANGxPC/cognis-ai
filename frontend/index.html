@@ -2,6 +2,19 @@
 <html lang="en">
 
 <head>
+    <script>
+
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="pages/login.html";
+
+}
+
+</script>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
@@ -103,7 +116,20 @@
     <!-- ========================================================= -->
 
     <div id="cursor-dot"></div>
+    <div class="theme-switch">
 
+    <span>☀️</span>
+
+    <label class="switch">
+
+    
+        <span class="slider"></span>
+
+    </label>
+
+    <span>🌙</span>
+
+</div>
     <div id="cursor-ring"></div>
 
     <!-- ========================================================= -->
@@ -135,7 +161,7 @@
         <!-- ===================================================== -->
 
         <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/20 border-b border-white/5">
-
+            
             <div class="max-w-7xl mx-auto px-8">
 
                 <div class="h-20 flex items-center justify-between">
@@ -201,8 +227,13 @@
                            data-tooltip="Start interactive scan">
 
                             INITIALIZE
-
+                        
                         </a>
+                        <button id="logoutBtn">
+
+LOGOUT
+
+</button>
 
                     </div>
 
@@ -213,11 +244,19 @@
                         <i data-lucide="menu"></i>
 
                     </button>
+                    <button
+id="themeToggle"
+class="secondary-button"
+title="Toggle Theme">
+
+🌙
+
+</button>
 
                 </div>
 
             </div>
-
+        
         </nav>
 
         <!-- ===================================================== -->
@@ -229,51 +268,47 @@
 
             <div class="max-w-7xl mx-auto px-8 w-full">
 
-                <div class="grid lg:grid-cols-2 gap-24 items-center">
+                <div class="grid lg:grid-cols-[1.6fr_0.8fr] gap-28 items-center">
 
                     <!-- ============================================= -->
                     <!-- LEFT -->
                     <!-- ============================================= -->
 
                     <div>
-
+                        <span class="status-chip">
+    <span class="status-dot"></span>
+    AI DIAGNOSTIC ENGINE
+</span>
                         <span class="status-chip">
 
-                            SYSTEM READY
+                            SYSTEM READY </span>
 
-                        </span>
+                        <h1 class="hero-title">
+    Stop Guessing.<br>
 
-                        <h1 class="hero-title mt-8">
+    Start <span class="highlight">
+    Diagnosing.
+    </span><br>
 
-                            FIND THE
+    Learn Smarter.
+</h1>
 
-                            <span class="text-accent">
+                        <p class="hero-description mt-8 max-w-xl">
+    XRAY uses AI-powered prerequisite graphs to trace exactly where understanding breaks down. Instead of revising entire chapters, students receive targeted explanations, adaptive quizzes, and personalized learning paths that address the real knowledge gap.
+</p>
 
-                                REAL
+<div class="hero-highlight">
 
-                            </span>
+<i data-lucide="search-check"></i>
 
-                            CONCEPT
+<h4>Detect Hidden Gaps</h4>
 
-                            <br>
+<p>
+AI identifies the prerequisite
+concept blocking progress.
+</p>
 
-                            YOU ARE
-
-                            <span class="text-primary">
-
-                                MISSING
-
-                            </span>
-
-                        </h1>
-
-                        <p class="hero-description mt-8">
-
-                            Concept Prerequisite X-Ray traces your learning path,
-                            diagnoses hidden prerequisite gaps,
-                            and reveals the exact concept preventing your understanding.
-
-                        </p>
+</div>
 
                         <!-- BUTTONS -->
 
@@ -291,7 +326,7 @@
                                class="secondary-button"
                                data-tooltip="View process timeline">
 
-                                HOW IT WORKS
+                                EXPLORE PROCESS ->
 
                             </a>
 
@@ -425,7 +460,7 @@
                         SYSTEM CAPABILITIES
 
                     </span>
-
+                    
                     <h2 class="section-title mt-6">
 
                         HOW THE ENGINE WORKS
@@ -443,7 +478,8 @@
 
                 <div class="grid lg:grid-cols-3 gap-8">
 
-                    <div class="feature-card">
+                    <div class="feature-card"
+     data-number="01">
 
                         <div class="feature-icon">
 
@@ -462,10 +498,20 @@
                             Go beyond incorrect answers and identify the exact prerequisite concept causing failure.
 
                         </p>
+                        <hr>
+                        <div class="feature-link">
 
+Learn More
+
+<i data-lucide="arrow-right"></i>
+
+</div>
                     </div>
+                    
 
-                    <div class="feature-card">
+
+                    <div class="feature-card"
+     data-number="02">
 
                         <div class="feature-icon">
 
@@ -484,10 +530,20 @@
                             Visualize every prerequisite relationship through an interactive concept graph.
 
                         </p>
+                        <hr>
+                        
+<div class="feature-link">
 
+Learn More
+
+<i data-lucide="arrow-right"></i>
+
+</div>
                     </div>
+                    
 
-                    <div class="feature-card">
+                    <div class="feature-card"
+     data-number="03">
 
                         <div class="feature-icon">
 
@@ -506,8 +562,17 @@
                             Receive explanations, practice problems and recovery paths tailored to your weak concepts.
 
                         </p>
+                        <hr>
+                        <div class="feature-link">
 
+Learn More
+
+<i data-lucide="arrow-right"></i>
+
+</div>
                     </div>
+                    
+
 
                 </div>
 
@@ -545,133 +610,93 @@
 
                     <div class="timeline-step">
 
-                        <div class="timeline-number">
+    <div class="timeline-node">
+        <span>01</span>
+    </div>
 
-                            01
+    <div class="timeline-card">
 
-                        </div>
+        <div class="timeline-tag">
+            INPUT
+        </div>
 
-                        <div class="timeline-card">
+        <h3>Input Problem</h3>
 
-                            <h3>
+        <p>
+            User selects the concept they struggle to understand.
+        </p>
 
-                                Input Problem
+    </div>
 
-                            </h3>
-
-                            <p>
-
-                                User enters a concept they struggle with.
-
-                            </p>
-
-                        </div>
-
-                    </div>
+</div>
 
                     <div class="timeline-step">
 
-                        <div class="timeline-number">
+    <div class="timeline-node">
+        <span>02</span>
+    </div>
 
-                            02
+    <div class="timeline-card">
 
-                        </div>
+        <div class="timeline-tag">
+            GRAPH
+        </div>
 
-                        <div class="timeline-card">
+        <h3>Dependency Scan</h3>
 
-                            <h3>
+        <p>
+            Traverse the prerequisite graph to identify missing concepts.
+        </p>
 
-                                Dependency Scan
+    </div>
 
-                            </h3>
-
-                            <p>
-
-                                The prerequisite graph is traversed backwards.
-
-                            </p>
-
-                        </div>
-
-                    </div>
+</div>
 
                     <div class="timeline-step">
 
-                        <div class="timeline-number">
+    <div class="timeline-node">
+        <span>03</span>
+    </div>
 
-                            03
+    <div class="timeline-card">
 
-                        </div>
+        <div class="timeline-tag">
+            ANALYSIS
+        </div>
 
-                        <div class="timeline-card">
+        <h3>Root Cause</h3>
 
-                            <h3>
+        <p>
+            Weak Concept Found
+        </p>
 
-                                Knowledge Test
+    </div>
 
-                            </h3>
-
-                            <p>
-
-                                Quick diagnostic questions validate understanding.
-
-                            </p>
-
-                        </div>
-
-                    </div>
+</div>
 
                     <div class="timeline-step">
 
-                        <div class="timeline-number">
+    <div class="timeline-node">
+        <span>04</span>
+    </div>
 
-                            04
+    <div class="timeline-card">
 
-                        </div>
+        <div class="timeline-tag">
+            RECOVERY
+        </div>
 
-                        <div class="timeline-card">
+        <h3>Adaptive dealing path</h3>
 
-                            <h3>
+        <p>
+            Traverse the prerequisite graph to identify missing concepts.
+        </p>
 
-                                Root Cause Found
+    </div>
 
-                            </h3>
+</div>
 
-                            <p>
-
-                                The weakest prerequisite is highlighted.
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="timeline-step">
-
-                        <div class="timeline-number">
-
-                            05
-
-                        </div>
-
-                        <div class="timeline-card">
-
-                            <h3>
-
-                                Recovery Path
-
-                            </h3>
-
-                            <p>
-
-                                Learn → Practice → Verify → Continue.
-
-                            </p>
-
-                        </div>
-
-                    </div>
+                    
 
                 </div>
 
@@ -689,73 +714,69 @@
 
                 <div class="grid lg:grid-cols-4 gap-8">
 
-                    <div class="stat-card">
+<div class="stat-card" data-id="01">
 
-                        <span class="counter"
-                              data-target="250">
+    <div class="stat-label">
+        Knowledge Graph
+    </div>
 
-                            0
+    <span class="counter" data-target="248">0</span>
 
-                        </span>
+    <div class="stat-divider"></div>
 
-                        <p>
+    <div class="stat-status">
+        +18 Today
+    </div>
 
-                            Knowledge Nodes
+</div>
 
-                        </p>
+<div class="stat-card" data-id="02">
 
-                    </div>
+    <div class="stat-label">
+        Dependency Links
+    </div>
 
-                    <div class="stat-card">
+    <span class="counter" data-target="820">0</span>
 
-                        <span class="counter"
-                              data-target="820">
+    <div class="stat-divider"></div>
 
-                            0
+    <div class="stat-status">
+        Growing
+    </div>
 
-                        </span>
+</div>
 
-                        <p>
+<div class="stat-card" data-id="03">
 
-                            Dependency Links
+    <div class="stat-label">
+        AI Confidence
+    </div>
 
-                        </p>
+    <span class="counter" data-target="98">0</span>
 
-                    </div>
+    <div class="stat-divider"></div>
 
-                    <div class="stat-card">
+    <div class="stat-status">
+        Live
+    </div>
 
-                        <span class="counter"
-                              data-target="98">
+</div>
 
-                            0
+<div class="stat-card" data-id="04">
 
-                        </span>
+    <div class="stat-label">
+        Recovery Paths
+    </div>
 
-                        <p>
+    <span class="counter" data-target="1248">0</span>
 
-                            Diagnostic Accuracy %
+    <div class="stat-divider"></div>
 
-                        </p>
+    <div class="stat-status">
+        Generated
+    </div>
 
-                    </div>
-
-                    <div class="stat-card">
-
-                        <span class="counter"
-                              data-target="1000">
-
-                            0
-
-                        </span>
-
-                        <p>
-
-                            Practice Questions
-
-                        </p>
-
-                    </div>
+</div>
 
                 </div>
 
@@ -767,46 +788,61 @@
         <!-- CTA -->
         <!-- ===================================================== -->
 
-        <section class="pb-32">
+      <section class="pb-40">
 
-            <div class="max-w-5xl mx-auto px-8">
+    <div class="max-w-6xl mx-auto px-8">
 
-                <div class="cta-panel">
+        <div class="cta-panel">
 
-                    <span class="status-chip">
+            <span class="status-chip">
+                XRAY ENGINE READY
+            </span>
 
-                        READY
+            <h2 class="cta-title">
+                Ready to Diagnose
+                <br>
+                Your Knowledge?
+            </h2>
 
-                    </span>
+            <p class="cta-description">
+                Discover exactly where learning breaks down and receive a personalized path to mastery.
+            </p>
 
-                    <h2 class="section-title mt-6">
+            <div class="cta-buttons">
 
-                        START YOUR FIRST DIAGNOSTIC
+    <a href="pages/scan.html"
+       class="primary-button">
 
-                    </h2>
+        INITIALIZE XRAY
 
-                    <p class="section-description">
+    </a>
 
-                        Discover the concept preventing your understanding in minutes.
+    <a href="#features"
+       class="secondary-button">
 
-                    </p>
+        VIEW PROCESS
 
-                    <div class="flex justify-center mt-10">
+    </a>
 
-                        <a href="pages/scan.html"
-                           class="primary-button">
+</div>
+<div class="cta-meta">
 
-                            BEGIN SCAN
+    ✓ AI Powered
 
-                        </a>
+    •
 
-                    </div>
+    Personalized Learning
 
-                </div>
+    •
 
-            </div>
+    Interactive Knowledge Graph
 
-        </section>
+</div>
+        </div>
+
+    </div>
+
+</section>
 
         <!-- ===================================================== -->
         <!-- FOOTER -->
@@ -929,8 +965,8 @@
         </footer>
 
     </div>
-
-    <script src="js/main.js"></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/theme.js" defer></script>
     <script src="js/terminal.js"></script>
     <script src="js/cursor.js"></script>
     <script src="js/graph.js"></script>

@@ -2,7 +2,19 @@
 <html lang="en">
 
 <head>
+<script>
 
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -26,11 +38,27 @@
 <link rel="stylesheet" href="../css/animations.css">
 
 </head>
-
+<script src="../js/theme.js"></script>
 <body>
 
 <div class="noise-layer"></div>
+<div class="theme-switch">
 
+    <span>☀️</span>
+
+    <label class="switch">
+
+        <input
+            id="themeToggle"
+            type="checkbox">
+
+        <span class="slider"></span>
+
+    </label>
+
+    <span>🌙</span>
+
+</div>
 <div class="grid-layer"></div>
 
 <canvas id="particles"></canvas>
@@ -143,7 +171,9 @@ SCAN NEXT CONCEPT
 
 <script>
 
-lucide.createIcons();
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
 
 const score = Number(sessionStorage.getItem("quizScore") || 0);
 

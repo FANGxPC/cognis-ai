@@ -2,7 +2,19 @@
 <html lang="en">
 
 <head>
+<script>
 
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -34,13 +46,29 @@ href="../css/components.css">
 href="../css/animations.css">
 
 </head>
-
+<script src="../js/theme.js"></script>
 <body
 class="bg-background text-text overflow-x-hidden"
 data-disable-auto-scroll="true">
 
 <div class="noise-layer"></div>
+<div class="theme-switch">
 
+    <span>☀️</span>
+
+    <label class="switch">
+
+        <input
+            id="themeToggle"
+            type="checkbox">
+
+        <span class="slider"></span>
+
+    </label>
+
+    <span>🌙</span>
+
+</div>
 <div class="grid-layer"></div>
 
 <canvas id="particles"></canvas>
@@ -180,8 +208,6 @@ class="h-full bg-lime-300 w-0">
 
 <script>
 
-lucide.createIcons();
-
 const btn=document.getElementById("startScan");
 
 const progress=document.getElementById("progressBar");
@@ -189,7 +215,8 @@ const progress=document.getElementById("progressBar");
 const status=document.getElementById("scanStatus");
 const hud=document.getElementById("scanHud");
 const radar=document.getElementById("radarLoader");
-
+const conceptInput = document.getElementById("conceptInput");
+const subjectField = document.querySelector(".subject-field");
 btn.onclick=()=>{
 
 let value=0;
@@ -202,6 +229,15 @@ const statusMessages=[
 ];
 
 btn.disabled=true;
+sessionStorage.setItem(
+    "selectedConcept",
+    conceptInput.value.trim()
+);
+
+sessionStorage.setItem(
+    "selectedSubject",
+    subjectField.value
+);
 btn.style.opacity=".8";
 btn.style.pointerEvents="none";
 
@@ -225,7 +261,7 @@ radar.classList.remove("is-active");
 
 setTimeout(()=>{
 
-window.location.href="lesson.html";
+window.location.href = "quiz.html";
 
 },1200);
 
@@ -239,7 +275,9 @@ messageIndex=(messageIndex+1)%statusMessages.length;
 },30);
 
 };
-
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
 </script>
 
 <script src="../js/ui-polish.js"></script>

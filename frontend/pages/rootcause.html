@@ -2,7 +2,19 @@
 <html lang="en">
 
 <head>
+<script>
 
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -26,7 +38,7 @@
 <link rel="stylesheet" href="../css/animations.css">
 
 </head>
-
+<script src="../js/theme.js"></script>
 <body>
 
 <div class="noise-layer"></div>
@@ -38,7 +50,23 @@
 <section class="min-h-screen flex items-center justify-center px-8">
 
 <div class="max-w-5xl w-full scanner-panel p-14">
+<div class="theme-switch">
 
+    <span>☀️</span>
+
+    <label class="switch">
+
+        <input
+            id="themeToggle"
+            type="checkbox">
+
+        <span class="slider"></span>
+
+    </label>
+
+    <span>🌙</span>
+
+</div>
 <div class="text-center">
 
 <span class="status-chip">
@@ -81,13 +109,17 @@ Weakest Concept
 
 </h3>
 
-<h2 class="font-terminal text-5xl text-accent mt-6">
+<h2
+id="weakConcept"
+class="font-terminal text-5xl text-accent mt-6">
 
 Recursion
 
 </h2>
 
-<p class="mt-6">
+<p
+id="weakDescription"
+class="mt-6">
 
 Binary Search Trees depend heavily on recursive thinking.
 Your quiz responses indicate that recursion is the missing prerequisite.
@@ -110,7 +142,9 @@ Dependency Chain
 
 </h3>
 
-<div class="mt-8 flex flex-col gap-4">
+<div
+id="dependencyChain"
+class="mt-8 flex flex-col gap-4">
 
 <div class="secondary-button justify-start">
 
@@ -170,15 +204,56 @@ START RECOVERY →
 
 <script>
 
-lucide.createIcons();
 
-</script>
+const score = Number(sessionStorage.getItem("quizScore") || 0);
 
-<script>
+const weakConcept = document.getElementById("weakConcept");
+const weakDescription = document.getElementById("weakDescription");
+const dependencyChain = document.getElementById("dependencyChain");
 
-lucide.createIcons();
+if (score >= 4) {
 
+    weakConcept.textContent = "Tree Traversals";
 
+    weakDescription.textContent =
+        "You have a strong grasp of the fundamentals. Reviewing tree traversals should complete your understanding.";
+
+    dependencyChain.innerHTML = `
+        <div class="secondary-button justify-start">Variables</div>
+        <div class="secondary-button justify-start">Loops</div>
+        <div class="secondary-button justify-start">Functions</div>
+        <div class="secondary-button justify-start border-lime-300 bg-lime-300/10">Tree Traversals ❌</div>
+        <div class="secondary-button justify-start">Binary Search Trees</div>
+    `;
+
+}
+else if (score >= 2) {
+
+    weakConcept.textContent = "Recursion";
+
+    weakDescription.textContent =
+        "Your answers indicate that recursive thinking is the main prerequisite that needs reinforcement.";
+
+}
+else {
+
+    weakConcept.textContent = "Functions";
+
+    weakDescription.textContent =
+        "The quiz suggests that function fundamentals should be strengthened before moving to recursion and trees.";
+
+    dependencyChain.innerHTML = `
+        <div class="secondary-button justify-start">Variables</div>
+        <div class="secondary-button justify-start">Loops</div>
+        <div class="secondary-button justify-start border-lime-300 bg-lime-300/10">Functions ❌</div>
+        <div class="secondary-button justify-start">Recursion</div>
+        <div class="secondary-button justify-start">Binary Search Trees</div>
+    `;
+
+}
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
 </script>
 
 <script src="../js/ui-polish.js"></script>

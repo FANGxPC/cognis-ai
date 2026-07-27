@@ -39,11 +39,15 @@ function initHotkeyHints() {
 
     document.querySelectorAll("[data-hotkey-hint]").forEach(element => {
 
-        const hint = document.createElement("span");
-        hint.className = "quick-hint";
-        hint.innerHTML = `Quick Focus <kbd>${element.dataset.hotkeyHint}</kbd>`;
+        if (element.nextElementSibling?.classList.contains("quick-hint")) {
+    return;
+}
 
-        element.insertAdjacentElement("afterend", hint);
+const hint = document.createElement("span");
+hint.className = "quick-hint";
+hint.innerHTML = `Quick Focus <kbd>${element.dataset.hotkeyHint}</kbd>`;
+
+element.insertAdjacentElement("afterend", hint);
 
     });
 
@@ -56,7 +60,11 @@ function initTerminalStream() {
     if (!terminal) {
         return;
     }
+    if (terminal.dataset.streamInitialized) {
+    return;
+}
 
+terminal.dataset.streamInitialized = "true";
     const observer = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
             mutation.addedNodes.forEach(node => {
