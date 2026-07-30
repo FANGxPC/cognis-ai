@@ -9,6 +9,12 @@
 
 ---
 
+## 🎬 Demo Video
+*(Link your 2-minute YouTube/Loom demo video here)*
+[![Cognis Demo Video](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
+
+---
+
 ## 📖 About
 
 When students struggle with complex subjects like **Linear Algebra**, **Data Structures**, or **Physics**, the problem is rarely the topic right in front of them—it is almost always an **unrecognized prerequisite gap** from weeks or semesters prior.
