@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<script>
+
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Concept Scan</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap"
+rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet"
+href="../css/style.css">
+
+<link rel="stylesheet"
+href="../css/components.css">
+
+<link rel="stylesheet"
+href="../css/animations.css">
+
+</head>
+<script src="../js/theme.js"></script>
+<body
+class="bg-background text-text overflow-x-hidden"
+data-disable-auto-scroll="true">
+
+<div class="noise-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<div class="theme-switch">
+
+    <span>☀️</span>
+
+    <label class="switch">
+
+        <input
+            id="themeToggle"
+            type="checkbox">
+
+        <span class="slider"></span>
+
+    </label>
+
+    <span>🌙</span>
+
+</div>
+<div class="grid-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+
+<canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></canvas>
+
+<nav class="fixed top-0 left-0 right-0 z-[9999] py-4 px-6 sm:px-12 backdrop-blur-xl bg-[#0A0A0F]/90 border-b border-white/10" style="position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;background:rgba(10,10,15,0.92)!important;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3 group">
+            <div class="logo-square group-hover:border-accent transition-colors font-terminal text-lg font-bold text-accent">CG</div>
+            <span class="font-terminal text-2xl tracking-widest text-accent hidden sm:inline">COGNIS</span>
+        </a>
+
+
+        <div class="flex items-center gap-4 sm:gap-6 text-xs font-mono">
+            <a href="../index.html" class="nav-link text-muted hover:text-text">HOME</a>
+            <a href="scan.html" class="nav-link text-accent font-bold">SCAN</a>
+            <a href="subject_graph.html" class="nav-link text-muted hover:text-accent">KNOWLEDGE MAP</a>
+            <a href="dashboard.html" class="nav-link text-muted hover:text-accent">DASHBOARD</a>
+            <a href="about.html" class="nav-link text-muted hover:text-text">ABOUT</a>
+        </div>
+    </div>
+</nav>
+
+
+
+<section class="pt-28 pb-16 px-8 flex justify-center">
+
+
+
+<div class="max-w-6xl w-full grid lg:grid-cols-2 gap-16">
+
+<div>
+
+<span class="status-chip">
+
+CONCEPT INPUT
+
+</span>
+
+<h1
+class="hero-title mt-8"
+style="font-size:clamp(3.3rem,8vw,5.9rem);line-height:.88;">
+
+SCAN
+
+ENGINE
+
+</h1>
+
+<p class="hero-description mt-8">
+
+Enter the concept you're struggling with and let the engine trace every missing prerequisite.
+
+</p>
+
+</div>
+
+<div class="scanner-panel p-10 flex flex-col justify-center">
+
+<label class="mb-4 uppercase tracking-[4px] text-sm text-accent">
+
+Concept Name
+
+</label>
+
+<input
+id="conceptInput"
+type="text"
+placeholder="Example: Binary Search Trees"
+data-command-focus
+data-hotkey-hint="Ctrl/Cmd + K"
+data-tooltip="Quick focus: Ctrl/Cmd + K"
+class="concept-field w-full rounded-xl bg-black/30 border border-white/10 p-5 outline-none mb-8">
+
+<label class="mb-4 uppercase tracking-[4px] text-sm text-accent">
+
+Subject
+
+</label>
+
+<div class="flex gap-4 mb-8">
+<select
+id="subjectSelect"
+data-tooltip="Choose your subject domain"
+class="subject-field w-full rounded-xl bg-black/30 border border-white/10 p-5 outline-none">
+<option>Loading subjects...</option>
+</select>
+<button id="openAddSubjectBtn" class="secondary-button whitespace-nowrap px-4" data-tooltip="Add new subject via Text or Syllabus Image">+ ADD</button>
+</div>
+
+<button
+id="startScan"
+data-tooltip="Run AI prerequisite scanner"
+class="primary-button w-full mb-4">
+INITIALIZE SCAN
+</button>
+<a
+href="subject_graph.html"
+data-tooltip="View the full knowledge graph for this subject"
+class="secondary-button w-full text-center block py-4">
+VIEW KNOWLEDGE MAP
+</a>
+
+<div
+id="scanStatus"
+class="mt-10 text-accent font-terminal text-3xl">
+
+READY_
+
+</div>
+
+<div id="scanHud" class="hud-status">
+SCANNING CONCEPT GRAPH
+</div>
+
+<div id="radarLoader" class="loader-radar"></div>
+
+<div
+class="mt-8 h-2 bg-white/10 rounded-full overflow-hidden">
+
+<div
+id="progressBar"
+class="h-full bg-lime-300 w-0">
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ADD SUBJECT MODAL -->
+<div id="addSubjectModal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
+  <div class="bg-panel border border-border p-8 rounded-xl max-w-md w-full relative">
+    <h2 class="text-xl mb-4 text-accent font-terminal text-3xl">Add New Subject</h2>
+    <label class="block mb-2 text-sm uppercase tracking-[2px] text-muted">Generate from Topic</label>
+    <input type="text" id="newSubjectTopic" placeholder="e.g. Quantum Physics" class="w-full bg-black/30 border border-white/10 p-4 rounded-xl mb-4 outline-none text-text">
+    
+    <div class="text-center my-4 text-muted text-sm tracking-[2px] uppercase">- OR -</div>
+    
+    <label class="block mb-2 text-sm uppercase tracking-[2px] text-muted">Generate from Syllabus Image</label>
+    <input type="file" id="syllabusUpload" accept="image/*" class="w-full bg-black/30 border border-white/10 p-4 rounded-xl mb-8 outline-none text-text">
+    
+    <div class="flex justify-end gap-4">
+       <button id="closeModalBtn" class="text-muted hover:text-white transition">Cancel</button>
+       <button id="submitSubjectBtn" class="primary-button px-6">Generate</button>
+    </div>
+    
+    <div id="generateStatus" class="hidden mt-6 text-accent font-terminal text-xl">Generating... this may take a minute...</div>
+  </div>
+</div>
+
+</section>
+
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/session.js"></script>
+<script src="../js/ui.js"></script>
+
+<script>
+
+const btn=document.getElementById("startScan");
+
+const progress=document.getElementById("progressBar");
+
+const status=document.getElementById("scanStatus");
+const hud=document.getElementById("scanHud");
+const radar=document.getElementById("radarLoader");
+const conceptInput = document.getElementById("conceptInput");
+const subjectField = document.getElementById("subjectSelect");
+
+async function initSubjects() {
+    try {
+        const data = await getSubjects();
+        subjectField.innerHTML = '';
+        if (data.subjects && data.subjects.length > 0) {
+            data.subjects.forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub.slug;
+                opt.textContent = sub.title;
+                subjectField.appendChild(opt);
+            });
+            const stored = sessionStorage.getItem("selectedSubject");
+            if (stored && [...subjectField.options].some(o => o.value === stored)) {
+                subjectField.value = stored;
+            }
+        } else {
+            subjectField.innerHTML = '<option>No subjects available</option>';
+        }
+    } catch(e) {
+        console.error("Failed to load subjects", e);
+    }
+}
+initSubjects();
+
+subjectField.addEventListener('change', (e) => {
+    sessionStorage.setItem("selectedSubject", e.target.value);
+});
+
+// Modal Logic
+const modal = document.getElementById('addSubjectModal');
+const openBtn = document.getElementById('openAddSubjectBtn');
+const closeBtn = document.getElementById('closeModalBtn');
+const submitBtn = document.getElementById('submitSubjectBtn');
+const genStatus = document.getElementById('generateStatus');
+const newTopicInput = document.getElementById('newSubjectTopic');
+const fileInput = document.getElementById('syllabusUpload');
+
+openBtn.onclick = () => modal.classList.remove('hidden');
+closeBtn.onclick = () => {
+    modal.classList.add('hidden');
+    genStatus.classList.add('hidden');
+    newTopicInput.value = '';
+    fileInput.value = '';
+};
+
+submitBtn.onclick = async () => {
+    submitBtn.disabled = true;
+    closeBtn.disabled = true;
+    genStatus.classList.remove('hidden');
+    genStatus.textContent = "Generating... this may take a minute...";
+    
+    try {
+        if (fileInput.files.length > 0) {
+            const res = await uploadSubject(fileInput.files[0]);
+            sessionStorage.setItem("selectedSubject", res.slug);
+        } else if (newTopicInput.value.trim()) {
+            const res = await addSubject(newTopicInput.value.trim());
+            sessionStorage.setItem("selectedSubject", res.slug);
+        } else {
+            throw new Error("Please provide a topic or an image.");
+        }
+        await initSubjects();
+        closeBtn.onclick(); // trigger close
+    } catch (e) {
+        genStatus.textContent = "Error: " + e.message;
+        console.error(e);
+    } finally {
+        submitBtn.disabled = false;
+        closeBtn.disabled = false;
+    }
+};
+
+btn.onclick = async () => {
+    const query = conceptInput.value.trim();
+    const subject = subjectField.value;
+
+    if (!query) {
+        showToast("Please enter a concept to scan.", "error");
+        return;
+    }
+    if (!subject || subject === "No subjects available") {
+        showToast("Please select a subject first.", "error");
+        return;
+    }
+
+    // Store concept and subject
+    Session.setConcept(query);
+    Session.setSubject(subject);
+
+    // UI: disable button, show scanning state
+    btn.disabled = true;
+    btn.style.opacity = ".8";
+    btn.style.pointerEvents = "none";
+    status.innerHTML = "MATCHING CONCEPT...";
+    hud.classList.add("is-active");
+    radar.classList.add("is-active");
+    progress.style.width = "15%";
+    progress.style.transition = "width 0.5s ease";
+
+    try {
+        // Step 1: Call real API
+        status.innerHTML = "TRACING DEPENDENCIES...";
+        progress.style.width = "30%";
+
+        const result = await diagnose(query, subject);
+
+        // Step 2: Store session state
+        progress.style.width = "60%";
+        status.innerHTML = "BUILDING TRAVERSAL PATH...";
+        Session.storeDiagnoseResult(result);
+
+        // Step 3: Animate completion
+        await new Promise(r => setTimeout(r, 400));
+        progress.style.width = "85%";
+        status.innerHTML = "COMPUTING WEAK NODES...";
+
+        await new Promise(r => setTimeout(r, 400));
+        progress.style.width = "100%";
+        status.innerHTML = "SCAN COMPLETE";
+        hud.innerHTML = "ENGINE READY";
+        radar.classList.remove("is-active");
+
+        showToast(`Matched to "${result.matched_node_id}" — ${result.traversal_path.length} nodes to probe`, "success");
+
+        // Redirect to quiz
+        setTimeout(() => {
+            window.location.href = "quiz.html";
+        }, 1200);
+
+    } catch (err) {
+        console.error("Scan failed:", err);
+        status.innerHTML = "SCAN FAILED";
+        hud.innerHTML = "ERROR";
+        radar.classList.remove("is-active");
+        progress.style.width = "0%";
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.style.pointerEvents = "auto";
+        showToast("Scan failed: " + (err.message || "Backend unreachable"), "error");
+    }
+};
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
+</script>
+
+<script src="../js/ui-polish.js"></script>
+<script src="../js/particles.js"></script>
+
+</body>
+
+</html>

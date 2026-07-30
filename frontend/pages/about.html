@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<script>
+
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>About Cognis</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap"
+rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="stylesheet"
+href="../css/style.css">
+
+<link rel="stylesheet"
+href="../css/components.css">
+
+<link rel="stylesheet"
+href="../css/animations.css">
+
+</head>
+<script src="../js/theme.js"></script>
+<body class="bg-background text-text">
+
+<div class="noise-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<div class="grid-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></canvas>
+
+<nav class="fixed top-0 left-0 right-0 z-[9999] py-4 px-6 sm:px-12 backdrop-blur-xl bg-[#0A0A0F]/90 border-b border-white/10" style="position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;background:rgba(10,10,15,0.92)!important;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3 group">
+            <div class="logo-square group-hover:border-accent transition-colors font-terminal text-lg font-bold text-accent">CG</div>
+            <span class="font-terminal text-2xl tracking-widest text-accent hidden sm:inline">COGNIS</span>
+        </a>
+
+        <div class="flex items-center gap-4 sm:gap-6 text-xs font-mono">
+            <a href="../index.html" class="nav-link text-muted hover:text-text">HOME</a>
+            <a href="scan.html" class="nav-link text-muted hover:text-accent">SCAN</a>
+            <a href="subject_graph.html" class="nav-link text-muted hover:text-accent">KNOWLEDGE MAP</a>
+            <a href="dashboard.html" class="nav-link text-muted hover:text-accent">DASHBOARD</a>
+            <a href="about.html" class="nav-link text-accent font-bold">ABOUT</a>
+        </div>
+    </div>
+</nav>
+
+
+
+<section class="pt-28 pb-24">
+<div class="max-w-6xl mx-auto px-8">
+<span class="status-chip">ABOUT COGNIS</span>
+
+<h1 class="hero-title mt-8">COGNIS</h1>
+
+<p class="hero-description mt-6 text-xl text-accent font-mono font-semibold">
+"Uncover the root of every learning gap."
+</p>
+<p class="hero-description mt-4">
+Cognis is an AI-powered diagnostic platform that identifies the hidden prerequisite concept responsible for a student's misunderstanding instead of simply marking answers as incorrect.
+</p>
+
+
+</div>
+
+</section>
+
+<section class="pb-24">
+
+<div class="max-w-7xl mx-auto px-8 grid lg:grid-cols-3 gap-8">
+
+<div class="feature-card">
+
+<div class="feature-icon">
+
+<i data-lucide="brain"></i>
+
+</div>
+
+<h3>
+
+AI Diagnosis
+
+</h3>
+
+<p>
+
+Analyzes prerequisite dependencies to identify conceptual weaknesses.
+
+</p>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-icon">
+
+<i data-lucide="network"></i>
+
+</div>
+
+<h3>
+
+Knowledge Graph
+
+</h3>
+
+<p>
+
+Visual representation of concept dependencies for every topic.
+
+</p>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-icon">
+
+<i data-lucide="graduation-cap"></i>
+
+</div>
+
+<h3>
+
+Learning Recovery
+
+</h3>
+
+<p>
+
+Provides personalized learning paths, quizzes and recommendations.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="pb-24">
+
+<div class="max-w-7xl mx-auto px-8">
+
+<div class="cta-panel">
+
+<h2 class="section-title">
+
+TECH STACK
+
+</h2>
+
+<div class="grid lg:grid-cols-4 gap-6 mt-12">
+
+<div class="stat-card">
+
+<span class="counter">
+
+HTML
+
+</span>
+
+<p>Frontend</p>
+
+</div>
+
+<div class="stat-card">
+
+<span class="counter">
+
+CSS
+
+</span>
+
+<p>Styling</p>
+
+</div>
+
+<div class="stat-card">
+
+<span class="counter">
+
+JS
+
+</span>
+
+<p>Interaction</p>
+
+</div>
+
+<div class="stat-card">
+
+<span class="counter">
+
+AI
+
+</span>
+
+<p>Diagnosis</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="pb-32">
+
+<div class="max-w-5xl mx-auto px-8">
+
+<div class="cta-panel">
+
+<span class="status-chip">
+
+READY
+
+</span>
+
+<h2 class="section-title mt-6">
+
+START SCANNING
+
+</h2>
+
+<p class="section-description">
+
+Find the real concept holding you back.
+
+</p>
+
+<div class="mt-10">
+
+<a href="scan.html"
+class="primary-button">
+
+OPEN SCANNER
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<script>
+
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
+
+</script>
+
+<script src="../js/ui-polish.js"></script>
+<script src="../js/particles.js"></script>
+
+</body>
+
+</html>

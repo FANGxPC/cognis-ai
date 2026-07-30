@@ -1,0 +1,179 @@
+{
+  "nodes": [
+    {
+      "id": "arrays",
+      "label": "Arrays",
+      "description": "A contiguous block of memory storing elements of the same type, accessed by index in O(1) time. The most fundamental data structure.",
+      "order": 1,
+      "mastery": null
+    },
+    {
+      "id": "linked_lists",
+      "label": "Linked Lists",
+      "description": "A sequence of nodes where each node stores data and a pointer to the next node. Supports efficient insertion and deletion but lacks random access.",
+      "order": 2,
+      "mastery": null
+    },
+    {
+      "id": "stacks",
+      "label": "Stacks",
+      "description": "A Last-In-First-Out (LIFO) data structure supporting push and pop operations. Used in function call management, expression evaluation, and undo systems.",
+      "order": 3,
+      "mastery": null
+    },
+    {
+      "id": "queues",
+      "label": "Queues",
+      "description": "A First-In-First-Out (FIFO) data structure supporting enqueue and dequeue operations. Used in scheduling, buffering, and breadth-first traversals.",
+      "order": 4,
+      "mastery": null
+    },
+    {
+      "id": "recursion",
+      "label": "Recursion",
+      "description": "A technique where a function calls itself with a smaller input and a base case to terminate. Essential for tree traversals, divide-and-conquer, and backtracking.",
+      "order": 5,
+      "mastery": null
+    },
+    {
+      "id": "hashing",
+      "label": "Hashing",
+      "description": "A technique that maps keys to array indices using a hash function. Enables average O(1) lookup, insertion, and deletion when collisions are handled properly.",
+      "order": 6,
+      "mastery": null
+    },
+    {
+      "id": "hash_tables",
+      "label": "Hash Tables",
+      "description": "A data structure that implements an associative array using hashing. Handles collisions via chaining (linked lists) or open addressing (probing).",
+      "order": 7,
+      "mastery": null
+    },
+    {
+      "id": "trees_intro",
+      "label": "Trees: Introduction",
+      "description": "A hierarchical data structure with a root node and children forming a non-cyclic connected graph. Key terms: root, leaf, parent, child, height, depth.",
+      "order": 8,
+      "mastery": null
+    },
+    {
+      "id": "binary_trees",
+      "label": "Binary Trees",
+      "description": "A tree where each node has at most two children (left and right). The foundation for BSTs, heaps, and expression trees.",
+      "order": 9,
+      "mastery": null
+    },
+    {
+      "id": "tree_traversals",
+      "label": "Tree Traversals",
+      "description": "Methods to visit every node in a tree: inorder (left-root-right), preorder (root-left-right), postorder (left-right-root), and level-order (BFS). Each produces a different ordering.",
+      "order": 10,
+      "mastery": null
+    },
+    {
+      "id": "binary_search_trees",
+      "label": "Binary Search Trees",
+      "description": "A binary tree where the left subtree contains only nodes with keys less than the parent, and the right subtree only greater. Supports O(log n) average search, insert, delete.",
+      "order": 11,
+      "mastery": null
+    },
+    {
+      "id": "balanced_bst",
+      "label": "Balanced BSTs (AVL / Red-Black)",
+      "description": "Self-balancing binary search trees that maintain O(log n) height through rotations. AVL trees enforce strict balance; red-black trees use color properties.",
+      "order": 12,
+      "mastery": null
+    },
+    {
+      "id": "heaps",
+      "label": "Heaps & Priority Queues",
+      "description": "A complete binary tree satisfying the heap property (max-heap: parent ≥ children, min-heap: parent ≤ children). Efficiently supports extract-min/max in O(log n). Typically stored as an array.",
+      "order": 13,
+      "mastery": null
+    },
+    {
+      "id": "sorting_basic",
+      "label": "Basic Sorting (Bubble, Selection, Insertion)",
+      "description": "Simple comparison-based sorting algorithms running in O(n²) worst case. Useful for understanding sorting fundamentals: comparisons, swaps, stability, and in-place operation.",
+      "order": 14,
+      "mastery": null
+    },
+    {
+      "id": "sorting_advanced",
+      "label": "Advanced Sorting (Merge Sort, Quick Sort)",
+      "description": "Divide-and-conquer sorting algorithms. Merge sort is O(n log n) guaranteed and stable. Quick sort is O(n log n) average but O(n²) worst case, typically faster in practice.",
+      "order": 15,
+      "mastery": null
+    },
+    {
+      "id": "graphs_intro",
+      "label": "Graphs: Introduction",
+      "description": "A set of vertices connected by edges. Can be directed or undirected, weighted or unweighted. Represented via adjacency matrix or adjacency list.",
+      "order": 16,
+      "mastery": null
+    },
+    {
+      "id": "graph_traversals",
+      "label": "Graph Traversals (BFS & DFS)",
+      "description": "Breadth-First Search (BFS) uses a queue to explore level by level. Depth-First Search (DFS) uses a stack/recursion to explore as deep as possible before backtracking.",
+      "order": 17,
+      "mastery": null
+    },
+    {
+      "id": "shortest_path",
+      "label": "Shortest Path Algorithms",
+      "description": "Dijkstra's algorithm finds shortest paths from a source in weighted graphs with non-negative edges. Bellman-Ford handles negative weights. Both build on graph traversal foundations.",
+      "order": 18,
+      "mastery": null
+    },
+    {
+      "id": "tries",
+      "label": "Tries (Prefix Trees)",
+      "description": "A tree-like data structure where each node represents a character. Used for efficient prefix-based search, autocomplete, and dictionary storage. Lookup is O(key length).",
+      "order": 19,
+      "mastery": null
+    },
+    {
+      "id": "dynamic_programming",
+      "label": "Dynamic Programming",
+      "description": "An optimization technique that solves complex problems by breaking them into overlapping subproblems and storing results (memoization or tabulation) to avoid redundant computation.",
+      "order": 20,
+      "mastery": null
+    }
+  ],
+  "edges": [
+    { "from": "arrays", "to": "linked_lists", "label": "requires" },
+    { "from": "linked_lists", "to": "stacks", "label": "requires" },
+    { "from": "linked_lists", "to": "queues", "label": "requires" },
+    { "from": "stacks", "to": "recursion", "label": "requires" },
+    { "from": "arrays", "to": "hashing", "label": "requires" },
+    { "from": "hashing", "to": "hash_tables", "label": "requires" },
+    { "from": "linked_lists", "to": "hash_tables", "label": "requires" },
+    { "from": "linked_lists", "to": "trees_intro", "label": "requires" },
+    { "from": "recursion", "to": "trees_intro", "label": "requires" },
+    { "from": "trees_intro", "to": "binary_trees", "label": "requires" },
+    { "from": "binary_trees", "to": "tree_traversals", "label": "requires" },
+    { "from": "recursion", "to": "tree_traversals", "label": "requires" },
+    { "from": "tree_traversals", "to": "binary_search_trees", "label": "requires" },
+    { "from": "binary_search_trees", "to": "balanced_bst", "label": "requires" },
+    { "from": "binary_trees", "to": "heaps", "label": "requires" },
+    { "from": "arrays", "to": "heaps", "label": "requires" },
+    { "from": "arrays", "to": "sorting_basic", "label": "requires" },
+    { "from": "sorting_basic", "to": "sorting_advanced", "label": "requires" },
+    { "from": "recursion", "to": "sorting_advanced", "label": "requires" },
+    { "from": "heaps", "to": "sorting_advanced", "label": "requires" },
+    { "from": "linked_lists", "to": "graphs_intro", "label": "requires" },
+    { "from": "arrays", "to": "graphs_intro", "label": "requires" },
+    { "from": "graphs_intro", "to": "graph_traversals", "label": "requires" },
+    { "from": "queues", "to": "graph_traversals", "label": "requires" },
+    { "from": "stacks", "to": "graph_traversals", "label": "requires" },
+    { "from": "recursion", "to": "graph_traversals", "label": "requires" },
+    { "from": "graph_traversals", "to": "shortest_path", "label": "requires" },
+    { "from": "heaps", "to": "shortest_path", "label": "requires" },
+    { "from": "trees_intro", "to": "tries", "label": "requires" },
+    { "from": "hash_tables", "to": "tries", "label": "requires" },
+    { "from": "recursion", "to": "dynamic_programming", "label": "requires" },
+    { "from": "arrays", "to": "dynamic_programming", "label": "requires" },
+    { "from": "sorting_advanced", "to": "dynamic_programming", "label": "requires" }
+  ]
+}

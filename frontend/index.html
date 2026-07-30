@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="pages/login.html";
+
+}
+
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Cognis | Uncover the root of every learning gap.</title>
+
+
+    <!-- ========================================================= -->
+    <!-- GOOGLE FONTS -->
+    <!-- ========================================================= -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- ========================================================= -->
+    <!-- TAILWIND -->
+    <!-- ========================================================= -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+
+                    colors: {
+
+                        background: "#0D0A14",
+
+                        panel: "#181228",
+
+                        primary: "#B98BFF",
+
+                        accent: "#C5FF6B",
+
+                        text: "#EDE6F5",
+
+                        border: "#2C2442",
+
+                        muted: "#7D7396",
+
+                        danger: "#FF5F6D"
+
+                    },
+
+                    fontFamily: {
+
+                        terminal: ["VT323"],
+
+                        mono: ["JetBrains Mono"]
+
+                    },
+
+                    boxShadow: {
+
+                        glow: "0 0 35px rgba(185,139,255,.25)",
+
+                        lime: "0 0 30px rgba(197,255,107,.3)"
+
+                    }
+
+                }
+            }
+        }
+    </script>
+
+    <!-- ========================================================= -->
+    <!-- ICONS -->
+    <!-- ========================================================= -->
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- ========================================================= -->
+    <!-- CSS -->
+    <!-- ========================================================= -->
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <link rel="stylesheet"
+          href="css/components.css">
+
+    <link rel="stylesheet"
+          href="css/animations.css">
+
+</head>
+
+<body class="bg-background text-text overflow-x-hidden">
+
+    <!-- ========================================================= -->
+    <!-- CUSTOM CURSOR -->
+    <!-- ========================================================= -->
+
+    <div id="cursor-dot"></div>
+    <div class="theme-switch">
+
+    <span>☀️</span>
+
+    <label class="switch">
+
+        <input id="themeToggle" type="checkbox">
+        <span class="slider"></span>
+
+    </label>
+
+    <span>🌙</span>
+
+</div>
+    <div id="cursor-ring"></div>
+
+    <!-- ========================================================= -->
+    <!-- NOISE -->
+    <!-- ========================================================= -->
+
+    <div class="noise-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+    <div class="grid-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+    <canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></canvas>
+
+
+    <!-- ========================================================= -->
+    <!-- PAGE WRAPPER -->
+    <!-- ========================================================= -->
+
+    <div class="relative z-10 min-h-screen">
+
+        <!-- ===================================================== -->
+        <!-- NAVBAR -->
+        <!-- ===================================================== -->
+
+        <nav class="fixed top-0 left-0 right-0 z-[9999] py-4 px-6 sm:px-12 backdrop-blur-xl bg-[#0A0A0F]/90 border-b border-white/10" style="position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;background:rgba(10,10,15,0.92)!important;">
+            
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+
+                <!-- LOGO -->
+
+                <a href="index.html" class="flex items-center gap-3 group">
+
+                    <div class="logo-square group-hover:border-accent transition-colors font-terminal text-lg font-bold text-accent">
+
+                        CG
+
+                    </div>
+
+                    <div>
+
+                        <h1 class="font-terminal text-2xl tracking-widest text-accent">
+
+                            COGNIS
+
+                        </h1>
+
+                        <p class="text-[9px] uppercase tracking-[0.2em] text-muted hidden sm:block">
+
+                            Uncover the root of every learning gap
+
+                        </p>
+
+                    </div>
+
+                </a>
+
+
+                <!-- LINKS -->
+
+                <div class="flex items-center gap-4 sm:gap-6 text-xs font-mono">
+
+                    <a href="index.html" class="nav-link text-accent font-bold">HOME</a>
+
+                    <a href="pages/scan.html" class="nav-link text-muted hover:text-accent">SCAN</a>
+
+                    <a href="pages/subject_graph.html" class="nav-link text-muted hover:text-accent">KNOWLEDGE MAP</a>
+
+                    <a href="pages/dashboard.html" class="nav-link text-muted hover:text-accent">DASHBOARD</a>
+
+                    <a href="pages/about.html" class="nav-link text-muted hover:text-text">ABOUT</a>
+
+                    <a href="pages/scan.html" class="primary-button text-xs py-2 px-4 hidden md:inline-block">INITIALIZE SCAN →</a>
+
+                    <button id="logoutBtn" class="secondary-button text-xs py-1.5 px-3">LOGOUT</button>
+
+                </div>
+
+            </div>
+        
+        </nav>
+
+
+
+        <!-- ===================================================== -->
+        <!-- HERO -->
+        <!-- ===================================================== -->
+
+        <section id="home"
+                 class="pt-28 pb-16">
+
+
+            <div class="max-w-7xl mx-auto px-8 w-full">
+
+                <div class="grid lg:grid-cols-[1.1fr_1fr] gap-12 items-start">
+
+                    <!-- ============================================= -->
+                    <!-- LEFT -->
+                    <!-- ============================================= -->
+
+                    <div>
+                        <span class="status-chip">
+    <span class="status-dot"></span>
+    AI DIAGNOSTIC ENGINE
+</span>
+                        <span class="status-chip">
+
+                            SYSTEM READY </span>
+
+                        <h1 class="hero-title">
+    Stop Guessing.<br>
+
+    Start <span class="highlight">
+    Diagnosing.
+    </span><br>
+
+    Learn Smarter.
+</h1>
+
+                        <p class="hero-description mt-8 max-w-xl">
+    Cognis uses AI-powered prerequisite knowledge graphs to trace exactly where understanding breaks down. Instead of revising entire chapters, students receive targeted explanations, adaptive quizzes, and personalized learning paths that uncover the root of every learning gap.
+</p>
+
+
+<div class="hero-highlight">
+
+<i data-lucide="search-check"></i>
+
+<h4>Detect Hidden Gaps</h4>
+
+<p>
+AI identifies the prerequisite
+concept blocking progress.
+</p>
+
+</div>
+
+                        <!-- BUTTONS -->
+
+                        <div class="flex flex-wrap gap-6 mt-12">
+
+                            <a href="pages/scan.html"
+                               class="primary-button"
+                               data-tooltip="Open scanner workspace">
+
+                                INITIALIZE SCAN
+
+                            </a>
+
+                            <a href="#features"
+                               class="secondary-button"
+                               data-tooltip="View process timeline">
+
+                                EXPLORE PROCESS ->
+
+                            </a>
+
+                        </div>
+
+                        <!-- TERMINAL -->
+
+                        <div class="terminal-window mt-12" style="height:220px!important;max-height:220px!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;">
+
+                            <div class="terminal-header" style="flex-shrink:0!important;">
+
+                                <span class="terminal-dot red"></span>
+
+                                <span class="terminal-dot yellow"></span>
+
+                                <span class="terminal-dot green"></span>
+
+                                <span class="terminal-title">
+
+                                    COGNIS_TERMINAL.exe
+
+                                </span>
+
+                            </div>
+
+                            <div class="terminal-body" style="height:160px!important;max-height:160px!important;overflow-y:auto!important;overflow-x:hidden!important;scroll-behavior:smooth!important;">
+
+                                <div id="terminal-output" style="word-break:break-all;white-space:pre-wrap;">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    <!-- ============================================= -->
+                    <!-- RIGHT -->
+                    <!-- ============================================= -->
+
+                    <div class="relative">
+
+                        <!-- MAIN PANEL -->
+
+                        <div class="scanner-panel p-6 rounded-2xl bg-panel/90 border border-white/10 shadow-glow">
+
+                            <!-- HEADER -->
+
+                            <div class="panel-top mb-4 flex justify-between items-center text-xs font-terminal uppercase tracking-widest">
+
+                                <span>
+
+                                    LIVE KNOWLEDGE GRAPH
+
+                                </span>
+
+                                <span class="text-accent flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-accent animate-ping inline-block"></span>
+                                    ONLINE
+
+                                </span>
+
+                            </div>
+
+                            <!-- GRAPH -->
+
+                            <div id="graph-preview" class="w-full h-[480px] relative rounded-xl overflow-hidden bg-black/40 border border-white/5">
+
+                            </div>
+
+                            <!-- SCAN BAR -->
+
+                            <div class="scan-line"></div>
+
+                            <!-- STATUS BADGES -->
+
+                            <div class="flex flex-wrap gap-3 mt-6 justify-between items-center text-xs font-mono">
+
+                                <div class="floating-card py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-muted flex items-center gap-2">
+                                    <span class="text-accent text-base">●</span> SEARCHING...
+                                </div>
+
+                                <div class="floating-card py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-muted flex items-center gap-2">
+                                    <span class="text-primary text-base">●</span> BUILDING GRAPH...
+                                </div>
+
+                                <div class="floating-card py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-muted flex items-center gap-2">
+                                    <span class="text-lime-300 text-base">●</span> PREREQUISITES FOUND
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+                <!-- ===================================================== -->
+        <!-- FEATURES -->
+        <!-- ===================================================== -->
+
+        <section id="features"
+                 class="py-32 relative">
+
+            <div class="max-w-7xl mx-auto px-8">
+
+                <div class="text-center mb-20">
+
+                    <span class="status-chip">
+
+                        SYSTEM CAPABILITIES
+
+                    </span>
+                    
+                    <h2 class="section-title mt-6">
+
+                        HOW THE ENGINE WORKS
+
+                    </h2>
+
+                    <p class="section-description">
+
+                        Trace dependencies, isolate prerequisite failures,
+                        and rebuild conceptual understanding.
+
+                    </p>
+
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+
+                    <div class="feature-card"
+     data-number="01">
+
+                        <div class="feature-icon">
+
+                            <i data-lucide="search-check"></i>
+
+                        </div>
+
+                        <h3>
+
+                            Detect Hidden Gaps
+
+                        </h3>
+
+                        <p>
+
+                            Go beyond incorrect answers and identify the exact prerequisite concept causing failure.
+
+                        </p>
+                        <hr>
+                        <a href="pages/about.html" class="feature-link">
+
+Learn More
+
+<i data-lucide="arrow-right"></i>
+
+</a>
+                    </div>
+                    
+
+
+                    <div class="feature-card"
+     data-number="02">
+
+                        <div class="feature-icon">
+
+                            <i data-lucide="network"></i>
+
+                        </div>
+
+                        <h3>
+
+                            Knowledge Dependency Graph
+
+                        </h3>
+
+                        <p>
+
+                            Visualize every prerequisite relationship through an interactive concept graph.
+
+                        </p>
+                        <hr>
+                        
+<a href="pages/about.html" class="feature-link">
+
+Learn More
+
+<i data-lucide="arrow-right"></i>
+
+</a>
+                    </div>
+                    
+
+                    <div class="feature-card"
+     data-number="03">
+
+                        <div class="feature-icon">
+
+                            <i data-lucide="brain-circuit"></i>
+
+                        </div>
+
+                        <h3>
+
+                            Personalized Recovery
+
+                        </h3>
+
+                        <p>
+
+                            Receive explanations, practice problems and recovery paths tailored to your weak concepts.
+
+                        </p>
+                        <hr>
+                        <a href="pages/about.html" class="feature-link">
+
+Learn More
+
+<i data-lucide="arrow-right"></i>
+
+</a>
+                    </div>
+                    
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- TIMELINE -->
+        <!-- ===================================================== -->
+
+        <section class="py-32">
+
+            <div class="max-w-7xl mx-auto px-8">
+
+                <div class="text-center mb-20">
+
+                    <span class="status-chip">
+
+                        PIPELINE
+
+                    </span>
+
+                    <h2 class="section-title mt-6">
+
+                        DIAGNOSTIC PROCESS
+
+                    </h2>
+
+                </div>
+
+                <div class="timeline">
+
+                    <div class="timeline-line"></div>
+
+                    <div class="timeline-step">
+
+    <div class="timeline-node">
+        <span>01</span>
+    </div>
+
+    <div class="timeline-card">
+
+        <div class="timeline-tag">
+            INPUT
+        </div>
+
+        <h3>Input Problem</h3>
+
+        <p>
+            User selects the concept they struggle to understand.
+        </p>
+
+    </div>
+
+</div>
+
+                    <div class="timeline-step">
+
+    <div class="timeline-node">
+        <span>02</span>
+    </div>
+
+    <div class="timeline-card">
+
+        <div class="timeline-tag">
+            GRAPH
+        </div>
+
+        <h3>Dependency Scan</h3>
+
+        <p>
+            Traverse the prerequisite graph to identify missing concepts.
+        </p>
+
+    </div>
+
+</div>
+
+                    <div class="timeline-step">
+
+    <div class="timeline-node">
+        <span>03</span>
+    </div>
+
+    <div class="timeline-card">
+
+        <div class="timeline-tag">
+            ANALYSIS
+        </div>
+
+        <h3>Root Cause</h3>
+
+        <p>
+            Weak Concept Found
+        </p>
+
+    </div>
+
+</div>
+
+                    <div class="timeline-step">
+
+    <div class="timeline-node">
+        <span>04</span>
+    </div>
+
+    <div class="timeline-card">
+
+        <div class="timeline-tag">
+            RECOVERY
+        </div>
+
+        <h3>Adaptive dealing path</h3>
+
+        <p>
+            Traverse the prerequisite graph to identify missing concepts.
+        </p>
+
+    </div>
+
+</div>
+
+                    
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- LIVE STATS -->
+        <!-- ===================================================== -->
+
+        <section class="pb-32">
+
+            <div class="max-w-7xl mx-auto px-8">
+
+                <div class="grid lg:grid-cols-4 gap-8">
+
+<div class="stat-card" data-id="01">
+
+    <div class="stat-label">
+        Concepts
+    </div>
+
+    <span class="counter" id="statNodes" data-target="0">0</span>
+
+    <div class="stat-divider"></div>
+
+    <div class="stat-status" id="statNodesStatus">
+        Loading...
+    </div>
+
+</div>
+
+<div class="stat-card" data-id="02">
+
+    <div class="stat-label">
+        Dependency Links
+    </div>
+
+    <span class="counter" id="statEdges" data-target="0">0</span>
+
+    <div class="stat-divider"></div>
+
+    <div class="stat-status" id="statEdgesStatus">
+        Loading...
+    </div>
+
+</div>
+
+<div class="stat-card" data-id="03">
+
+    <div class="stat-label">
+        Subjects
+    </div>
+
+    <span class="counter" id="statSubjects" data-target="0">0</span>
+
+    <div class="stat-divider"></div>
+
+    <div class="stat-status" id="statSubjectsStatus">
+        Loading...
+    </div>
+
+</div>
+
+<div class="stat-card" data-id="04">
+
+    <div class="stat-label">
+        AI Engine
+    </div>
+
+    <span class="counter" id="statEngine" data-target="0">—</span>
+
+    <div class="stat-divider"></div>
+
+    <div class="stat-status" id="statEngineStatus">
+        Checking...
+    </div>
+
+</div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- CTA -->
+        <!-- ===================================================== -->
+
+      <section class="pb-40">
+
+    <div class="max-w-6xl mx-auto px-8">
+
+        <div class="cta-panel">
+
+            <span class="status-chip">
+                COGNIS ENGINE READY
+            </span>
+
+            <h2 class="cta-title">
+                Ready to Diagnose
+                <br>
+                Your Knowledge?
+            </h2>
+
+            <p class="cta-description">
+                Discover exactly where learning breaks down and receive a personalized path to mastery.
+            </p>
+
+            <div class="cta-buttons">
+
+    <a href="pages/scan.html"
+       class="primary-button">
+
+        INITIALIZE COGNIS
+
+    </a>
+
+    <a href="#features"
+       class="secondary-button">
+
+        VIEW PROCESS
+
+    </a>
+
+</div>
+<div class="cta-meta">
+
+    ✓ AI Powered
+
+    •
+
+    Personalized Learning
+
+    •
+
+    Interactive Knowledge Graph
+
+</div>
+        </div>
+
+    </div>
+
+</section>
+
+        <!-- ===================================================== -->
+        <!-- FOOTER -->
+        <!-- ===================================================== -->
+
+        <footer class="border-t border-white/10">
+
+            <div class="max-w-7xl mx-auto px-8 py-12">
+
+                <div class="grid lg:grid-cols-4 gap-12">
+
+                    <div>
+
+                        <h3 class="font-terminal text-4xl text-accent">
+
+                            COGNIS
+
+                        </h3>
+
+                        <p class="mt-4 text-sm text-muted">
+
+                            Uncover the root of every learning gap.
+
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <h4 class="footer-heading">
+
+                            Navigation
+
+                        </h4>
+
+                        <ul class="footer-links">
+
+                            <li><a href="#home">Home</a></li>
+
+                            <li><a href="#features">Features</a></li>
+
+                            <li><a href="pages/about.html">About</a></li>
+
+                        </ul>
+
+                    </div>
+
+                    <div>
+
+                        <h4 class="footer-heading">
+
+                            Tools
+
+                        </h4>
+
+                        <ul class="footer-links">
+
+                            <li><a href="pages/scan.html">Scanner</a></li>
+
+                            <li><a href="pages/upload.html">Upload Notes</a></li>
+
+                            <li><a href="pages/subject_graph.html">Knowledge Map</a></li>
+
+                        </ul>
+
+                    </div>
+
+                    <div>
+
+                        <h4 class="footer-heading">
+
+                            Connect
+
+                        </h4>
+
+                        <div class="flex gap-4 mt-5">
+
+                            <a class="social-icon" href="https://github.com" target="_blank" rel="noopener">
+
+                                <i data-lucide="github"></i>
+
+                            </a>
+
+                            <a class="social-icon" href="mailto:contact@cognis.dev">
+
+                                <i data-lucide="mail"></i>
+
+                            </a>
+
+                            <a class="social-icon" href="https://linkedin.com" target="_blank" rel="noopener">
+
+                                <i data-lucide="linkedin"></i>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-16 pt-8 border-t border-white/5 flex justify-between items-center text-xs text-muted">
+
+                    <span>
+
+                        © 2026 Cognis
+
+                    </span>
+
+                    <span>
+
+                        Built for Hackathons • Frontend Prototype
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/session.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/theme.js" defer></script>
+    <script src="js/terminal.js"></script>
+    <script src="js/cursor.js"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/ui-polish.js"></script>
+    <script src="js/particles.js"></script>
+
+    <script>
+        lucide.createIcons();
+
+        // --- Dynamic Stats from /health API ---
+        async function loadLiveStats() {
+            try {
+                const res = await fetch(API_BASE.replace('/api', '') + '/health');
+                if (!res.ok) throw new Error('Health check failed');
+                const data = await res.json();
+
+                const nodesEl = document.getElementById('statNodes');
+                const edgesEl = document.getElementById('statEdges');
+                const subjectsEl = document.getElementById('statSubjects');
+                const engineEl = document.getElementById('statEngine');
+
+                if (nodesEl) {
+                    nodesEl.dataset.target = data.total_nodes || data.nodes || '0';
+                    document.getElementById('statNodesStatus').textContent = 'Live';
+                }
+                if (edgesEl) {
+                    edgesEl.dataset.target = data.total_edges || '0';
+                    document.getElementById('statEdgesStatus').textContent = 'Mapped';
+                }
+                if (subjectsEl) {
+                    subjectsEl.dataset.target = data.subjects || '0';
+                    document.getElementById('statSubjectsStatus').textContent = 'Available';
+                }
+                if (engineEl) {
+                    engineEl.textContent = data.embeddings_ready === 'True' ? 'ONLINE' : 'LOADING';
+                    engineEl.dataset.target = '';
+                    document.getElementById('statEngineStatus').textContent = data.status === 'ok' ? 'Ready' : 'Checking...';
+                }
+
+                // Re-init counters with real data
+                initCounters();
+
+            } catch (err) {
+                console.warn('Could not load live stats:', err.message);
+                // Keep showing 0s with "Offline" status
+                const statuses = ['statNodesStatus', 'statEdgesStatus', 'statSubjectsStatus', 'statEngineStatus'];
+                statuses.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = 'Offline';
+                });
+            }
+        }
+        loadLiveStats();
+
+        // --- Mobile Menu Toggle ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.querySelector('.hidden.lg\\:flex');
+        if (mobileMenuBtn && navLinks) {
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('hidden');
+                navLinks.classList.toggle('flex');
+                navLinks.classList.toggle('flex-col');
+                navLinks.classList.toggle('absolute');
+                navLinks.classList.toggle('top-20');
+                navLinks.classList.toggle('left-0');
+                navLinks.classList.toggle('right-0');
+                navLinks.classList.toggle('bg-panel');
+                navLinks.classList.toggle('p-8');
+                navLinks.classList.toggle('border-b');
+                navLinks.classList.toggle('border-border');
+                navLinks.classList.toggle('z-50');
+            });
+        }
+    </script>
+
+</body>
+
+</html>

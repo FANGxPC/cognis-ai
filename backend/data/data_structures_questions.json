@@ -1,0 +1,602 @@
+{
+  "arrays": [
+    {
+      "id": "arrays_q1",
+      "question": "What is the time complexity of accessing an element in an array by its index?",
+      "choices": { "A": "O(n)", "B": "O(log n)", "C": "O(1)", "D": "O(n²)" },
+      "correct_answer": "C",
+      "explanation": "Arrays store elements in contiguous memory, so any index can be computed directly from the base address in constant time."
+    },
+    {
+      "id": "arrays_q2",
+      "question": "What happens when you insert an element at the beginning of an array of size n?",
+      "choices": { "A": "Only the first element shifts", "B": "All n elements must shift right", "C": "No elements need to shift", "D": "Only half the elements shift" },
+      "correct_answer": "B",
+      "explanation": "Inserting at position 0 requires shifting all existing elements one position to the right, making it an O(n) operation."
+    },
+    {
+      "id": "arrays_q3",
+      "question": "Which property distinguishes arrays from linked lists?",
+      "choices": { "A": "Arrays can store multiple types", "B": "Arrays support contiguous memory allocation", "C": "Arrays have dynamic size by default", "D": "Arrays store elements in non-sequential memory" },
+      "correct_answer": "B",
+      "explanation": "Arrays allocate a contiguous block of memory, enabling O(1) random access, whereas linked lists use scattered nodes connected by pointers."
+    },
+    {
+      "id": "arrays_q4",
+      "question": "An array has indices 0 through 9. What is the index of the 7th element?",
+      "choices": { "A": "7", "B": "6", "C": "8", "D": "5" },
+      "correct_answer": "B",
+      "explanation": "Arrays use zero-based indexing, so the 7th element is at index 6."
+    }
+  ],
+  "linked_lists": [
+    {
+      "id": "linked_lists_q1",
+      "question": "What is the time complexity of inserting a node at the head of a singly linked list?",
+      "choices": { "A": "O(n)", "B": "O(log n)", "C": "O(1)", "D": "O(n log n)" },
+      "correct_answer": "C",
+      "explanation": "Inserting at the head only requires creating a new node and updating the head pointer — no shifting needed."
+    },
+    {
+      "id": "linked_lists_q2",
+      "question": "What is the main disadvantage of a singly linked list compared to an array?",
+      "choices": { "A": "Cannot store integers", "B": "No random access — must traverse sequentially", "C": "Uses less memory", "D": "Cannot be sorted" },
+      "correct_answer": "B",
+      "explanation": "Linked lists lack contiguous memory, so accessing the kth element requires traversing k nodes from the head."
+    },
+    {
+      "id": "linked_lists_q3",
+      "question": "In a doubly linked list, each node contains:",
+      "choices": { "A": "Data and one pointer", "B": "Data only", "C": "Data and two pointers (next and previous)", "D": "Two data fields and one pointer" },
+      "correct_answer": "C",
+      "explanation": "A doubly linked list node holds data, a pointer to the next node, and a pointer to the previous node, enabling traversal in both directions."
+    },
+    {
+      "id": "linked_lists_q4",
+      "question": "To delete a node from the middle of a singly linked list, you need:",
+      "choices": { "A": "Access to the node to delete only", "B": "Access to the node before the one to delete", "C": "Access to the tail node", "D": "The index of the node in an array" },
+      "correct_answer": "B",
+      "explanation": "In a singly linked list, you must update the previous node's next pointer to skip the deleted node, so you need access to the predecessor."
+    }
+  ],
+  "stacks": [
+    {
+      "id": "stacks_q1",
+      "question": "Which principle does a stack follow?",
+      "choices": { "A": "FIFO (First In, First Out)", "B": "LIFO (Last In, First Out)", "C": "Random access", "D": "Priority-based" },
+      "correct_answer": "B",
+      "explanation": "A stack follows Last-In-First-Out: the most recently pushed element is the first to be popped."
+    },
+    {
+      "id": "stacks_q2",
+      "question": "If you push A, B, C onto a stack (in that order), what is the first element popped?",
+      "choices": { "A": "A", "B": "B", "C": "C", "D": "Cannot determine" },
+      "correct_answer": "C",
+      "explanation": "C was pushed last, so under LIFO it is popped first."
+    },
+    {
+      "id": "stacks_q3",
+      "question": "Which real-world application commonly uses a stack?",
+      "choices": { "A": "Print job scheduling", "B": "Undo functionality in text editors", "C": "Ticket queue at a counter", "D": "Round-robin scheduling" },
+      "correct_answer": "B",
+      "explanation": "Undo operations reverse the most recent action first, which matches LIFO behavior — a perfect use case for stacks."
+    },
+    {
+      "id": "stacks_q4",
+      "question": "What operation retrieves the top element without removing it?",
+      "choices": { "A": "pop", "B": "push", "C": "peek (or top)", "D": "dequeue" },
+      "correct_answer": "C",
+      "explanation": "Peek (or top) returns the element at the top of the stack without modifying the stack."
+    }
+  ],
+  "queues": [
+    {
+      "id": "queues_q1",
+      "question": "Which principle does a queue follow?",
+      "choices": { "A": "LIFO", "B": "FIFO (First In, First Out)", "C": "Random access", "D": "Sorted order" },
+      "correct_answer": "B",
+      "explanation": "A queue follows First-In-First-Out: the element added first is removed first."
+    },
+    {
+      "id": "queues_q2",
+      "question": "If you enqueue 10, 20, 30 (in that order), what does dequeue return?",
+      "choices": { "A": "30", "B": "20", "C": "10", "D": "Undefined" },
+      "correct_answer": "C",
+      "explanation": "10 was enqueued first, so under FIFO it is dequeued first."
+    },
+    {
+      "id": "queues_q3",
+      "question": "A circular queue solves which problem of a linear array-based queue?",
+      "choices": { "A": "Slow enqueue", "B": "Wasted space at the front after dequeues", "C": "Lack of FIFO ordering", "D": "Inability to store strings" },
+      "correct_answer": "B",
+      "explanation": "In a linear array queue, dequeuing wastes front slots. A circular queue wraps around, reusing freed space."
+    },
+    {
+      "id": "queues_q4",
+      "question": "Which traversal algorithm primarily uses a queue?",
+      "choices": { "A": "Depth-First Search", "B": "Inorder traversal", "C": "Breadth-First Search", "D": "Postorder traversal" },
+      "correct_answer": "C",
+      "explanation": "BFS explores nodes level by level, using a queue to track which nodes to visit next."
+    }
+  ],
+  "recursion": [
+    {
+      "id": "recursion_q1",
+      "question": "Every recursive function must have:",
+      "choices": { "A": "A loop", "B": "A base case", "C": "A global variable", "D": "A return type of void" },
+      "correct_answer": "B",
+      "explanation": "Without a base case the function calls itself infinitely, causing a stack overflow. The base case provides the termination condition."
+    },
+    {
+      "id": "recursion_q2",
+      "question": "What data structure does the system use to manage recursive function calls?",
+      "choices": { "A": "Queue", "B": "Heap", "C": "Call stack", "D": "Hash table" },
+      "correct_answer": "C",
+      "explanation": "Each recursive call is pushed onto the call stack; when it returns, it is popped — classic LIFO behavior."
+    },
+    {
+      "id": "recursion_q3",
+      "question": "What is the time complexity of a naive recursive Fibonacci implementation?",
+      "choices": { "A": "O(n)", "B": "O(log n)", "C": "O(2^n)", "D": "O(n²)" },
+      "correct_answer": "C",
+      "explanation": "Each call branches into two sub-calls, leading to an exponential number of calls — approximately O(2^n)."
+    },
+    {
+      "id": "recursion_q4",
+      "question": "Tail recursion is a special form of recursion where:",
+      "choices": { "A": "The function never returns", "B": "The recursive call is the last operation before returning", "C": "Two functions call each other", "D": "The base case is checked at the end" },
+      "correct_answer": "B",
+      "explanation": "In tail recursion the recursive call is the final action, allowing compilers to optimize it into a loop (tail-call optimization)."
+    }
+  ],
+  "hashing": [
+    {
+      "id": "hashing_q1",
+      "question": "What is the primary purpose of a hash function?",
+      "choices": { "A": "Sort data", "B": "Map a key to an array index", "C": "Encrypt data", "D": "Compress files" },
+      "correct_answer": "B",
+      "explanation": "A hash function transforms a key into an integer index within the bounds of an array, enabling fast lookups."
+    },
+    {
+      "id": "hashing_q2",
+      "question": "A collision in hashing occurs when:",
+      "choices": { "A": "Two different keys produce the same hash index", "B": "The hash table is empty", "C": "A key is not found", "D": "The hash function returns a negative value" },
+      "correct_answer": "A",
+      "explanation": "Since the hash space is finite, different keys can map to the same index — this is called a collision."
+    },
+    {
+      "id": "hashing_q3",
+      "question": "A good hash function should:",
+      "choices": { "A": "Always return the same index for all keys", "B": "Distribute keys uniformly across the table", "C": "Be as slow as possible", "D": "Only work with integers" },
+      "correct_answer": "B",
+      "explanation": "Uniform distribution minimizes collisions, which is key to maintaining O(1) average-case performance."
+    },
+    {
+      "id": "hashing_q4",
+      "question": "The load factor of a hash table is defined as:",
+      "choices": { "A": "Number of empty slots / total slots", "B": "Number of stored elements / total slots", "C": "Total slots / number of collisions", "D": "Number of collisions / number of elements" },
+      "correct_answer": "B",
+      "explanation": "Load factor = n/m (elements/slots). Higher load factors increase collision probability and degrade performance."
+    }
+  ],
+  "hash_tables": [
+    {
+      "id": "hash_tables_q1",
+      "question": "In separate chaining, collisions are resolved by:",
+      "choices": { "A": "Deleting the old key", "B": "Storing colliding entries in a linked list at that index", "C": "Rehashing with a different function", "D": "Ignoring the new key" },
+      "correct_answer": "B",
+      "explanation": "Separate chaining maintains a linked list (or other container) at each slot, appending colliding entries to the list."
+    },
+    {
+      "id": "hash_tables_q2",
+      "question": "What is the average time complexity of lookup in a well-designed hash table?",
+      "choices": { "A": "O(n)", "B": "O(log n)", "C": "O(1)", "D": "O(n log n)" },
+      "correct_answer": "C",
+      "explanation": "With a good hash function and low load factor, the expected number of collisions per slot is constant, giving O(1) average lookup."
+    },
+    {
+      "id": "hash_tables_q3",
+      "question": "Open addressing resolves collisions by:",
+      "choices": { "A": "Creating a new hash table", "B": "Probing for the next available slot in the array", "C": "Using a second hash table", "D": "Storing values in a tree" },
+      "correct_answer": "B",
+      "explanation": "Open addressing (linear probing, quadratic probing, double hashing) searches for the next empty slot within the same array."
+    },
+    {
+      "id": "hash_tables_q4",
+      "question": "When should a hash table be resized (rehashed)?",
+      "choices": { "A": "After every insertion", "B": "When the load factor exceeds a threshold (e.g., 0.75)", "C": "When the table is completely empty", "D": "Only when a deletion occurs" },
+      "correct_answer": "B",
+      "explanation": "Resizing when the load factor exceeds ~0.75 keeps collision rates low and maintains O(1) average performance."
+    }
+  ],
+  "trees_intro": [
+    {
+      "id": "trees_intro_q1",
+      "question": "Which of the following is NOT a property of a tree?",
+      "choices": { "A": "It has exactly one root", "B": "It contains no cycles", "C": "Every node can have multiple parents", "D": "There is exactly one path between any two nodes" },
+      "correct_answer": "C",
+      "explanation": "In a tree, every node except the root has exactly one parent. Multiple parents would create cycles, violating the tree definition."
+    },
+    {
+      "id": "trees_intro_q2",
+      "question": "The height of a tree with only a root node is:",
+      "choices": { "A": "1", "B": "0", "C": "-1", "D": "2" },
+      "correct_answer": "B",
+      "explanation": "Height is the number of edges on the longest path from root to a leaf. A single root has no edges, so height = 0."
+    },
+    {
+      "id": "trees_intro_q3",
+      "question": "A leaf node is a node that:",
+      "choices": { "A": "Has exactly one child", "B": "Is the root", "C": "Has no children", "D": "Has the maximum value" },
+      "correct_answer": "C",
+      "explanation": "A leaf node has no children — it is at the boundary of the tree."
+    },
+    {
+      "id": "trees_intro_q4",
+      "question": "If a tree has n nodes, how many edges does it have?",
+      "choices": { "A": "n", "B": "n + 1", "C": "n - 1", "D": "2n" },
+      "correct_answer": "C",
+      "explanation": "Every node except the root has exactly one incoming edge from its parent, so a tree with n nodes has n - 1 edges."
+    }
+  ],
+  "binary_trees": [
+    {
+      "id": "binary_trees_q1",
+      "question": "In a binary tree, each node can have at most:",
+      "choices": { "A": "1 child", "B": "2 children", "C": "3 children", "D": "Unlimited children" },
+      "correct_answer": "B",
+      "explanation": "By definition, a binary tree restricts each node to at most two children: left and right."
+    },
+    {
+      "id": "binary_trees_q2",
+      "question": "A full binary tree is one where:",
+      "choices": { "A": "Every level is completely filled", "B": "Every node has exactly 0 or 2 children", "C": "All leaves are at the same depth", "D": "It has exactly n nodes" },
+      "correct_answer": "B",
+      "explanation": "In a full (proper) binary tree, every internal node has exactly two children; no node has only one child."
+    },
+    {
+      "id": "binary_trees_q3",
+      "question": "A complete binary tree of height h has between ___ and ___ nodes.",
+      "choices": { "A": "h and 2h", "B": "2^h and 2^(h+1) - 1", "C": "h+1 and h²", "D": "1 and h" },
+      "correct_answer": "B",
+      "explanation": "A complete binary tree of height h has at minimum 2^h nodes (one node at the last level) and at most 2^(h+1)-1 nodes (all levels full)."
+    },
+    {
+      "id": "binary_trees_q4",
+      "question": "The maximum number of nodes at level k of a binary tree is:",
+      "choices": { "A": "k", "B": "2k", "C": "2^k", "D": "k²" },
+      "correct_answer": "C",
+      "explanation": "Each level k can have at most 2^k nodes (level 0 = 1 node, level 1 = 2 nodes, level 2 = 4 nodes, etc.)."
+    }
+  ],
+  "tree_traversals": [
+    {
+      "id": "tree_traversals_q1",
+      "question": "Which traversal visits the root node before its children?",
+      "choices": { "A": "Inorder", "B": "Preorder", "C": "Postorder", "D": "None of these" },
+      "correct_answer": "B",
+      "explanation": "Preorder traversal visits root first, then left subtree, then right subtree (Root → Left → Right)."
+    },
+    {
+      "id": "tree_traversals_q2",
+      "question": "Inorder traversal of a Binary Search Tree produces:",
+      "choices": { "A": "Random order", "B": "Reverse sorted order", "C": "Sorted (ascending) order", "D": "Level-by-level order" },
+      "correct_answer": "C",
+      "explanation": "Inorder visits left → root → right. In a BST, left < root < right, so the output is sorted ascending."
+    },
+    {
+      "id": "tree_traversals_q3",
+      "question": "Which data structure is used for level-order traversal?",
+      "choices": { "A": "Stack", "B": "Queue", "C": "Hash table", "D": "Linked list" },
+      "correct_answer": "B",
+      "explanation": "Level-order traversal processes nodes level by level using a queue to track the next node to visit."
+    },
+    {
+      "id": "tree_traversals_q4",
+      "question": "Postorder traversal visits nodes in the order:",
+      "choices": { "A": "Root → Left → Right", "B": "Left → Right → Root", "C": "Left → Root → Right", "D": "Right → Left → Root" },
+      "correct_answer": "B",
+      "explanation": "Postorder traversal visits the left subtree, then the right subtree, then the root (Left → Right → Root)."
+    }
+  ],
+  "binary_search_trees": [
+    {
+      "id": "binary_search_trees_q1",
+      "question": "In a BST, all keys in the left subtree of a node are:",
+      "choices": { "A": "Greater than the node", "B": "Equal to the node", "C": "Less than the node", "D": "Randomly placed" },
+      "correct_answer": "C",
+      "explanation": "The BST property requires that all keys in the left subtree are strictly less than the node's key."
+    },
+    {
+      "id": "binary_search_trees_q2",
+      "question": "What is the worst-case time complexity of searching in a BST?",
+      "choices": { "A": "O(1)", "B": "O(log n)", "C": "O(n)", "D": "O(n log n)" },
+      "correct_answer": "C",
+      "explanation": "In the worst case (a completely skewed tree resembling a linked list), search must traverse all n nodes."
+    },
+    {
+      "id": "binary_search_trees_q3",
+      "question": "To delete a node with two children from a BST, you typically replace it with:",
+      "choices": { "A": "Its parent", "B": "Its inorder successor or predecessor", "C": "The root node", "D": "A null value" },
+      "correct_answer": "B",
+      "explanation": "Replacing with the inorder successor (smallest in right subtree) or predecessor (largest in left subtree) maintains the BST property."
+    },
+    {
+      "id": "binary_search_trees_q4",
+      "question": "Inserting a sorted sequence 1, 2, 3, 4, 5 into an empty BST creates:",
+      "choices": { "A": "A balanced tree", "B": "A right-skewed tree (like a linked list)", "C": "A complete binary tree", "D": "A heap" },
+      "correct_answer": "B",
+      "explanation": "Each new element is larger than all existing nodes, so it always goes to the right child, creating a linear chain."
+    }
+  ],
+  "balanced_bst": [
+    {
+      "id": "balanced_bst_q1",
+      "question": "What problem do self-balancing BSTs (like AVL or Red-Black trees) solve?",
+      "choices": { "A": "Slow insertion in arrays", "B": "O(n) worst-case operations in skewed BSTs", "C": "Memory leaks", "D": "Hash collisions" },
+      "correct_answer": "B",
+      "explanation": "Self-balancing trees guarantee O(log n) height, preventing the O(n) degradation that occurs with skewed BSTs."
+    },
+    {
+      "id": "balanced_bst_q2",
+      "question": "In an AVL tree, the balance factor of every node must be:",
+      "choices": { "A": "Always 0", "B": "-1, 0, or +1", "C": "Any positive number", "D": "Between -2 and +2" },
+      "correct_answer": "B",
+      "explanation": "The AVL balance factor (height of left subtree - height of right subtree) must be -1, 0, or +1 for every node."
+    },
+    {
+      "id": "balanced_bst_q3",
+      "question": "Which operation restores balance in an AVL tree after an insertion?",
+      "choices": { "A": "Rehashing", "B": "Rotation (single or double)", "C": "Deleting the root", "D": "Rebuilding the entire tree" },
+      "correct_answer": "B",
+      "explanation": "AVL trees use rotations (left, right, left-right, right-left) to restore balance after insertions or deletions."
+    },
+    {
+      "id": "balanced_bst_q4",
+      "question": "Red-Black trees guarantee that the longest path from root to a leaf is at most ___ times the shortest path.",
+      "choices": { "A": "1.5", "B": "2", "C": "3", "D": "log n" },
+      "correct_answer": "B",
+      "explanation": "Red-Black tree properties ensure no path is more than twice as long as any other, guaranteeing O(log n) height."
+    }
+  ],
+  "heaps": [
+    {
+      "id": "heaps_q1",
+      "question": "In a min-heap, the smallest element is always at:",
+      "choices": { "A": "The last position", "B": "A random position", "C": "The root", "D": "The leftmost leaf" },
+      "correct_answer": "C",
+      "explanation": "The min-heap property requires every parent to be ≤ its children, so the global minimum is always at the root."
+    },
+    {
+      "id": "heaps_q2",
+      "question": "A binary heap is typically implemented using:",
+      "choices": { "A": "A linked list", "B": "A hash table", "C": "An array", "D": "A graph adjacency list" },
+      "correct_answer": "C",
+      "explanation": "Since a binary heap is a complete binary tree, it maps perfectly to an array: parent at index i has children at 2i+1 and 2i+2."
+    },
+    {
+      "id": "heaps_q3",
+      "question": "The time complexity of extracting the minimum from a min-heap of n elements is:",
+      "choices": { "A": "O(1)", "B": "O(log n)", "C": "O(n)", "D": "O(n log n)" },
+      "correct_answer": "B",
+      "explanation": "The root is removed in O(1), but restoring the heap property (heapify/sift-down) takes O(log n)."
+    },
+    {
+      "id": "heaps_q4",
+      "question": "Building a heap from an unsorted array of n elements takes:",
+      "choices": { "A": "O(n log n)", "B": "O(n²)", "C": "O(n)", "D": "O(log n)" },
+      "correct_answer": "C",
+      "explanation": "Floyd's bottom-up heap construction algorithm runs in O(n) by sifting down from the last internal node upward."
+    }
+  ],
+  "sorting_basic": [
+    {
+      "id": "sorting_basic_q1",
+      "question": "What is the best-case time complexity of insertion sort?",
+      "choices": { "A": "O(n²)", "B": "O(n log n)", "C": "O(n)", "D": "O(1)" },
+      "correct_answer": "C",
+      "explanation": "When the array is already sorted, insertion sort only makes one comparison per element — O(n) total."
+    },
+    {
+      "id": "sorting_basic_q2",
+      "question": "Which of these sorting algorithms is stable?",
+      "choices": { "A": "Selection sort", "B": "Heap sort", "C": "Insertion sort", "D": "Quick sort" },
+      "correct_answer": "C",
+      "explanation": "Insertion sort preserves the relative order of equal elements because it only shifts elements, never swapping distant equal elements."
+    },
+    {
+      "id": "sorting_basic_q3",
+      "question": "Selection sort works by repeatedly:",
+      "choices": { "A": "Dividing the array in half", "B": "Finding the minimum element and placing it at the current position", "C": "Comparing adjacent elements and swapping", "D": "Inserting each element into a heap" },
+      "correct_answer": "B",
+      "explanation": "Selection sort scans the unsorted portion for the minimum and swaps it into place at the beginning of the unsorted section."
+    },
+    {
+      "id": "sorting_basic_q4",
+      "question": "Bubble sort has a worst-case time complexity of:",
+      "choices": { "A": "O(n)", "B": "O(n log n)", "C": "O(n²)", "D": "O(2^n)" },
+      "correct_answer": "C",
+      "explanation": "In the worst case (reverse-sorted array), bubble sort performs n(n-1)/2 comparisons and swaps — O(n²)."
+    }
+  ],
+  "sorting_advanced": [
+    {
+      "id": "sorting_advanced_q1",
+      "question": "Merge sort's time complexity is:",
+      "choices": { "A": "O(n²) always", "B": "O(n log n) always", "C": "O(n) best case", "D": "O(n log n) average but O(n²) worst" },
+      "correct_answer": "B",
+      "explanation": "Merge sort always divides the array in half (log n levels) and merges in O(n) at each level — O(n log n) in all cases."
+    },
+    {
+      "id": "sorting_advanced_q2",
+      "question": "Quick sort's worst case occurs when:",
+      "choices": { "A": "The array is randomly shuffled", "B": "The pivot always splits the array evenly", "C": "The pivot is always the smallest or largest element", "D": "The array has only unique elements" },
+      "correct_answer": "C",
+      "explanation": "If the pivot is always the extreme element, one partition has n-1 elements and the other has 0, giving O(n²)."
+    },
+    {
+      "id": "sorting_advanced_q3",
+      "question": "What extra space does merge sort require?",
+      "choices": { "A": "O(1)", "B": "O(log n)", "C": "O(n)", "D": "O(n²)" },
+      "correct_answer": "C",
+      "explanation": "Standard merge sort needs an auxiliary array of size n for merging, giving O(n) extra space."
+    },
+    {
+      "id": "sorting_advanced_q4",
+      "question": "Which sorting algorithm is typically fastest in practice for large random arrays?",
+      "choices": { "A": "Bubble sort", "B": "Insertion sort", "C": "Quick sort", "D": "Selection sort" },
+      "correct_answer": "C",
+      "explanation": "Quick sort's cache-friendly in-place partitioning and O(n log n) average case make it the fastest in practice for most inputs."
+    }
+  ],
+  "graphs_intro": [
+    {
+      "id": "graphs_intro_q1",
+      "question": "A directed graph differs from an undirected graph in that:",
+      "choices": { "A": "It has no edges", "B": "Edges have a direction (from one vertex to another)", "C": "It cannot have cycles", "D": "It always has weighted edges" },
+      "correct_answer": "B",
+      "explanation": "In a directed graph, each edge goes from a source vertex to a destination vertex — the order matters."
+    },
+    {
+      "id": "graphs_intro_q2",
+      "question": "An adjacency matrix for a graph with V vertices uses ___ space.",
+      "choices": { "A": "O(V)", "B": "O(V + E)", "C": "O(V²)", "D": "O(E²)" },
+      "correct_answer": "C",
+      "explanation": "An adjacency matrix is a V×V 2D array, requiring O(V²) space regardless of the number of edges."
+    },
+    {
+      "id": "graphs_intro_q3",
+      "question": "An adjacency list is more space-efficient than an adjacency matrix when:",
+      "choices": { "A": "The graph is dense (many edges)", "B": "The graph is sparse (few edges)", "C": "The graph has no edges", "D": "The graph is a complete graph" },
+      "correct_answer": "B",
+      "explanation": "An adjacency list uses O(V + E) space. When E << V², this is much less than the O(V²) matrix."
+    },
+    {
+      "id": "graphs_intro_q4",
+      "question": "The degree of a vertex in an undirected graph is:",
+      "choices": { "A": "The number of vertices in the graph", "B": "The number of edges connected to that vertex", "C": "The shortest path to the root", "D": "The weight of its heaviest edge" },
+      "correct_answer": "B",
+      "explanation": "The degree of a vertex is the count of edges incident to it — how many direct neighbors it has."
+    }
+  ],
+  "graph_traversals": [
+    {
+      "id": "graph_traversals_q1",
+      "question": "BFS explores vertices in order of their:",
+      "choices": { "A": "Weight", "B": "Distance (number of edges) from the source", "C": "Alphabetical order", "D": "Insertion time" },
+      "correct_answer": "B",
+      "explanation": "BFS explores all vertices at distance k before any vertex at distance k+1, giving a level-by-level exploration."
+    },
+    {
+      "id": "graph_traversals_q2",
+      "question": "DFS can be implemented using:",
+      "choices": { "A": "A queue", "B": "A stack or recursion", "C": "A hash table only", "D": "An adjacency matrix only" },
+      "correct_answer": "B",
+      "explanation": "DFS uses a stack (explicitly or via the call stack in recursion) to track which vertex to explore next."
+    },
+    {
+      "id": "graph_traversals_q3",
+      "question": "The time complexity of BFS or DFS on a graph with V vertices and E edges is:",
+      "choices": { "A": "O(V)", "B": "O(E)", "C": "O(V + E)", "D": "O(V × E)" },
+      "correct_answer": "C",
+      "explanation": "Both BFS and DFS visit every vertex once (O(V)) and examine every edge once (O(E)), totaling O(V + E)."
+    },
+    {
+      "id": "graph_traversals_q4",
+      "question": "To detect a cycle in an undirected graph, you can use:",
+      "choices": { "A": "BFS or DFS — if a visited node is encountered again (not the parent)", "B": "Only sorting", "C": "Only BFS, not DFS", "D": "A hash function" },
+      "correct_answer": "A",
+      "explanation": "During BFS/DFS, if you encounter a previously visited vertex that isn't the current node's parent, a cycle exists."
+    }
+  ],
+  "shortest_path": [
+    {
+      "id": "shortest_path_q1",
+      "question": "Dijkstra's algorithm does NOT work correctly with:",
+      "choices": { "A": "Undirected graphs", "B": "Sparse graphs", "C": "Negative edge weights", "D": "Weighted graphs" },
+      "correct_answer": "C",
+      "explanation": "Dijkstra's greedy approach assumes once a vertex is finalized its distance won't improve — negative weights break this assumption."
+    },
+    {
+      "id": "shortest_path_q2",
+      "question": "Dijkstra's algorithm uses which data structure for optimal performance?",
+      "choices": { "A": "Stack", "B": "Queue", "C": "Min-heap (priority queue)", "D": "Hash table" },
+      "correct_answer": "C",
+      "explanation": "A min-heap efficiently extracts the vertex with the smallest tentative distance, giving O((V + E) log V) complexity."
+    },
+    {
+      "id": "shortest_path_q3",
+      "question": "Bellman-Ford algorithm can detect:",
+      "choices": { "A": "Only positive cycles", "B": "Negative weight cycles reachable from the source", "C": "Disconnected components", "D": "Bridges in a graph" },
+      "correct_answer": "B",
+      "explanation": "After V-1 relaxation rounds, if any edge can still be relaxed, a negative cycle exists — Bellman-Ford detects this."
+    },
+    {
+      "id": "shortest_path_q4",
+      "question": "BFS finds the shortest path in an unweighted graph because:",
+      "choices": { "A": "It uses a priority queue", "B": "It visits nodes in order of increasing distance from the source", "C": "It sorts all edges first", "D": "It uses dynamic programming" },
+      "correct_answer": "B",
+      "explanation": "BFS processes vertices level by level, so the first time it reaches a vertex, it has found the shortest path (fewest edges)."
+    }
+  ],
+  "tries": [
+    {
+      "id": "tries_q1",
+      "question": "A trie stores characters of a key in:",
+      "choices": { "A": "A single node", "B": "An array", "C": "Individual nodes along a path from root to leaf", "D": "A hash table" },
+      "correct_answer": "C",
+      "explanation": "Each node in a trie represents one character; a full key is represented by the path from root to a terminal node."
+    },
+    {
+      "id": "tries_q2",
+      "question": "The time complexity of searching for a word of length L in a trie is:",
+      "choices": { "A": "O(n) where n is total words", "B": "O(L)", "C": "O(n log n)", "D": "O(1)" },
+      "correct_answer": "B",
+      "explanation": "We traverse at most L nodes (one per character), regardless of how many words are stored — O(L)."
+    },
+    {
+      "id": "tries_q3",
+      "question": "Tries are particularly efficient for:",
+      "choices": { "A": "Sorting integers", "B": "Prefix-based searches (like autocomplete)", "C": "Finding shortest paths", "D": "Balanced insertions" },
+      "correct_answer": "B",
+      "explanation": "Tries share prefixes between keys, making prefix matching and autocomplete extremely efficient."
+    },
+    {
+      "id": "tries_q4",
+      "question": "The main disadvantage of a trie compared to a hash table is:",
+      "choices": { "A": "Slower lookup", "B": "Cannot store strings", "C": "High memory usage due to many pointers per node", "D": "Cannot handle collisions" },
+      "correct_answer": "C",
+      "explanation": "Each trie node may store up to 26 (or more) child pointers, leading to significant memory overhead compared to hash tables."
+    }
+  ],
+  "dynamic_programming": [
+    {
+      "id": "dynamic_programming_q1",
+      "question": "Dynamic programming is applicable when a problem has:",
+      "choices": { "A": "Only unique subproblems", "B": "Overlapping subproblems and optimal substructure", "C": "No recursive structure", "D": "Only greedy solutions" },
+      "correct_answer": "B",
+      "explanation": "DP works when the same subproblems recur (overlapping) and optimal solutions can be built from optimal sub-solutions (optimal substructure)."
+    },
+    {
+      "id": "dynamic_programming_q2",
+      "question": "Memoization is a DP technique that:",
+      "choices": { "A": "Solves problems bottom-up", "B": "Stores results of solved subproblems to avoid recomputation", "C": "Always uses iteration", "D": "Requires sorting the input first" },
+      "correct_answer": "B",
+      "explanation": "Memoization caches the results of expensive recursive calls so the same subproblem is solved only once."
+    },
+    {
+      "id": "dynamic_programming_q3",
+      "question": "The bottom-up approach to DP differs from top-down in that it:",
+      "choices": { "A": "Uses recursion", "B": "Starts from the smallest subproblems and builds up iteratively", "C": "Is always slower", "D": "Cannot use arrays" },
+      "correct_answer": "B",
+      "explanation": "Bottom-up (tabulation) iteratively fills a table from the simplest subproblems to the full problem, avoiding recursion overhead."
+    },
+    {
+      "id": "dynamic_programming_q4",
+      "question": "The Fibonacci sequence computed with DP (memoization) has time complexity:",
+      "choices": { "A": "O(2^n)", "B": "O(n²)", "C": "O(n)", "D": "O(log n)" },
+      "correct_answer": "C",
+      "explanation": "Each subproblem (F(0) through F(n)) is computed exactly once and stored, giving O(n) total time."
+    }
+  ]
+}

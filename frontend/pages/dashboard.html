@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+if(sessionStorage.getItem("loggedIn")!=="true"){
+    window.location.href="login.html";
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostic History & Progress Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/animations.css">
+</head>
+<script src="../js/theme.js"></script>
+<body class="bg-background text-text overflow-x-hidden">
+
+<div class="noise-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<div class="grid-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></canvas>
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-[9999] py-4 px-6 sm:px-12 backdrop-blur-xl bg-[#0A0A0F]/90 border-b border-white/10" style="position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;background:rgba(10,10,15,0.92)!important;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3 group">
+            <div class="logo-square group-hover:border-accent transition-colors font-terminal text-lg font-bold text-accent">CG</div>
+            <span class="font-terminal text-2xl tracking-widest text-accent hidden sm:inline">COGNIS</span>
+        </a>
+
+
+        <div class="flex items-center gap-4 sm:gap-6 text-xs font-mono">
+            <a href="../index.html" class="nav-link text-muted hover:text-text">HOME</a>
+            <a href="scan.html" class="nav-link text-muted hover:text-accent">SCAN</a>
+            <a href="subject_graph.html" class="nav-link text-muted hover:text-accent">KNOWLEDGE MAP</a>
+            <a href="dashboard.html" class="nav-link text-accent font-bold">DASHBOARD</a>
+            <a href="about.html" class="nav-link text-muted hover:text-text">ABOUT</a>
+        </div>
+    </div>
+</nav>
+
+
+
+<!-- MAIN CONTENT -->
+<section class="pt-28 pb-20 px-8 max-w-7xl mx-auto">
+
+
+
+    <!-- HEADER -->
+    <div class="mb-12">
+        <span class="status-chip">ANALYTICS & HISTORY</span>
+        <h1 class="hero-title mt-4">YOUR DIAGNOSTIC HISTORY</h1>
+        <p class="text-muted mt-4 max-w-2xl">
+            Track all past concept scans, root cause analyses, and overall prerequisite mastery rates.
+        </p>
+    </div>
+
+    <!-- STATS OVERVIEW CARDS -->
+    <div class="grid md:grid-cols-4 gap-6 mb-12">
+        <div class="scanner-panel p-6 border border-white/10">
+            <div class="text-xs font-mono text-muted uppercase tracking-wider mb-2">Total Scans</div>
+            <div class="text-4xl font-terminal text-accent" id="statTotal">0</div>
+        </div>
+        <div class="scanner-panel p-6 border border-white/10">
+            <div class="text-xs font-mono text-muted uppercase tracking-wider mb-2">Concepts Diagnosed</div>
+            <div class="text-4xl font-terminal text-primary" id="statConcepts">0</div>
+        </div>
+        <div class="scanner-panel p-6 border border-white/10">
+            <div class="text-xs font-mono text-muted uppercase tracking-wider mb-2">Root Causes Identified</div>
+            <div class="text-4xl font-terminal text-danger" id="statRootCauses">0</div>
+        </div>
+        <div class="scanner-panel p-6 border border-white/10">
+            <div class="text-xs font-mono text-muted uppercase tracking-wider mb-2">Mastery Rate</div>
+            <div class="text-4xl font-terminal text-lime-300" id="statMasteryRate">100%</div>
+        </div>
+    </div>
+
+    <!-- HISTORY TABLE -->
+    <div class="scanner-panel p-8 border border-white/10 rounded-2xl shadow-glow">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-terminal text-accent">Recent Session Traversals</h2>
+                <p class="text-xs text-muted font-mono mt-1">Scroll through diagnostic logs & click any row to replay</p>
+            </div>
+            <button class="secondary-button text-xs py-2 px-4" onclick="loadDashboardData()">🔄 REFRESH</button>
+        </div>
+
+        <div class="overflow-x-auto overflow-y-auto max-h-[420px] rounded-xl border border-white/5 scroll-smooth">
+            <table class="w-full text-left border-collapse">
+                <thead class="sticky top-0 bg-[#140F22] z-10 border-b border-white/10 shadow-md">
+                    <tr class="text-xs font-mono text-muted uppercase">
+                        <th class="py-3.5 px-4 bg-[#140F22]">Date</th>
+                        <th class="py-3.5 px-4 bg-[#140F22]">Subject</th>
+                        <th class="py-3.5 px-4 bg-[#140F22]">Target Concept</th>
+                        <th class="py-3.5 px-4 bg-[#140F22]">Root Cause Found</th>
+                        <th class="py-3.5 px-4 text-center bg-[#140F22]">Score</th>
+                        <th class="py-3.5 px-4 text-right bg-[#140F22]">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody" class="divide-y divide-white/5 text-sm">
+                    <tr>
+                        <td colspan="6" class="py-8 text-center text-muted">Loading session history...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</section>
+
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/session.js"></script>
+<script src="../js/ui.js"></script>
+
+<script>
+async function loadDashboardData() {
+    try {
+        // Load aggregate stats
+        const stats = await getStats();
+        document.getElementById("statTotal").textContent = stats.total_sessions || 0;
+        document.getElementById("statConcepts").textContent = stats.unique_concepts || 0;
+        document.getElementById("statRootCauses").textContent = stats.root_causes_found || 0;
+        document.getElementById("statMasteryRate").textContent = `${stats.mastery_rate || 100}%`;
+
+        // Load history records
+        const hist = await getHistory(50);
+        const tbody = document.getElementById("historyTableBody");
+
+        if (!hist.sessions || hist.sessions.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="py-8 text-center text-muted">
+                        No sessions recorded yet. Start by <a href="scan.html" class="text-accent underline">initializing a concept scan</a>.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = hist.sessions.map(s => {
+            const dateStr = s.created_at ? s.created_at.replace("T", " ").slice(0, 16) : "Recent";
+            const subjectLabel = (s.subject_slug || "linear_algebra").replace(/_/g, " ").toUpperCase();
+            const conceptLabel = (s.matched_node || s.original_query || "—").replace(/_/g, " ");
+            const rootLabel = s.root_cause_node ? s.root_cause_node.replace(/_/g, " ") : "All Clear ✓";
+            
+            let statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-mono bg-white/10 text-muted">IN PROGRESS</span>`;
+            if (s.status === "complete") {
+                statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-mono bg-lime-300/10 text-lime-300 border border-lime-300/30">✓ MASTERED</span>`;
+            } else if (s.root_cause_node) {
+                statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-mono bg-danger/10 text-danger border border-danger/30">GAP FOUND</span>`;
+            }
+
+            return `
+                <tr class="hover:bg-white/5 transition-colors cursor-pointer" onclick="replaySession('${s.session_id}', '${s.subject_slug}', '${s.matched_node}', '${s.root_cause_node}')">
+                    <td class="py-4 px-4 font-mono text-xs text-muted">${dateStr}</td>
+                    <td class="py-4 px-4 font-mono text-xs text-accent">${subjectLabel}</td>
+                    <td class="py-4 px-4 font-bold text-text">${conceptLabel}</td>
+                    <td class="py-4 px-4 text-primary">${rootLabel}</td>
+                    <td class="py-4 px-4 text-center font-mono text-xs">${s.score_correct || 0}/${s.score_total || 0}</td>
+                    <td class="py-4 px-4 text-right">${statusBadge}</td>
+                </tr>
+            `;
+        }).join("");
+
+    } catch (err) {
+        console.error("Dashboard error:", err);
+        showToast("Error loading dashboard: " + err.message, "error");
+    }
+}
+
+function replaySession(sessionId, subject, matchedNode, rootCauseNode) {
+    if (sessionId) Session.setSessionId(sessionId);
+    if (subject) Session.setSubject(subject);
+    if (matchedNode) Session.setMatchedNodeId(matchedNode);
+    if (rootCauseNode) Session.setRootCauseNode(rootCauseNode);
+
+    if (rootCauseNode) {
+        window.location.href = "lesson.html";
+    } else {
+        window.location.href = "subject_graph.html";
+    }
+}
+
+loadDashboardData();
+
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
+</script>
+
+<script src="../js/ui-polish.js"></script>
+<script src="../js/particles.js"></script>
+
+</body>
+</html>

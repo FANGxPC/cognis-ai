@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<script>
+if(sessionStorage.getItem("loggedIn")!=="true"){
+    window.location.href="login.html";
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Success</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/animations.css">
+</head>
+<script src="../js/theme.js"></script>
+<body>
+
+<div class="noise-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<div class="grid-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></canvas>
+
+<nav class="fixed top-0 left-0 right-0 z-[9999] py-4 px-6 sm:px-12 backdrop-blur-xl bg-[#0A0A0F]/90 border-b border-white/10" style="position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;background:rgba(10,10,15,0.92)!important;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3 group">
+            <div class="logo-square group-hover:border-accent transition-colors font-terminal text-lg font-bold text-accent">CG</div>
+            <span class="font-terminal text-2xl tracking-widest text-accent hidden sm:inline">COGNIS</span>
+        </a>
+
+        <div class="flex items-center gap-4 sm:gap-6 text-xs font-mono">
+            <a href="../index.html" class="nav-link text-muted hover:text-text">HOME</a>
+            <a href="scan.html" class="nav-link text-muted hover:text-accent">SCAN</a>
+            <a href="subject_graph.html" class="nav-link text-muted hover:text-accent">KNOWLEDGE MAP</a>
+            <a href="dashboard.html" class="nav-link text-muted hover:text-accent">DASHBOARD</a>
+            <a href="about.html" class="nav-link text-muted hover:text-text">ABOUT</a>
+        </div>
+    </div>
+</nav>
+
+
+<section class="pt-28 pb-16 flex items-center justify-center px-8">
+
+
+
+<div class="max-w-4xl w-full">
+
+<div class="cta-panel text-center">
+
+<div class="mx-auto w-40 h-40 rounded-full bg-lime-300/10 border border-lime-300 flex items-center justify-center animate-pulse">
+    <i data-lucide="check-circle-2" class="w-24 h-24 text-lime-300"></i>
+</div>
+
+<span class="status-chip mt-10 inline-flex" id="statusChip">
+    VERIFYING...
+</span>
+
+<h1 class="hero-title mt-10" id="heroTitle">
+    VERIFYING
+    MASTERY
+</h1>
+
+<p class="hero-description mt-8 mx-auto" id="heroDescription">
+    Running retest to verify your understanding...
+</p>
+
+<div class="grid lg:grid-cols-3 gap-6 mt-20">
+
+<div class="stat-card">
+    <span class="counter" id="statConcept">
+        —
+    </span>
+    <p>Root Cause</p>
+</div>
+
+<div class="stat-card">
+    <span class="counter" id="statQuestions">
+        —
+    </span>
+    <p>Questions Answered</p>
+</div>
+
+<div class="stat-card">
+    <span class="counter" id="statResult">
+        —
+    </span>
+    <p>Verification</p>
+</div>
+
+</div>
+
+<div class="flex justify-center gap-6 mt-20">
+
+<a href="../index.html" class="secondary-button">HOME</a>
+
+<a href="scan.html" class="primary-button">SCAN NEXT CONCEPT</a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/session.js"></script>
+<script src="../js/ui.js"></script>
+
+<script>
+// ======================================================
+// DYNAMIC SUCCESS — powered by backend API
+// ======================================================
+
+const sessionId = Session.getSessionId();
+const rootCauseNode = Session.getRootCauseNode();
+const matchedNode = Session.getMatchedNodeId();
+const quizScore = Session.getQuizScore();
+const totalQuestions = Session.getTotalQuestions();
+
+const statusChip = document.getElementById("statusChip");
+const heroTitle = document.getElementById("heroTitle");
+const heroDescription = document.getElementById("heroDescription");
+const statConcept = document.getElementById("statConcept");
+const statQuestions = document.getElementById("statQuestions");
+const statResult = document.getElementById("statResult");
+
+async function verifyMastery() {
+    // Show what we know from the session
+    const conceptLabel = (rootCauseNode || matchedNode || "unknown").replace(/_/g, " ");
+    statConcept.textContent = conceptLabel;
+    statQuestions.textContent = `${quizScore}/${totalQuestions || "?"}`;
+
+    if (!sessionId) {
+        // No session — show static completion
+        statusChip.textContent = "MISSION COMPLETE";
+        heroTitle.innerHTML = "CONCEPT<br>MASTERED";
+        heroDescription.textContent = "The diagnostic flow has been completed.";
+        statResult.textContent = "DONE";
+        return;
+    }
+
+    try {
+        // Call the retest endpoint to verify mastery
+        const result = await retest(sessionId, rootCauseNode);
+
+        if (result.solved) {
+            statusChip.textContent = "MISSION COMPLETE";
+            heroTitle.innerHTML = "CONCEPT<br>MASTERED";
+            heroDescription.textContent = "Congratulations! The diagnostic engine has verified your understanding. The root cause concept has been mastered.";
+            statResult.textContent = "PASSED ✓";
+            statResult.style.color = "#C5FF6B";
+        } else {
+            statusChip.textContent = "NEEDS REVIEW";
+            heroTitle.innerHTML = "KEEP<br>LEARNING";
+            heroDescription.textContent = "The retest indicates more practice is needed. Consider reviewing the remediation material again.";
+            statResult.textContent = "REVIEW";
+            statResult.style.color = "#FF5F6D";
+        }
+
+        // Show updated graph state if available
+        if (result.updated_graph_state) {
+            const mastered = Object.values(result.updated_graph_state).filter(v => v >= 1.0).length;
+            const total = Object.keys(result.updated_graph_state).length;
+            statQuestions.textContent = `${mastered}/${total} mastered`;
+        }
+
+    } catch (err) {
+        console.error("Retest failed:", err);
+
+        // Graceful fallback — show completion anyway
+        statusChip.textContent = "MISSION COMPLETE";
+        heroTitle.innerHTML = "CONCEPT<br>MASTERED";
+        heroDescription.textContent = "The diagnostic flow has been completed. You can scan another concept or review your progress.";
+        statResult.textContent = "DONE";
+    }
+}
+
+verifyMastery();
+
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
+</script>
+
+<script src="../js/ui-polish.js"></script>
+<script src="../js/particles.js"></script>
+
+</body>
+</html>

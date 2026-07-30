@@ -1,0 +1,554 @@
+/* ===========================================
+   GLOBAL ANIMATIONS
+=========================================== */
+
+@keyframes scanner {
+
+    0%{
+        transform:translateY(0);
+        opacity:0;
+    }
+
+    8%{
+        opacity:1;
+    }
+
+    50%{
+        transform:translateY(520px);
+        opacity:1;
+    }
+
+    100%{
+        transform:translateY(520px);
+        opacity:0;
+    }
+
+}
+
+@keyframes gridPulse{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.08);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
+}
+
+@keyframes float{
+
+    0%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-15px);
+    }
+
+    100%{
+        transform:translateY(0px);
+    }
+
+}
+
+@keyframes glow{
+
+    0%{
+        box-shadow:0 0 0 rgba(185,139,255,0);
+    }
+
+    50%{
+        box-shadow:0 0 40px rgba(185,139,255,.35);
+    }
+
+    100%{
+        box-shadow:0 0 0 rgba(185,139,255,0);
+    }
+
+}
+
+@keyframes blink{
+
+    0%,50%{
+        opacity:1;
+    }
+
+    51%,100%{
+        opacity:0;
+    }
+
+}
+
+@keyframes rotateSlow{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+@keyframes pulse{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.06);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(50px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes slideLeft{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(70px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+@keyframes slideRight{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(-70px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+@keyframes breathing{
+
+    0%{
+
+        transform:scale(1);
+
+        opacity:.8;
+
+    }
+
+    50%{
+
+        transform:scale(1.08);
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+        opacity:.8;
+
+    }
+
+}
+
+@keyframes borderFlow{
+
+    0%{
+
+        background-position:0 0;
+
+    }
+
+    100%{
+
+        background-position:400px 0;
+
+    }
+
+}
+
+@keyframes flicker{
+
+    0%{
+
+        opacity:1;
+
+    }
+
+    2%{
+
+        opacity:.85;
+
+    }
+
+    4%{
+
+        opacity:1;
+
+    }
+
+    8%{
+
+        opacity:.94;
+
+    }
+
+    15%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        opacity:1;
+
+    }
+
+}
+
+@keyframes shimmer{
+
+    0%{
+
+        transform:translateX(-120%);
+
+    }}
+
+    @keyframes statusPulse{
+        0%{
+            transform:scale(1);
+            opacity:1;
+        }
+
+        50%{
+            transform:scale(1.35);
+            opacity:.68;
+        }
+
+        100%{
+            transform:scale(1);
+            opacity:1;
+        }
+    }
+
+    @keyframes ambientDrift{
+        0%{
+            transform:translate(0,0) scale(1);
+        }
+
+        50%{
+            transform:translate(18px,-24px) scale(1.08);
+        }
+
+        100%{
+            transform:translate(0,0) scale(1);
+        }
+    }
+
+    @keyframes streamIn{
+        0%{
+            opacity:0;
+            transform:translateX(-8px);
+        }
+
+        100%{
+            opacity:1;
+            transform:translateX(0);
+        }
+
+    100%{
+
+        transform:translateX(120%);
+
+    }
+
+}
+
+.hero-title{
+
+    animation:
+
+    fadeUp .9s ease forwards,
+
+    flicker 6s infinite;
+
+}
+
+.hero-description{
+
+    animation:
+
+    fadeUp 1.2s ease forwards;
+
+}
+
+.status-chip{
+
+    animation:
+
+    pulse 4s infinite;
+
+}
+
+.primary-button{
+
+    animation:
+
+    glow 4s infinite;
+
+}
+
+.floating-card{
+
+    animation:
+
+    float 5s ease-in-out infinite;
+
+}
+
+.card-two{
+
+    animation-delay:1s;
+
+}
+
+.card-three{
+
+    animation-delay:2s;
+
+}
+
+.feature-card{
+
+    opacity:0;
+
+    animation:
+
+    fadeUp .9s forwards;
+
+}
+
+.feature-card:nth-child(1){
+
+    animation-delay:.2s;
+
+}
+
+.feature-card:nth-child(2){
+
+    animation-delay:.4s;
+
+}
+
+.feature-card:nth-child(3){
+
+    animation-delay:.6s;
+
+}
+
+.stat-card{
+
+    animation:
+
+    breathing 5s infinite;
+
+}
+
+.timeline-step{
+
+    opacity:0;
+
+    animation:
+
+    slideLeft .8s forwards;
+
+}
+
+.timeline-step:nth-child(2){
+
+    animation-delay:.2s;
+
+}
+
+.timeline-step:nth-child(3){
+
+    animation-delay:.4s;
+
+}
+
+.timeline-step:nth-child(4){
+
+    animation-delay:.6s;
+
+}
+
+.timeline-step:nth-child(5){
+
+    animation-delay:.8s;
+
+}
+
+.timeline-step:nth-child(6){
+
+    animation-delay:1s;
+
+}
+
+.scanner-panel{
+
+    animation:
+
+    glow 6s infinite;
+
+}
+
+.scan-line{
+
+    animation:
+
+    scanner 3.8s linear infinite;
+
+}
+
+.logo-square{
+
+    animation: none;
+
+}
+
+.social-icon:hover{
+
+    animation:
+
+    pulse .5s ease;
+
+}
+
+.nav-link{
+
+    transition: color .2s ease, background-color .2s ease;
+
+}
+
+.feature-card:hover{
+
+    transform:
+
+    translateY(-12px);
+
+}
+
+.primary-button:hover{
+
+    transform:
+
+    translateY(-2px);
+
+}
+
+.secondary-button:hover{
+
+    transform:
+
+    translateY(-2px);
+
+}
+
+nav .primary-button:hover,
+nav .secondary-button:hover,
+nav #logoutBtn:hover,
+nav .logo-square:hover,
+nav .nav-link:hover {
+
+    transform: none !important;
+
+}
+
+
+.stat-card:hover{
+
+    transform:scale(1.05);
+
+}
+
+.timeline-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.scanner-panel:hover{
+
+    transform:scale(1.01);
+
+}
+.timeline-step:hover .timeline-line{
+
+background:
+linear-gradient(
+180deg,
+var(--accent),
+var(--primary)
+);
+}
