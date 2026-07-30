@@ -273,7 +273,7 @@
 
         transform:translateX(-120%);
 
-    }
+    }}
 
     @keyframes statusPulse{
         0%{
@@ -316,7 +316,6 @@
             opacity:1;
             transform:translateX(0);
         }
-    }
 
     100%{
 
@@ -474,9 +473,7 @@
 
 .logo-square{
 
-    animation:
-
-    breathing 5s infinite;
+    animation: none;
 
 }
 
@@ -490,7 +487,7 @@
 
 .nav-link{
 
-    transition:.35s;
+    transition: color .2s ease, background-color .2s ease;
 
 }
 
@@ -506,7 +503,7 @@
 
     transform:
 
-    translateY(-5px) scale(1.02);
+    translateY(-2px);
 
 }
 
@@ -514,9 +511,20 @@
 
     transform:
 
-    translateY(-5px);
+    translateY(-2px);
 
 }
+
+nav .primary-button:hover,
+nav .secondary-button:hover,
+nav #logoutBtn:hover,
+nav .logo-square:hover,
+nav .nav-link:hover {
+
+    transform: none !important;
+
+}
+
 
 .stat-card:hover{
 
@@ -534,4 +542,13 @@
 
     transform:scale(1.01);
 
+}
+.timeline-step:hover .timeline-line{
+
+background:
+linear-gradient(
+180deg,
+var(--accent),
+var(--primary)
+);
 }

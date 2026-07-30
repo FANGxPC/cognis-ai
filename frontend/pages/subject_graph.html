@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+if(sessionStorage.getItem("loggedIn")!=="true"){
+    window.location.href="login.html";
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Graph Visualization</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/components.css">
+<!-- vis-network library -->
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<style type="text/css">
+    #network-container {
+        width: 100%;
+        height: 65vh;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.3);
+    }
+</style>
+</head>
+<body class="bg-background text-text overflow-x-hidden">
+
+<nav class="fixed top-0 left-0 right-0 z-[9999] py-4 px-6 sm:px-12 backdrop-blur-xl bg-[#0A0A0F]/90 border-b border-white/10" style="position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;background:rgba(10,10,15,0.92)!important;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3 group">
+            <div class="logo-square group-hover:border-accent transition-colors font-terminal text-lg font-bold text-accent">CG</div>
+            <span class="font-terminal text-2xl tracking-widest text-accent hidden sm:inline">COGNIS</span>
+        </a>
+
+
+        <div class="flex items-center gap-4 sm:gap-6 text-xs font-mono">
+            <a href="../index.html" class="nav-link text-muted hover:text-text">HOME</a>
+            <a href="scan.html" class="nav-link text-muted hover:text-accent">SCAN</a>
+            <a href="subject_graph.html" class="nav-link text-accent font-bold">KNOWLEDGE MAP</a>
+            <a href="dashboard.html" class="nav-link text-muted hover:text-accent">DASHBOARD</a>
+            <a href="about.html" class="nav-link text-muted hover:text-text">ABOUT</a>
+        </div>
+    </div>
+</nav>
+
+
+
+<section class="pt-28 pb-16 px-8 max-w-7xl mx-auto flex flex-col">
+
+    <!-- HEADER & SELECTOR -->
+    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div>
+            <h2 class="text-3xl font-terminal text-primary mb-1">Subject Knowledge Map</h2>
+            <p class="text-muted text-sm">Interactive prerequisite dependency tree with live diagnostic mastery overlay.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <label class="text-xs font-mono text-muted uppercase">Subject:</label>
+            <select id="subjectSelectGraph" class="rounded-xl bg-[#181228] border border-accent/30 p-3 outline-none text-sm text-accent font-mono shadow-glow">
+                <option>Loading curriculum...</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- LIVE STATS SUMMARY HEADER -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="scanner-panel p-4 border border-lime-300/30 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-lime-300/10 border border-lime-300/30 flex items-center justify-center text-lime-300 font-bold text-lg">✓</div>
+            <div>
+                <div class="text-[10px] font-mono text-muted uppercase">Mastered Nodes</div>
+                <div class="text-xl font-terminal text-lime-300" id="statMasteredCount">0</div>
+            </div>
+        </div>
+        <div class="scanner-panel p-4 border border-danger/30 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-danger/10 border border-danger/30 flex items-center justify-center text-danger font-bold text-lg">⚠</div>
+            <div>
+                <div class="text-[10px] font-mono text-muted uppercase">Root Causes (Weak)</div>
+                <div class="text-xl font-terminal text-danger" id="statWeakCount">0</div>
+            </div>
+        </div>
+        <div class="scanner-panel p-4 border border-white/10 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-muted font-bold text-lg">○</div>
+            <div>
+                <div class="text-[10px] font-mono text-muted uppercase">Untested Concepts</div>
+                <div class="text-xl font-terminal text-muted" id="statUntestedCount">0</div>
+            </div>
+        </div>
+        <div class="scanner-panel p-4 border border-primary/30 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary font-bold text-lg">⚡</div>
+            <div>
+                <div class="text-[10px] font-mono text-muted uppercase">Subject Mastery</div>
+                <div class="text-xl font-terminal text-primary" id="statSubjectMastery">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRAPH CONTAINER -->
+    <div id="network-container" class="w-full h-[540px] rounded-2xl bg-[#0D0A14] border border-white/10 relative overflow-hidden shadow-glow"></div>
+
+    <!-- LEGEND & FILTER BAR -->
+    <div class="flex flex-wrap gap-8 mt-4 p-4 scanner-panel border border-white/10 justify-between items-center text-xs font-mono">
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded bg-[#C5FF6B] border border-[#C5FF6B] inline-block shadow-[0_0_12px_rgba(197,255,107,0.7)]"></span>
+                <span class="text-accent font-bold">✓ MASTERED (1.0)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded bg-[#FF5F6D] border border-[#FF5F6D] inline-block shadow-[0_0_12px_rgba(255,95,109,0.7)]"></span>
+                <span class="text-danger font-bold">⚠ WEAK / ROOT CAUSE (0.0)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded bg-[#1D172E] border border-[#5A4B7C] inline-block"></span>
+                <span class="text-muted">○ UNTESTED</span>
+            </div>
+        </div>
+        <div class="text-muted text-[11px]">
+            💡 <span class="text-text">Tip:</span> Drag nodes to explore. Click any node for targeted study options.
+        </div>
+    </div>
+
+    <!-- NODE DETAIL PANEL -->
+    <div id="nodeDetailPanel" class="hidden mt-6"></div>
+
+</section>
+
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/session.js"></script>
+<script>
+const container = document.getElementById('network-container');
+const subjectSelect = document.getElementById('subjectSelectGraph');
+const nodeDetailPanel = document.getElementById('nodeDetailPanel');
+let network = null;
+let currentGraphData = null;
+
+async function loadSubjects() {
+    try {
+        const data = await getSubjects();
+        subjectSelect.innerHTML = '';
+        if (data.subjects && data.subjects.length > 0) {
+            data.subjects.forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub.slug;
+                opt.textContent = sub.title;
+                subjectSelect.appendChild(opt);
+            });
+            const stored = sessionStorage.getItem("selectedSubject");
+            if (stored && [...subjectSelect.options].some(o => o.value === stored)) {
+                subjectSelect.value = stored;
+            }
+            loadGraph(subjectSelect.value);
+        } else {
+            subjectSelect.innerHTML = '<option>No subjects available</option>';
+        }
+    } catch (e) {
+        console.error(e);
+        subjectSelect.innerHTML = '<option>Error loading subjects</option>';
+    }
+}
+
+async function loadGraph(slug) {
+    if (!slug) return;
+    try {
+        const sessionId = Session.getSessionId();
+        const graphData = await getGraph(slug, sessionId);
+        currentGraphData = graphData;
+
+        // Calculate Stats
+        let masteredCount = 0;
+        let weakCount = 0;
+        let untestedCount = 0;
+
+        graphData.nodes.forEach(n => {
+            if (n.status === 'mastered') masteredCount++;
+            else if (n.status === 'weak') weakCount++;
+            else untestedCount++;
+        });
+
+        const totalNodes = graphData.nodes.length || 1;
+        const masteryPct = Math.round((masteredCount / totalNodes) * 100);
+
+        document.getElementById("statMasteredCount").textContent = masteredCount;
+        document.getElementById("statWeakCount").textContent = weakCount;
+        document.getElementById("statUntestedCount").textContent = untestedCount;
+        document.getElementById("statSubjectMastery").textContent = `${masteryPct}%`;
+
+        // Format Nodes with Glowing Neon Styles
+        const nodes = new vis.DataSet(
+            graphData.nodes.map(n => {
+                const status = n.status || "untested";
+                let bgColor = "#1B162B";
+                let borderColor = "#4A3D6B";
+                let fontColor = "#EDE6F5";
+                let labelPrefix = "○ ";
+                let shadowColor = "rgba(0,0,0,0.5)";
+
+                if (status === "mastered") {
+                    bgColor = "#143318";
+                    borderColor = "#C5FF6B";
+                    fontColor = "#C5FF6B";
+                    labelPrefix = "✓ ";
+                    shadowColor = "rgba(197, 255, 107, 0.45)";
+                } else if (status === "weak") {
+                    bgColor = "#42141A";
+                    borderColor = "#FF5F6D";
+                    fontColor = "#FF5F6D";
+                    labelPrefix = "⚠ ";
+                    shadowColor = "rgba(255, 95, 109, 0.45)";
+                }
+
+                return {
+                    id: n.id,
+                    label: labelPrefix + n.label,
+                    title: `<b>${n.label}</b><br>${n.description}<br>Status: <b style="color:${fontColor}">${status.toUpperCase()}</b>`,
+                    shape: 'box',
+                    borderWidth: status === 'untested' ? 1.5 : 2.5,
+                    shadow: {
+                        enabled: true,
+                        color: shadowColor,
+                        size: status === 'untested' ? 6 : 16,
+                        x: 0,
+                        y: 0
+                    },
+                    color: {
+                        background: bgColor,
+                        border: borderColor,
+                        highlight: {
+                            background: borderColor,
+                            border: '#FFFFFF'
+                        },
+                        hover: {
+                            background: borderColor,
+                            border: '#FFFFFF'
+                        }
+                    },
+                    font: { color: fontColor, face: 'JetBrains Mono', size: 15, bold: true },
+                    margin: { top: 12, right: 16, bottom: 12, left: 16 }
+                };
+            })
+        );
+
+        const edges = new vis.DataSet(
+            graphData.edges.map(e => ({
+                from: e.from,
+                to: e.to,
+                arrows: 'to',
+                color: { color: '#66598B', highlight: '#C5FF6B', hover: '#C5FF6B' },
+                width: 2
+            }))
+        );
+
+        const data = { nodes: nodes, edges: edges };
+        const options = {
+            interaction: {
+                hover: true,
+                tooltipDelay: 100,
+                dragNodes: true,
+                zoomView: true
+            },
+            layout: {
+                hierarchical: {
+                    direction: 'UD',
+                    sortMethod: 'directed',
+                    nodeSpacing: 180,
+                    levelSeparation: 150
+                }
+            },
+            physics: {
+                enabled: true,
+                hierarchicalRepulsion: {
+                    centralGravity: 0.2,
+                    springLength: 150,
+                    springConstant: 0.05,
+                    nodeDistance: 180,
+                    damping: 0.09
+                },
+                solver: 'hierarchicalRepulsion'
+            }
+        };
+
+        if (network) network.destroy();
+        network = new vis.Network(container, data, options);
+
+        // Click interaction for node details
+        network.on("click", function(params) {
+            if (params.nodes.length > 0) {
+                const nodeId = params.nodes[0];
+                const nodeObj = currentGraphData.nodes.find(n => n.id === nodeId);
+                if (nodeObj) {
+                    showNodeDetail(nodeObj);
+                }
+            }
+        });
+
+    } catch (e) {
+        console.error("Failed to load graph:", e);
+    }
+}
+
+function showNodeDetail(node) {
+    const status = node.status || "untested";
+    let statusClass = "bg-white/10 text-muted";
+    if (status === "mastered") statusClass = "bg-lime-300/10 text-lime-300 border border-lime-300/30";
+    if (status === "weak") statusClass = "bg-danger/10 text-danger border border-danger/30";
+
+    nodeDetailPanel.classList.remove("hidden");
+    nodeDetailPanel.innerHTML = `
+        <div class="scanner-panel p-6 border border-accent/30 rounded-2xl shadow-glow">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-terminal text-accent">${node.label}</h3>
+                <span class="px-3 py-1 rounded-full text-xs font-mono ${statusClass}">${status.toUpperCase()}</span>
+            </div>
+            <p class="text-muted mb-6 text-sm">${node.description}</p>
+            <div class="flex flex-wrap gap-4">
+                <button class="primary-button text-xs py-3 px-6" onclick="startRemediationFor('${node.id}')">
+                    STUDY LESSON & PRACTICE →
+                </button>
+                <button class="secondary-button text-xs py-3 px-6" onclick="startScanForNode('${node.id}')">
+                    START SCAN FOR THIS CONCEPT
+                </button>
+                <button class="secondary-button text-xs py-3 px-6" onclick="nodeDetailPanel.classList.add('hidden')">
+                    CLOSE
+                </button>
+            </div>
+        </div>
+    `;
+    nodeDetailPanel.scrollIntoView({ behavior: "smooth" });
+}
+
+function startRemediationFor(nodeId) {
+    Session.setRootCauseNode(nodeId);
+    window.location.href = "lesson.html";
+}
+
+function startScanForNode(nodeId) {
+    Session.setMatchedNodeId(nodeId);
+    window.location.href = "scan.html";
+}
+
+subjectSelect.addEventListener('change', (e) => {
+    sessionStorage.setItem("selectedSubject", e.target.value);
+    loadGraph(e.target.value);
+});
+
+window.addEventListener('load', loadSubjects);
+</script>
+</body>
+</html>
+

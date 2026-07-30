@@ -16,51 +16,51 @@ document.addEventListener("DOMContentLoaded", () => {
 COUNTERS
 =========================================== */
 
-function initCounters(){
+function initCounters() {
 
-    const counters=document.querySelectorAll(".counter");
+    const counters = document.querySelectorAll(".counter");
 
-    const observer=new IntersectionObserver(entries=>{
+    const observer = new IntersectionObserver(entries => {
 
-        entries.forEach(entry=>{
+        entries.forEach(entry => {
 
-            if(!entry.isIntersecting) return;
+            if (!entry.isIntersecting) return;
 
-            const counter=entry.target;
+            const counter = entry.target;
 
-            const target=+counter.dataset.target;
+            const target = +counter.dataset.target;
 
-            let current=0;
+            let current = 0;
 
-            const increment=Math.ceil(target/100);
+            const increment = Math.ceil(target / 100);
 
-            const timer=setInterval(()=>{
+            const timer = setInterval(() => {
 
-                current+=increment;
+                current += increment;
 
-                if(current>=target){
+                if (current >= target) {
 
-                    current=target;
+                    current = target;
 
                     clearInterval(timer);
 
                 }
 
-                counter.textContent=current;
+                counter.textContent = current;
 
-            },20);
+            }, 20);
 
             observer.unobserve(counter);
 
         });
 
-    },{
+    }, {
 
-        threshold:.5
+        threshold: .5
 
     });
 
-    counters.forEach(counter=>observer.observe(counter));
+    counters.forEach(counter => observer.observe(counter));
 
 }
 
@@ -68,41 +68,41 @@ function initCounters(){
 SCROLL REVEAL
 =========================================== */
 
-function initScrollReveal(){
+function initScrollReveal() {
 
-    const items=document.querySelectorAll(
+    const items = document.querySelectorAll(
 
         ".feature-card,.timeline-step,.stat-card,.cta-panel"
 
     );
 
-    const observer=new IntersectionObserver(entries=>{
+    const observer = new IntersectionObserver(entries => {
 
-        entries.forEach(entry=>{
+        entries.forEach(entry => {
 
-            if(entry.isIntersecting){
+            if (entry.isIntersecting) {
 
-                entry.target.style.opacity="1";
+                entry.target.style.opacity = "1";
 
-                entry.target.style.transform="translateY(0)";
+                entry.target.style.transform = "translateY(0)";
 
             }
 
         });
 
-    },{
+    }, {
 
-        threshold:.15
+        threshold: .15
 
     });
 
-    items.forEach(item=>{
+    items.forEach(item => {
 
-        item.style.opacity="0";
+        item.style.opacity = "0";
 
-        item.style.transform="translateY(60px)";
+        item.style.transform = "translateY(60px)";
 
-        item.style.transition="all .8s ease";
+        item.style.transition = "all .8s ease";
 
         observer.observe(item);
 
@@ -114,13 +114,13 @@ function initScrollReveal(){
 NAVBAR
 =========================================== */
 
-function initNavbar(){
+function initNavbar() {
 
-    const navbar=document.querySelector("nav");
+    const navbar = document.querySelector("nav");
 
-    window.addEventListener("scroll",()=>{
+    window.addEventListener("scroll", () => {
 
-        if(window.scrollY>60){
+        if (window.scrollY > 60) {
 
             navbar.classList.add(
 
@@ -134,7 +134,7 @@ function initNavbar(){
 
         }
 
-        else{
+        else {
 
             navbar.classList.remove(
 
@@ -158,15 +158,15 @@ BUTTON RIPPLE
 
 document.querySelectorAll(
 
-".primary-button,.secondary-button,.scan-button"
+    ".primary-button,.secondary-button,.scan-button"
 
-).forEach(button=>{
+).forEach(button => {
 
-    button.addEventListener("click",e=>{
+    button.addEventListener("click", e => {
 
-        const ripple=document.createElement("span");
+        const ripple = document.createElement("span");
 
-        const size=Math.max(
+        const size = Math.max(
 
             button.clientWidth,
 
@@ -174,24 +174,32 @@ document.querySelectorAll(
 
         );
 
-        ripple.style.width=size+"px";
+        ripple.style.width = size + "px";
 
-        ripple.style.height=size+"px";
+        ripple.style.height = size + "px";
 
-        ripple.style.left=e.offsetX-size/2+"px";
+        ripple.style.left = e.offsetX - size / 2 + "px";
 
-        ripple.style.top=e.offsetY-size/2+"px";
+        ripple.style.top = e.offsetY - size / 2 + "px";
 
-        ripple.className="ripple";
+        ripple.className = "ripple";
 
         button.appendChild(ripple);
 
-        setTimeout(()=>{
+        setTimeout(() => {
 
             ripple.remove();
 
-        },600);
+        }, 600);
 
     });
 
 });
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+    logoutBtn.onclick = () => {
+        sessionStorage.clear();
+        localStorage.removeItem(STORAGE_KEYS.TOKEN);
+        location.href = "pages/login.html";
+    };
+}

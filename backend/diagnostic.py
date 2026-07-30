@@ -15,6 +15,8 @@ import random
 from typing import Any
 
 from graph import ConceptGraph
+from remediation import generate_rich_remediation
+
 
 
 # ---------------------------------------------------------------------------
@@ -143,6 +145,9 @@ class DiagnosticEngine:
 
         is_correct = answer.strip().upper() == question["correct_answer"].strip().upper()
 
+        # Update mastery
+        session["mastery"][node_id] = 1.0 if is_correct else 0.0
+
         result: dict[str, Any] = {
             "session_id": session["session_id"],
             "node_id": node_id,
@@ -153,60 +158,60 @@ class DiagnosticEngine:
             "explanation": question["explanation"],
         }
 
-        current_mastery = session["mastery"].get(node_id)
-        
-        if current_mastery is None:
-            # First question for this node
-            session["mastery"][node_id] = 0.5 if is_correct else -0.5
-            result["next_action"] = "continue_node"
-            result["questions_remaining_for_node"] = 1
-            result["progress"] = f"{session['traversal_index']}/{len(session['traversal_path'])}"
-            return result
+        if is_correct:
+            # Advance traversal index
+            path = session["traversal_path"]
+            current_idx = session["traversal_index"]
 
-        # Second question for this node
-        if current_mastery == 0.5:
-            final_mastery = 1.0 if is_correct else 0.5
-        else: # current_mastery == -0.5
-            final_mastery = 0.5 if is_correct else 0.0
-            
-        session["mastery"][node_id] = final_mastery
-        result["questions_remaining_for_node"] = 0
-
-        path = session["traversal_path"]
-        current_idx = session["traversal_index"]
-        matched = session["matched_node"]
-
-        # If they passed, or if they are weak (0.5), or if they failed the target node itself
-        # -> We advance to the next node in the traversal path to find the real 0.0 gap.
-        if final_mastery >= 0.5 or (final_mastery == 0.0 and node_id == matched and current_idx == 0):
+            # Find the next node to probe
             next_idx = current_idx + 1
             session["traversal_index"] = next_idx
 
             if next_idx < len(path):
-                result["next_action"] = "continue_traversal"
+                result["next_action"] = "continue"
                 result["next_node"] = path[next_idx]
                 result["progress"] = f"{next_idx}/{len(path)}"
-                if final_mastery == 0.0:
-                    result["note"] = "You struggled with the target concept. Let's check prerequisites."
             else:
-                # Reached end of path. 
-                # If there's no 0.0 root cause found, it means they passed or were just weak.
+                # Student passed all nodes — no gap found!
                 session["status"] = "diagnosed"
                 session["root_cause_node"] = None
                 result["next_action"] = "diagnosed"
                 result["diagnosis"] = "all_clear"
                 result["progress"] = f"{len(path)}/{len(path)}"
-                
-                # If they failed the target node but it has no prereqs, it's the root cause
-                if final_mastery == 0.0 and node_id == matched and current_idx == 0:
-                    session["root_cause_node"] = node_id
-                    result["root_cause"] = node_id
         else:
-            # final_mastery == 0.0 on a prerequisite! This is the root cause.
-            session["root_cause_node"] = node_id
-            session["status"] = "diagnosed"
-            result["next_action"] = "root_confirmed"
-            result["root_cause"] = node_id
+            # Student failed — this is the root cause (or we probe deeper)
+            # The diagnostic strategy: if the student fails the target node itself,
+            # we continue probing prerequisites. If they fail a prerequisite,
+            # that's the root cause.
+            path = session["traversal_path"]
+            current_idx = session["traversal_index"]
+            matched = session["matched_node"]
+
+            if node_id == matched and current_idx == 0:
+                # Failed the target node itself — this is expected.
+                # Advance to probe prerequisites to find the real gap.
+                next_idx = current_idx + 1
+                session["traversal_index"] = next_idx
+                if next_idx < len(path):
+                    result["next_action"] = "continue"
+                    result["next_node"] = path[next_idx]
+                    result["progress"] = f"{next_idx}/{len(path)}"
+                    result["note"] = (
+                        "You struggled with the target concept. "
+                        "Let's check your prerequisites to find the real gap."
+                    )
+                else:
+                    # Target node has no prerequisites — it IS the root cause
+                    session["root_cause_node"] = node_id
+                    session["status"] = "diagnosed"
+                    result["next_action"] = "diagnosed"
+                    result["root_cause"] = node_id
+            else:
+                # Failed a prerequisite — this is the root cause
+                session["root_cause_node"] = node_id
+                session["status"] = "diagnosed"
+                result["next_action"] = "diagnosed"
+                result["root_cause"] = node_id
 
         return result
 
@@ -240,17 +245,10 @@ class DiagnosticEngine:
                     ),
                 })
 
-        # Count stats (excluding temporary -0.5 and 0.5 first questions)
-        tested = sum(1 for nid in path if mastery.get(nid) is not None and mastery.get(nid) >= 0.0)
-        passed = sum(1 for nid in path if mastery.get(nid, -1.0) >= 1.0)
-        failed = sum(1 for nid in path if mastery.get(nid, -1.0) == 0.0)
-        
-        weak_nodes = []
-        for nid in path:
-            if mastery.get(nid) == 0.5:
-                node = self.graph.nodes.get(nid)
-                if node:
-                    weak_nodes.append({"node_id": nid, "label": node.label, "mastery": 0.5})
+        # Count stats
+        tested = sum(1 for nid in path if mastery.get(nid) is not None)
+        passed = sum(1 for nid in path if mastery.get(nid, 0) >= 1.0)
+        failed = sum(1 for nid in path if mastery.get(nid) is not None and mastery.get(nid, 0) < 1.0)
 
         # Confidence: how deep into the tree we probed
         confidence = tested / max(len(path), 1)
@@ -264,7 +262,6 @@ class DiagnosticEngine:
             "root_cause_label": (
                 self.graph.nodes[root_cause].label if root_cause else None
             ),
-            "weak_nodes": weak_nodes,
             "traversal_path": traversal_results,
             "stats": {
                 "total_nodes": len(path),
@@ -305,10 +302,10 @@ class DiagnosticEngine:
     # Step 5: Remediation content
     # ------------------------------------------------------------------
 
-    def get_remediation(self, node_id: str) -> dict[str, Any]:
+    def get_remediation(self, node_id: str, subject_slug: str = "linear_algebra") -> dict[str, Any]:
         """
-        Return remediation content for a node: its description,
-        prerequisite context, and practice questions.
+        Return rich remediation content for a node: AI explanation, worked examples,
+        misconceptions, practice questions, and video keywords.
         """
         if node_id not in self.graph.nodes:
             raise ValueError(f"Unknown node: {node_id!r}")
@@ -317,9 +314,27 @@ class DiagnosticEngine:
         prereqs = self.graph.prereqs_of.get(node_id, [])
         dependents = self.graph.dependents_of.get(node_id, [])
 
-        # Get all questions for practice
+        prereq_objs = [
+            {"id": pid, "label": self.graph.nodes[pid].label}
+            for pid in prereqs
+            if pid in self.graph.nodes
+        ]
+        dependent_objs = [
+            {"id": did, "label": self.graph.nodes[did].label}
+            for did in dependents
+            if did in self.graph.nodes
+        ]
+
+        rich = generate_rich_remediation(
+            subject_slug=subject_slug,
+            node_id=node_id,
+            node_label=node.label,
+            node_description=node.description,
+            prereqs=prereq_objs,
+            dependents=dependent_objs,
+        )
+
         practice_qs = self.questions.get(node_id, [])
-        # Format for display (without correct_answer to avoid spoilers initially)
         practice = [
             {
                 "question_id": q["id"],
@@ -333,17 +348,14 @@ class DiagnosticEngine:
             "node_id": node_id,
             "label": node.label,
             "description": node.description,
+            "detailed_explanation": rich.get("detailed_explanation", node.description),
+            "worked_examples": rich.get("worked_examples", []),
+            "common_misconceptions": rich.get("common_misconceptions", []),
+            "video_keywords": rich.get("video_keywords", []),
+            "summary_tips": rich.get("summary_tips", []),
             "order": node.order,
-            "prerequisites": [
-                {"id": pid, "label": self.graph.nodes[pid].label}
-                for pid in prereqs
-                if pid in self.graph.nodes
-            ],
-            "leads_to": [
-                {"id": did, "label": self.graph.nodes[did].label}
-                for did in dependents
-                if did in self.graph.nodes
-            ],
+            "prerequisites": prereq_objs,
+            "leads_to": dependent_objs,
             "practice_questions": practice,
             "tips": (
                 f"Focus on understanding '{node.label}' before moving on. "
@@ -351,6 +363,7 @@ class DiagnosticEngine:
                 f"is needed for {len(dependents)} downstream concept(s)."
             ),
         }
+
 
     # ------------------------------------------------------------------
     # Step 6: Retest
@@ -436,120 +449,103 @@ class DiagnosticEngine:
     # Step 8: Generate explanation (for /api/diagnose/explain)
     # ------------------------------------------------------------------
 
-
-    async def generate_ai_explanation(self, session: dict[str, Any]) -> dict[str, Any]:
-        """
-        Generate a dynamic, AI-powered explanation using Gemini.
-        Falls back to the static generate_explanation on failure.
-        """
-        import os
-        from google import genai
-
-        static_expl = self.generate_explanation(session)
-        if not session.get("root_cause_node"):
-            return static_expl
-
-        api_key = os.getenv("GEMINI_API_KEY")
-        if not api_key:
-            return static_expl
-        
-        try:
-            client = genai.Client(api_key=api_key)
-            root_cause = session["root_cause_node"]
-            matched = session["matched_node"]
-            
-            root_node = self.graph.nodes[root_cause]
-            matched_node = self.graph.nodes[matched]
-            
-            prompt = f"The student was struggling with '{matched_node.label}'. "
-            prompt += f"After a diagnostic test, we found their true gap is in the prerequisite concept '{root_node.label}'. "
-            prompt += f"Explain in a friendly, encouraging way why {root_node.label} is essential for understanding {matched_node.label}, "
-            prompt += f"and give a brief intuitive analogy. Keep it under 4 paragraphs."
-            
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=[prompt]
-            )
-            
-            if response.text:
-                return {
-                    "root_node_id": root_cause,
-                    "root_node_label": root_node.label,
-                    "weak_nodes": static_expl.get("weak_nodes", []),
-                    "explanation": response.text,
-                    "is_ai_generated": True
-                }
-        except Exception as e:
-            print(f"AI explanation failed: {e}")
-            
-        return static_expl
-
     def generate_explanation(self, session: dict[str, Any]) -> dict[str, Any]:
         """
         Build the plain-language explanation for the confirmed root cause.
         Used by GET /api/diagnose/explain.
         """
-        if session["status"] != "diagnosed":
-            raise ValueError(f"Cannot generate explanation for session in state '{session['status']}'")
-
+        matched_node = session.get("matched_node")
         root_cause = session.get("root_cause_node")
-        matched = session.get("matched_node")
-        path = session.get("traversal_path", [])
         mastery = session.get("mastery", {})
-        
-        # Determine weak nodes
-        weak_nodes = []
-        for nid in path:
-            if mastery.get(nid) == 0.5:
-                node = self.graph.nodes.get(nid)
-                if node:
-                    weak_nodes.append({"node_id": nid, "label": node.label, "mastery": 0.5})
+        path = session.get("traversal_path", [])
 
         if not root_cause:
-            # Passed everything
             return {
                 "root_node_id": None,
                 "root_node_label": None,
-                "weak_nodes": weak_nodes,
-                "explanation": "Great job! You demonstrated mastery across all prerequisite concepts. Your confusion with the target topic might just be a minor misunderstanding. Review the primary lesson again.",
+                "explanation": (
+                    "Great news! You demonstrated mastery of all tested prerequisites. "
+                    "Your confusion may be about a specific problem type rather than "
+                    "a conceptual gap."
+                ),
             }
 
-        root_node = self.graph.nodes.get(root_cause)
-        if not root_node:
-            raise ValueError(f"Root cause node '{root_cause}' not found in graph.")
+        matched_label = self.graph.nodes[matched_node].label if matched_node else "the target concept"
+        root_label = self.graph.nodes[root_cause].label
 
-        matched_node = self.graph.nodes.get(matched)
+        # Count how many steps back the root cause is
+        gap_depth = 0
+        passed_labels: list[str] = []
+        for i, nid in enumerate(path):
+            if nid == root_cause:
+                gap_depth = i
+                break
+            if mastery.get(nid, 0) >= 1.0:
+                passed_labels.append(self.graph.nodes[nid].label)
 
-        # Count how many concepts upstream this is
-        try:
-            depth = path.index(root_cause)
-        except ValueError:
-            depth = 0
+        # Try AI explanation generation
+        import os
+        api_key = os.getenv("GEMINI_API_KEY")
+        if api_key:
+            try:
+                from google import genai
+                client = genai.Client(api_key=api_key)
+                prompt = (
+                    f"A student reported feeling confused about '{matched_label}'. "
+                    f"Our diagnostic engine probed them backward through course prerequisites. "
+                    f"They successfully mastered: {', '.join(passed_labels) if passed_labels else 'none'}. "
+                    f"However, they failed on '{root_label}' ({self.graph.nodes[root_cause].description}).\n\n"
+                    f"Write a 2-paragraph empathetic, encouraging, and clear diagnostic explanation. "
+                    f"You MUST mention both concepts by their exact titles '{matched_label}' and '{root_label}'. "
+                    f"Explain precisely WHY struggling with '{root_label}' causes confusion when trying to learn '{matched_label}'."
+                )
 
-        # Build a narrative explanation
-        if depth == 0:
-            expl = (
-                f"You're struggling with **{matched_node.label}**, and our tests confirm "
-                f"that this is the core issue. Your foundational prerequisites are solid, "
-                f"but you need to focus on the mechanics of {matched_node.label} itself."
+                response = client.models.generate_content(
+                    model="gemini-3.5-flash-lite",
+                    contents=prompt
+                )
+
+
+                if response.text and response.text.strip():
+                    return {
+                        "root_node_id": root_cause,
+                        "root_node_label": root_label,
+                        "root_cause_node": root_cause,
+                        "root_cause": root_cause,
+                        "explanation": response.text.strip(),
+                    }
+            except Exception as e:
+                print(f"[Explanation] AI generation fallback ({e})")
+
+
+        # Build a narrative template explanation fallback
+        if passed_labels:
+            passed_str = " and ".join(passed_labels) if len(passed_labels) <= 2 else (
+                ", ".join(passed_labels[:-1]) + f", and {passed_labels[-1]}"
+            )
+            explanation = (
+                f"You said you're stuck on {matched_label}. Tracing backward, "
+                f"{passed_str} {'checks' if len(passed_labels) == 1 else 'all check'} out — "
+                f"but {root_label}, {gap_depth} concept{'s' if gap_depth != 1 else ''} "
+                f"upstream, doesn't. That's the real gap."
             )
         else:
-            expl = (
-                f"You asked about **{matched_node.label}**, but tracing backwards, we found the real gap is "
-                f"**{depth} concept{'s' if depth > 1 else ''} upstream**. "
-                f"You need a solid understanding of **{root_node.label}** before {matched_node.label} will click."
+            explanation = (
+                f"You said you're stuck on {matched_label}. Testing backward through "
+                f"prerequisites, {root_label} — {gap_depth} concept{'s' if gap_depth != 1 else ''} "
+                f"earlier in the course — is where the gap begins. "
+                f"Strengthening this foundation should unlock the concepts that follow."
             )
-            
-        if weak_nodes:
-            weak_labels = ", ".join([w["label"] for w in weak_nodes])
-            expl += f"\n\nNote: You also showed some weakness in {weak_labels}. Consider reviewing those as well."
 
         return {
             "root_node_id": root_cause,
-            "root_node_label": root_node.label,
-            "weak_nodes": weak_nodes,
-            "explanation": expl,
+            "root_node_label": root_label,
+            "root_cause_node": root_cause,
+            "root_cause": root_cause,
+            "explanation": explanation,
         }
+
+
 
     # ------------------------------------------------------------------
     # Step 9: Score practice answer (for /api/practice/answer)
@@ -565,15 +561,37 @@ class DiagnosticEngine:
         Grade a practice answer during remediation.
         Tracks attempts and flips node_mastered when the student passes.
         """
-        root_cause = session.get("root_cause_node")
+        root_cause = session.get("root_cause_node") or session.get("matched_node")
         if not root_cause:
-            raise ValueError("No root cause node — cannot score practice answer.")
+            for nid, qlist in self.questions.items():
+                if any(q["id"] == question_id for q in qlist):
+                    root_cause = nid
+                    break
 
-        # Find the question in the root cause node's bank
+        if not root_cause:
+            root_cause = list(self.questions.keys())[0] if self.questions else None
+
+        if not root_cause:
+            raise ValueError("No node found for practice question.")
+
+        session["root_cause_node"] = root_cause
+
+        # Find the question in the node's bank
         node_qs = self.questions.get(root_cause, [])
         question = next((q for q in node_qs if q["id"] == question_id), None)
         if question is None:
-            raise ValueError(f"Question {question_id!r} not found for node {root_cause!r}")
+            # Search across all node question banks
+            for nid, qlist in self.questions.items():
+                match = next((q for q in qlist if q["id"] == question_id), None)
+                if match:
+                    question = match
+                    root_cause = nid
+                    session["root_cause_node"] = nid
+                    break
+
+        if question is None:
+            raise ValueError(f"Question {question_id!r} not found.")
+
 
         is_correct = answer.strip().upper() == question["correct_answer"].strip().upper()
 
@@ -606,43 +624,50 @@ class DiagnosticEngine:
     # Step 10: Execute retest (for /api/retest spec-aligned)
     # ------------------------------------------------------------------
 
-    def execute_retest(self, session: dict[str, Any]) -> dict[str, Any]:
+    def execute_retest(
+        self,
+        session: dict[str, Any],
+        question_id: str | None = None,
+        answer: str | None = None,
+    ) -> dict[str, Any]:
         """
-        Mark the root cause and entire traversal path as mastered,
-        simulating a successful retest.
-
-        Returns the spec-aligned response: {solved, updated_graph_state}.
+        Scoring retest answer or validating mastery.
+        Returns spec-aligned response: {solved, updated_graph_state}.
         """
         root_cause = session.get("root_cause_node")
         path = session.get("traversal_path", [])
         matched = session.get("matched_node")
 
-        if not root_cause and not matched:
+        # If retest answer is explicitly provided, grade it
+        solved = True
+        if question_id and answer and root_cause:
+            node_qs = self.questions.get(root_cause, [])
+            question = next((q for q in node_qs if q["id"] == question_id), None)
+            if question:
+                is_correct = str(answer).strip().upper() == question["correct_answer"].strip().upper()
+                solved = is_correct
+
+
+        if solved:
+            # Mark everything in traversal path as mastered
+            updated_state: list[dict[str, str]] = []
+            for nid in path:
+                session["mastery"][nid] = 1.0
+                updated_state.append({"node_id": nid, "status": "mastered"})
+            if matched and matched not in [s["node_id"] for s in updated_state]:
+                session["mastery"][matched] = 1.0
+                updated_state.append({"node_id": matched, "status": "mastered"})
+            session["status"] = "complete"
             return {
                 "solved": True,
-                "updated_graph_state": [],
+                "updated_graph_state": updated_state,
+            }
+        else:
+            return {
+                "solved": False,
+                "updated_graph_state": [
+                    {"node_id": nid, "status": "weak" if nid == root_cause else "untested"}
+                    for nid in path
+                ],
             }
 
-        # Mark everything in the traversal path as mastered
-        updated_state: list[dict[str, str]] = []
-        for nid in path:
-            session["mastery"][nid] = 1.0
-            updated_state.append({
-                "node_id": nid,
-                "status": "mastered",
-            })
-
-        # Also ensure the matched node is mastered
-        if matched and matched not in [s["node_id"] for s in updated_state]:
-            session["mastery"][matched] = 1.0
-            updated_state.append({
-                "node_id": matched,
-                "status": "mastered",
-            })
-
-        session["status"] = "complete"
-
-        return {
-            "solved": True,
-            "updated_graph_state": updated_state,
-        }

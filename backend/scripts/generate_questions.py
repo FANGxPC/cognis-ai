@@ -34,8 +34,10 @@ DATA_DIR = Path(__file__).parent.parent / "data"
 GRAPH_FILE = DATA_DIR / "graph.json"
 OUTPUT_FILE = DATA_DIR / "questions.json"
 
-# Use gemini-1.5-flash or gemini-2.0-flash or gemini-2.5-flash or gemini-3.5-flash
-GENERATION_MODEL = "gemini-3.5-flash"
+# Use gemini-3.5-flash-lite model
+GENERATION_MODEL = "gemini-3.5-flash-lite"
+
+
 
 PROMPT_TEMPLATE = """You are an expert Linear Algebra educator building a diagnostic question bank.
 

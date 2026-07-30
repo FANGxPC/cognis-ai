@@ -2,7 +2,19 @@
 <html lang="en">
 
 <head>
+<script>
 
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -26,18 +38,39 @@
 <link rel="stylesheet" href="../css/animations.css">
 
 </head>
-
+<script src="../js/theme.js"></script>
 <body>
 
-<div class="noise-layer"></div>
+<div class="noise-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
 
-<div class="grid-layer"></div>
+<div class="grid-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
 
-<canvas id="particles"></canvas>
+<canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></canvas>
 
-<section class="min-h-screen flex items-center justify-center px-8">
+<nav class="fixed top-0 left-0 right-0 z-[9999] py-4 px-6 sm:px-12 backdrop-blur-xl bg-[#0A0A0F]/90 border-b border-white/10" style="position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;background:rgba(10,10,15,0.92)!important;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3 group">
+            <div class="logo-square group-hover:border-accent transition-colors font-terminal text-lg font-bold text-accent">CG</div>
+            <span class="font-terminal text-2xl tracking-widest text-accent hidden sm:inline">COGNIS</span>
+        </a>
 
-<div class="max-w-4xl w-full scanner-panel p-12">
+        <div class="flex items-center gap-4 sm:gap-6 text-xs font-mono">
+            <a href="../index.html" class="nav-link text-muted hover:text-text">HOME</a>
+            <a href="scan.html" class="nav-link text-muted hover:text-accent">SCAN</a>
+            <a href="subject_graph.html" class="nav-link text-muted hover:text-accent">KNOWLEDGE MAP</a>
+            <a href="dashboard.html" class="nav-link text-muted hover:text-accent">DASHBOARD</a>
+            <a href="about.html" class="nav-link text-muted hover:text-text">ABOUT</a>
+        </div>
+    </div>
+</nav>
+
+
+<section class="pt-28 pb-16 flex justify-center px-8">
+
+
+
+
+<div class="max-w-4xl w-full scanner-panel p-12 my-10">
 
 <div class="flex justify-between items-center">
 
@@ -73,41 +106,20 @@ QUESTION
 
 <div class="mt-16">
 
-<h2 class="text-3xl mb-10">
+<h2 class="text-3xl mb-10 text-muted">
 
-Which traversal visits the root node before its children?
+Loading probe question...
 
 </h2>
 
 <div class="grid gap-5">
 
-<button class="secondary-button answer">
-
-Inorder Traversal
-
-</button>
-
-<button class="secondary-button answer">
-
-Preorder Traversal
-
-</button>
-
-<button class="secondary-button answer">
-
-Postorder Traversal
-
-</button>
-
-<button class="secondary-button answer">
-
-Level Order Traversal
-
-</button>
+<div class="p-4 border border-white/10 rounded-xl text-muted text-sm text-center">Loading options...</div>
 
 </div>
 
 </div>
+
 
 <div class="flex justify-between mt-16">
 
@@ -129,180 +141,175 @@ NEXT →
 
 </section>
 
-<script>
-
-lucide.createIcons();
-
-document.querySelectorAll(".answer").forEach(btn=>{
-
-btn.onclick=()=>{
-
-document.querySelectorAll(".answer").forEach(x=>{
-
-x.style.borderColor="rgba(255,255,255,.08)";
-x.style.background="rgba(255,255,255,.03)";
-
-});
-
-btn.style.borderColor="#C5FF6B";
-btn.style.background="rgba(197,255,107,.12)";
-
-};
-
-});
-
-document.getElementById("nextQuestion").onclick=()=>{
-
-window.location="rootcause.html";
-
-};
-
-</script>
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/session.js"></script>
+<script src="../js/ui.js"></script>
 
 <script>
+// ======================================================
+// DYNAMIC QUIZ — powered by backend API
+// ======================================================
 
-lucide.createIcons();
+const title = document.querySelector(".hero-title");
+const questionEl = document.querySelector("h2");
+const progressEl = document.querySelector(".counter");
+const buttonsContainer = document.querySelector(".grid.gap-5");
+const nextBtn = document.getElementById("nextQuestion");
+const chipEl = document.querySelector(".status-chip");
 
-const questions=[
+let selectedAnswer = -1;
+let currentQuestionId = null;
+let questionsAnswered = 0;
+let score = 0;
 
-{
-question:"Which traversal visits the root node before its children?",
-options:[
-"Inorder Traversal",
-"Preorder Traversal",
-"Postorder Traversal",
-"Level Order Traversal"
-],
-answer:1
-},
+// Traversal state from Session
+const sessionId = Session.getSessionId();
+const traversalPath = Session.getTraversalPath();
+const totalNodes = traversalPath.length;
 
-{
-question:"Which data structure uses LIFO?",
-options:[
-"Queue",
-"Stack",
-"Tree",
-"Heap"
-],
-answer:1
-},
-
-{
-question:"A recursive function must always have a:",
-options:[
-"Loop",
-"Pointer",
-"Base Case",
-"Queue"
-],
-answer:2
-},
-
-{
-question:"Binary Search Tree search complexity is average:",
-options:[
-"O(n²)",
-"O(log n)",
-"O(n)",
-"O(1)"
-],
-answer:1
-},
-
-{
-question:"Which traversal returns sorted order in a BST?",
-options:[
-"Preorder",
-"Postorder",
-"Level Order",
-"Inorder"
-],
-answer:3
+// Redirect if no active session
+if (!sessionId || totalNodes === 0) {
+    showToast("No active scan session. Please run a scan first.", "error");
+    setTimeout(() => { window.location.href = "scan.html"; }, 1500);
 }
 
-];
+// --------------------------------------------------
+// Load a question for the current node
+// --------------------------------------------------
+async function loadQuestion() {
+    const nodeId = Session.getCurrentNodeId();
+    const nodeIdx = Session.getCurrentNodeIndex();
 
-let current=0;
-let selected=-1;
-let score=0;
+    if (!nodeId) {
+        // All nodes probed — go to root cause
+        Session.setQuizScore(score);
+        window.location.href = "rootcause.html";
+        return;
+    }
 
-const title=document.querySelector(".hero-title");
-const question=document.querySelector("h2");
-const progress=document.querySelector(".counter");
-const buttons=document.querySelectorAll(".answer");
-const next=document.getElementById("nextQuestion");
+    // Update header
+    chipEl.textContent = `PROBING: ${nodeId.replace(/_/g, " ").toUpperCase()}`;
+    title.innerHTML = `NODE<br>${String(nodeIdx + 1).padStart(2, "0")}`;
+    progressEl.innerHTML = `${String(nodeIdx + 1).padStart(2, "0")}/${String(totalNodes).padStart(2, "0")}`;
 
-function loadQuestion(){
+    // Reset selection
+    selectedAnswer = -1;
+    currentQuestionId = null;
+    nextBtn.disabled = true;
+    nextBtn.style.opacity = ".5";
 
-selected=-1;
+    try {
+        const data = await nextQuestion(sessionId, nodeId);
 
-progress.innerHTML=`0${current+1}/05`;
+        // Render question
+        questionEl.textContent = data.prompt || data.question;
+        currentQuestionId = data.question_id;
 
-title.innerHTML=`QUESTION<br>0${current+1}`;
+        // Render options dynamically
+        const rawOptions = data.options || data.choices || [];
+        const options = Array.isArray(rawOptions)
+            ? rawOptions
+            : (typeof rawOptions === "object" && rawOptions !== null)
+                ? Object.values(rawOptions)
+                : [];
+        buttonsContainer.innerHTML = "";
 
-question.innerHTML=questions[current].question;
+        options.forEach((opt, index) => {
+            const btn = document.createElement("button");
+            btn.className = "secondary-button answer";
+            btn.textContent = opt;
+            btn.onclick = () => selectAnswer(index, btn);
+            buttonsContainer.appendChild(btn);
+        });
 
-buttons.forEach((btn,index)=>{
+    } catch (err) {
+        console.error("Failed to load question:", err);
 
-btn.innerHTML=questions[current].options[index];
+        // If no questions remain for this node, auto-advance
+        if (err.message && err.message.includes("No unasked questions")) {
+            Session.advanceNode();
+            await loadQuestion();
+            return;
+        }
 
-btn.style.borderColor="rgba(255,255,255,.08)";
-btn.style.background="rgba(255,255,255,.03)";
-
-});
-
+        questionEl.textContent = "Failed to load question. Please try again.";
+        showToast("Error loading question: " + err.message, "error");
+    }
 }
 
-buttons.forEach((btn,index)=>{
+// --------------------------------------------------
+// Handle answer selection
+// --------------------------------------------------
+function selectAnswer(index, clickedBtn) {
+    selectedAnswer = index;
 
-btn.onclick=()=>{
+    // Reset all buttons
+    buttonsContainer.querySelectorAll(".answer").forEach(btn => {
+        btn.style.borderColor = "rgba(255,255,255,.08)";
+        btn.style.background = "rgba(255,255,255,.03)";
+    });
 
-selected=index;
+    // Highlight selected
+    clickedBtn.style.borderColor = "#C5FF6B";
+    clickedBtn.style.background = "rgba(197,255,107,.12)";
 
-buttons.forEach(x=>{
+    // Enable next
+    nextBtn.disabled = false;
+    nextBtn.style.opacity = "1";
+}
 
-x.style.borderColor="rgba(255,255,255,.08)";
-x.style.background="rgba(255,255,255,.03)";
+// --------------------------------------------------
+// Submit answer and advance
+// --------------------------------------------------
+nextBtn.onclick = async () => {
+    if (selectedAnswer === -1 || !currentQuestionId) return;
 
-});
+    nextBtn.disabled = true;
+    nextBtn.textContent = "SUBMITTING...";
 
-btn.style.borderColor="#C5FF6B";
-btn.style.background="rgba(197,255,107,.12)";
+    try {
+        const result = await submitAnswer(sessionId, currentQuestionId, selectedAnswer);
 
+        questionsAnswered++;
+
+        if (result.correct) {
+            score++;
+            showToast("✓ Correct!", "success");
+        } else {
+            showToast("✗ Incorrect", "error");
+        }
+
+        // Brief pause to show feedback
+        await new Promise(r => setTimeout(r, 800));
+
+        if (result.next_action === "root_confirmed") {
+            // Root cause found — store and redirect
+            Session.setQuizScore(score);
+            Session.setTotalQuestions(questionsAnswered);
+            window.location.href = "rootcause.html";
+            return;
+        }
+
+        // Advance to next node in traversal
+        Session.advanceNode();
+        nextBtn.textContent = "NEXT →";
+        await loadQuestion();
+
+    } catch (err) {
+        console.error("Submit failed:", err);
+        showToast("Error submitting answer: " + err.message, "error");
+        nextBtn.disabled = false;
+        nextBtn.textContent = "NEXT →";
+    }
 };
 
-});
-
-next.onclick=()=>{
-
-if(selected===-1)return;
-
-if(selected===questions[current].answer){
-
-score++;
-
-}
-
-current++;
-
-if(current<questions.length){
-
+// Start
 loadQuestion();
 
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
 }
-
-else{
-
-sessionStorage.setItem("quizScore",score);
-
-window.location="rootcause.html";
-
-}
-
-};
-
-loadQuestion();
-
 </script>
 
 <script src="../js/ui-polish.js"></script>

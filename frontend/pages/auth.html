@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>XR | Authentication</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap"
+          rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/auth.css">
+
+</head>
+
+<body class="bg-background text-text">
+<button
+id="themeToggle"
+class="secondary-button"
+title="Toggle Theme">
+
+🌙
+
+</button>
+<div class="noise-layer"></div>
+<div class="grid-layer"></div>
+<canvas id="particles"></canvas>
+
+<div class="auth-wrapper">
+
+    <!-- LEFT -->
+
+    <div class="auth-left">
+
+        <a href="../index.html" class="logo-square">
+            XR
+        </a>
+
+        <span class="status-chip mt-10">
+            AI LEARNING RECOVERY
+        </span>
+
+        <h1 class="hero-title mt-8">
+            SIGN IN TO<br>
+            CONTINUE<br>
+            YOUR JOURNEY
+        </h1>
+
+        <p class="hero-description mt-8">
+
+            Diagnose learning gaps.
+
+            Understand root causes.
+
+            Receive AI-generated remediation.
+
+            Verify mastery.
+
+        </p>
+
+        <div class="auth-features">
+
+            <div class="auth-feature">
+
+                <i data-lucide="brain"></i>
+
+                <span>Knowledge Graph Diagnosis</span>
+
+            </div>
+
+            <div class="auth-feature">
+
+                <i data-lucide="sparkles"></i>
+
+                <span>AI Generated Lessons</span>
+
+            </div>
+
+            <div class="auth-feature">
+
+                <i data-lucide="graduation-cap"></i>
+
+                <span>Adaptive Practice</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+
+    <div class="auth-right">
+
+        <div class="auth-card">
+
+            <div class="auth-tabs">
+
+                <button
+                        id="signinTab"
+                        class="auth-tab active">
+
+                    SIGN IN
+
+                </button>
+
+                <button
+                        id="signupTab"
+                        class="auth-tab">
+
+                    SIGN UP
+
+                </button>
+
+            </div>
+
+            <!-- SIGN IN -->
+
+            <form id="signinForm">
+
+                <div class="input-group">
+
+                    <label>Email</label>
+
+                    <input
+                            type="email"
+                            id="loginEmail"
+                            placeholder="student@example.com"
+                            required>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Password</label>
+
+                    <input
+                            type="password"
+                            id="loginPassword"
+                            placeholder="••••••••"
+                            required>
+
+                </div>
+
+                <button
+                        type="submit"
+                        class="primary-button w-full mt-8">
+
+                    CONTINUE
+
+                </button>
+
+            </form>
+
+            <!-- SIGN UP -->
+
+            <form
+                    id="signupForm"
+                    class="hidden">
+
+                <div class="input-group">
+
+                    <label>Full Name</label>
+
+                    <input
+                            type="text"
+                            placeholder="Your Name">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Email</label>
+
+                    <input
+                            type="email"
+                            placeholder="student@example.com">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Password</label>
+
+                    <input
+                            type="password"
+                            placeholder="Create password">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Confirm Password</label>
+
+                    <input
+                            type="password"
+                            placeholder="Confirm password">
+
+                </div>
+
+                <button
+                        type="submit"
+                        class="primary-button w-full mt-8">
+
+                    CREATE ACCOUNT
+
+                </button>
+
+            </form>
+
+            <div class="divider">
+
+                <span>OR</span>
+
+            </div>
+
+            <button class="social-button">
+
+                <i data-lucide="chrome"></i>
+
+                Continue with Google
+
+            </button>
+
+            <button class="social-button">
+
+                <i data-lucide="github"></i>
+
+                Continue with GitHub
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="../js/particles.js"></script>
+<script src="../js/ui-polish.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+
+lucide.createIcons();
+
+</script>
+
+</body>
+
+</html>

@@ -2,13 +2,25 @@
 <html lang="en">
 
 <head>
+<script>
 
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
 <meta charset="UTF-8">
 
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>About Concept X-Ray</title>
+<title>About Cognis</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -34,62 +46,45 @@ href="../css/components.css">
 href="../css/animations.css">
 
 </head>
-
+<script src="../js/theme.js"></script>
 <body class="bg-background text-text">
 
-<div class="noise-layer"></div>
+<div class="noise-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<div class="grid-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></canvas>
 
-<div class="grid-layer"></div>
+<nav class="fixed top-0 left-0 right-0 z-[9999] py-4 px-6 sm:px-12 backdrop-blur-xl bg-[#0A0A0F]/90 border-b border-white/10" style="position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;background:rgba(10,10,15,0.92)!important;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3 group">
+            <div class="logo-square group-hover:border-accent transition-colors font-terminal text-lg font-bold text-accent">CG</div>
+            <span class="font-terminal text-2xl tracking-widest text-accent hidden sm:inline">COGNIS</span>
+        </a>
 
-<canvas id="particles"></canvas>
-
-<nav class="fixed top-0 w-full z-50 px-8 py-5">
-
-<div class="max-w-7xl mx-auto flex justify-between items-center">
-
-<a href="../index.html"
-class="logo-square">
-
-XR
-
-</a>
-
-<a href="../index.html"
-class="secondary-button">
-
-HOME
-
-</a>
-
-</div>
-
+        <div class="flex items-center gap-4 sm:gap-6 text-xs font-mono">
+            <a href="../index.html" class="nav-link text-muted hover:text-text">HOME</a>
+            <a href="scan.html" class="nav-link text-muted hover:text-accent">SCAN</a>
+            <a href="subject_graph.html" class="nav-link text-muted hover:text-accent">KNOWLEDGE MAP</a>
+            <a href="dashboard.html" class="nav-link text-muted hover:text-accent">DASHBOARD</a>
+            <a href="about.html" class="nav-link text-accent font-bold">ABOUT</a>
+        </div>
+    </div>
 </nav>
 
-<section class="pt-40 pb-24">
 
+
+<section class="pt-28 pb-24">
 <div class="max-w-6xl mx-auto px-8">
+<span class="status-chip">ABOUT COGNIS</span>
 
-<span class="status-chip">
+<h1 class="hero-title mt-8">COGNIS</h1>
 
-ABOUT PROJECT
-
-</span>
-
-<h1 class="hero-title mt-8">
-
-CONCEPT
-
-PREREQUISITE
-
-X-RAY
-
-</h1>
-
-<p class="hero-description mt-8">
-
-Concept Prerequisite X-Ray is an AI-powered diagnostic platform that identifies the hidden prerequisite concept responsible for a student's misunderstanding instead of simply marking answers as incorrect.
-
+<p class="hero-description mt-6 text-xl text-accent font-mono font-semibold">
+"Uncover the root of every learning gap."
 </p>
+<p class="hero-description mt-4">
+Cognis is an AI-powered diagnostic platform that identifies the hidden prerequisite concept responsible for a student's misunderstanding instead of simply marking answers as incorrect.
+</p>
+
 
 </div>
 
@@ -282,7 +277,9 @@ OPEN SCANNER
 
 <script>
 
-lucide.createIcons();
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
 
 </script>
 

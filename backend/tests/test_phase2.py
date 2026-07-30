@@ -204,7 +204,7 @@ class TestRecordAnswer:
             fresh_session, prereq, q2["question_id"], wrong
         )
         assert result["is_correct"] is False
-        assert result["next_action"] == "continue_node"
+        assert result["next_action"] == "diagnosed"
         assert result["root_cause"] == prereq
         assert fresh_session["status"] == "diagnosed"
 
@@ -239,7 +239,7 @@ class TestFullDiagnosticJourney:
         full_q = next(fq for fq in questions["eigenvectors"] if fq["id"] == q["question_id"])
         wrong = [c for c in "ABCD" if c != full_q["correct_answer"]][0]
         result1 = engine.record_answer(session, "eigenvectors", q["question_id"], wrong)
-        
+        assert result1["next_action"] == "continue"
 
         # Step 3: Pass the first prereq
         prereq1 = path[1]
@@ -256,7 +256,7 @@ class TestFullDiagnosticJourney:
         full_q3 = next(fq for fq in questions[prereq2] if fq["id"] == q3["question_id"])
         wrong3 = [c for c in "ABCD" if c != full_q3["correct_answer"]][0]
         result3 = engine.record_answer(session, prereq2, q3["question_id"], wrong3)
-        assert result3["next_action"] in ("root_confirmed", "diagnosed")
+        assert result3["next_action"] == "diagnosed"
         assert result3["root_cause"] == prereq2
 
         # Step 5: Diagnose
@@ -294,7 +294,7 @@ class TestFullDiagnosticJourney:
             session, "vectors_intro", q["question_id"], full_q["correct_answer"]
         )
         assert result["is_correct"] is True
-        assert result["next_action"] == "continue_node"
+        assert result["next_action"] == "diagnosed"
         assert result["diagnosis"] == "all_clear"
 
         # Diagnose

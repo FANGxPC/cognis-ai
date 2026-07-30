@@ -41,13 +41,12 @@ from embeddings import cosine_similarity, embed_text, NodeEmbeddingCache
 
 @pytest.fixture(scope="session")
 def graph() -> ConceptGraph:
-    return load_graph()
+    return load_graph("linear_algebra")
 
 
 @pytest.fixture(scope="session")
 def questions() -> dict:
-    with open(Path(__file__).parent.parent / 'data' / 'questions.json') as f:
-        return json.load(f)
+    return load_questions("linear_algebra")
 
 
 @pytest.fixture(scope="session")

@@ -2,7 +2,19 @@
 <html lang="en">
 
 <head>
+<script>
 
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -34,7 +46,7 @@ href="../css/components.css">
 href="../css/animations.css">
 
 </head>
-
+<script src="../js/theme.js"></script>
 <body>
 
 <div class="noise-layer"></div>
@@ -162,79 +174,87 @@ ANALYZE NOTES
 
 </section>
 
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/session.js"></script>
+<script src="../js/ui.js"></script>
+
 <script>
 
-lucide.createIcons();
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
 
 const browse=document.getElementById("browseBtn");
-
 const input=document.getElementById("fileInput");
-
 const fileCard=document.getElementById("fileCard");
-
 const fileName=document.getElementById("fileName");
-
 const analyze=document.getElementById("analyzeBtn");
 const drop=document.getElementById("dropZone");
+
+let selectedFile = null;
 
 browse.onclick=()=>input.click();
 
 input.onchange=()=>{
-
-const file=input.files[0];
-
-if(!file)return;
-
-fileCard.classList.remove("hidden");
-
-analyze.classList.remove("hidden");
-
-fileName.innerHTML=file.name;
-
+    selectedFile = input.files[0];
+    if(!selectedFile)return;
+    fileCard.classList.remove("hidden");
+    analyze.classList.remove("hidden");
+    fileName.innerHTML=selectedFile.name;
 };
 
 drop.ondragover=e=>{
-
-e.preventDefault();
-
-drop.style.borderColor="#C5FF6B";
-
+    e.preventDefault();
+    drop.style.borderColor="#C5FF6B";
 };
 
 drop.ondragleave=()=>{
-
-drop.style.borderColor="rgba(255,255,255,.1)";
-
+    drop.style.borderColor="rgba(255,255,255,.1)";
 };
 
 drop.ondrop=e=>{
-
-e.preventDefault();
-
-drop.style.borderColor="rgba(255,255,255,.1)";
-
-const file=e.dataTransfer.files[0];
-
-if(!file)return;
-
-fileCard.classList.remove("hidden");
-
-analyze.classList.remove("hidden");
-
-fileName.innerHTML=file.name;
-
+    e.preventDefault();
+    drop.style.borderColor="rgba(255,255,255,.1)";
+    selectedFile = e.dataTransfer.files[0];
+    if(!selectedFile)return;
+    fileCard.classList.remove("hidden");
+    analyze.classList.remove("hidden");
+    fileName.innerHTML=selectedFile.name;
 };
 
-analyze.onclick=()=>{
+analyze.onclick = async () => {
+    if (!selectedFile) {
+        showToast("No file selected.", "error");
+        return;
+    }
 
-analyze.innerHTML="ANALYZING...";
-analyze.disabled=true;
-analyze.style.opacity=".85";
+    analyze.innerHTML = "UPLOADING & ANALYZING...";
+    analyze.disabled = true;
+    analyze.style.opacity = ".85";
+    showLoader("Processing Upload...", "Generating knowledge graph from your notes");
 
-setTimeout(()=>{
-window.location.href="quiz.html";
-},900);
+    try {
+        const res = await uploadSubject(selectedFile);
 
+        hideLoader();
+        Session.setSubject(res.slug);
+        showToast(`Subject "${res.slug}" created successfully!`, "success");
+
+        analyze.innerHTML = "✓ COMPLETE — REDIRECTING...";
+
+        setTimeout(() => {
+            window.location.href = "scan.html";
+        }, 1200);
+
+    } catch (err) {
+        hideLoader();
+        console.error("Upload failed:", err);
+        analyze.innerHTML = "ANALYZE NOTES";
+        analyze.disabled = false;
+        analyze.style.opacity = "1";
+        showToast("Upload failed: " + (err.message || "Unknown error"), "error");
+    }
 };
 
 </script>

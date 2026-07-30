@@ -2,7 +2,19 @@
 <html lang="en">
 
 <head>
+<script>
 
+if(
+
+sessionStorage.getItem("loggedIn")!=="true"
+
+){
+
+window.location.href="login.html";
+
+}
+
+</script>
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -26,16 +38,38 @@
 <link rel="stylesheet" href="../css/animations.css">
 
 </head>
-
+<script src="../js/theme.js"></script>
 <body>
 
-<div class="noise-layer"></div>
+<div class="noise-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
 
-<div class="grid-layer"></div>
+<div class="grid-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
 
-<canvas id="particles"></canvas>
+<canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></canvas>
 
-<section class="min-h-screen flex items-center justify-center px-8">
+<nav class="fixed top-0 left-0 right-0 z-[9999] py-4 px-6 sm:px-12 backdrop-blur-xl bg-[#0A0A0F]/90 border-b border-white/10" style="position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;background:rgba(10,10,15,0.92)!important;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3 group">
+            <div class="logo-square group-hover:border-accent transition-colors font-terminal text-lg font-bold text-accent">CG</div>
+            <span class="font-terminal text-2xl tracking-widest text-accent hidden sm:inline">COGNIS</span>
+        </a>
+
+
+        <div class="flex items-center gap-4 sm:gap-6 text-xs font-mono">
+            <a href="../index.html" class="nav-link text-muted hover:text-text">HOME</a>
+            <a href="scan.html" class="nav-link text-muted hover:text-accent">SCAN</a>
+            <a href="subject_graph.html" class="nav-link text-muted hover:text-accent">KNOWLEDGE MAP</a>
+            <a href="dashboard.html" class="nav-link text-muted hover:text-accent">DASHBOARD</a>
+            <a href="about.html" class="nav-link text-muted hover:text-text">ABOUT</a>
+        </div>
+    </div>
+</nav>
+
+
+<section class="pt-28 pb-16 flex justify-center px-8">
+
+
+
 
 <div class="max-w-5xl w-full scanner-panel p-14">
 
@@ -81,16 +115,19 @@ Weakest Concept
 
 </h3>
 
-<h2 class="font-terminal text-5xl text-accent mt-6">
+<h2
+id="weakConcept"
+class="font-terminal text-5xl text-accent mt-6">
 
-Recursion
+ANALYZING...
 
 </h2>
 
-<p class="mt-6">
+<p
+id="weakDescription"
+class="mt-6 text-muted">
 
-Binary Search Trees depend heavily on recursive thinking.
-Your quiz responses indicate that recursion is the missing prerequisite.
+Tracing prerequisite dependency graph to uncover knowledge gaps...
 
 </p>
 
@@ -110,41 +147,16 @@ Dependency Chain
 
 </h3>
 
-<div class="mt-8 flex flex-col gap-4">
+<div
+id="dependencyChain"
+class="mt-8 flex flex-col gap-4">
 
-<div class="secondary-button justify-start">
-
-Variables
-
-</div>
-
-<div class="secondary-button justify-start">
-
-Loops
-
-</div>
-
-<div class="secondary-button justify-start">
-
-Functions
-
-</div>
-
-<div class="secondary-button justify-start border-lime-300 bg-lime-300/10">
-
-Recursion ❌
-
-</div>
-
-<div class="secondary-button justify-start">
-
-Binary Search Trees
+<div class="text-muted text-sm italic">Loading dependency graph...</div>
 
 </div>
 
 </div>
 
-</div>
 
 </div>
 
@@ -168,17 +180,106 @@ START RECOVERY →
 
 </section>
 
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/session.js"></script>
+<script src="../js/ui.js"></script>
+
 <script>
+// ======================================================
+// DYNAMIC ROOT CAUSE — powered by backend API
+// ======================================================
 
-lucide.createIcons();
+const weakConcept = document.getElementById("weakConcept");
+const weakDescription = document.getElementById("weakDescription");
+const dependencyChain = document.getElementById("dependencyChain");
+const sessionId = Session.getSessionId();
 
-</script>
+if (!sessionId) {
+    showToast("No active session. Please run a scan first.", "error");
+    setTimeout(() => { window.location.href = "scan.html"; }, 1500);
+}
 
-<script>
+async function loadRootCause() {
+    try {
+        showLoader("Analyzing Root Cause...", "Tracing prerequisite dependencies");
 
-lucide.createIcons();
+        const data = await explain(sessionId);
+
+        hideLoader();
+
+        // Render the root cause
+        const targetNode = data.root_node_id || data.root_cause_node || data.root_cause || Session.getMatchedNodeId();
+        if (targetNode) {
+            const label = targetNode.replace(/_/g, " ");
+            weakConcept.textContent = label;
+            Session.setRootCauseNode(targetNode);
+        } else {
+            weakConcept.textContent = "All Prerequisites Clear";
+        }
 
 
+        // Render the explanation
+        if (data.explanation) {
+            weakDescription.textContent = data.explanation;
+        } else if (data.summary) {
+            weakDescription.textContent = data.summary;
+        }
+
+        // Render the dependency chain from traversal path
+        const traversalPath = Session.getTraversalPath();
+        const rootCauseNode = Session.getRootCauseNode();
+        const matchedNode = Session.getMatchedNodeId();
+
+        if (traversalPath.length > 0) {
+            dependencyChain.innerHTML = "";
+
+            traversalPath.forEach(nodeId => {
+                const div = document.createElement("div");
+                const label = nodeId.replace(/_/g, " ");
+                const isRootCause = nodeId === rootCauseNode;
+
+                div.className = "secondary-button justify-start";
+
+                if (isRootCause) {
+                    div.classList.add("border-lime-300", "bg-lime-300/10");
+                    div.textContent = label + " ❌";
+                } else {
+                    div.textContent = label;
+                }
+
+                dependencyChain.appendChild(div);
+            });
+
+            // Add the original matched node at the end if not in path
+            if (matchedNode && !traversalPath.includes(matchedNode)) {
+                const div = document.createElement("div");
+                div.className = "secondary-button justify-start";
+                div.textContent = matchedNode.replace(/_/g, " ");
+                dependencyChain.appendChild(div);
+            }
+        }
+
+        // Update the lesson link to pass context
+        const lessonLink = document.querySelector('a[href="lesson.html"]');
+        if (lessonLink) {
+            lessonLink.href = "lesson.html";
+        }
+
+    } catch (err) {
+        console.error("Failed to load root cause:", err);
+        hideLoader();
+        weakConcept.textContent = "Analysis Error";
+        weakDescription.textContent = "Could not retrieve root cause analysis. " + (err.message || "Backend may be offline.");
+        showToast("Error loading root cause: " + err.message, "error");
+    }
+}
+
+loadRootCause();
+
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
 </script>
 
 <script src="../js/ui-polish.js"></script>

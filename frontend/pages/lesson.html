@@ -2,350 +2,527 @@
 <html lang="en">
 
 <head>
-
+<script>
+if(sessionStorage.getItem("loggedIn")!=="true"){
+    window.location.href="login.html";
+}
+</script>
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Recovery Path</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
-
-<link rel="preconnect"
-href="https://fonts.googleapis.com">
-
-<link rel="preconnect"
-href="https://fonts.gstatic.com"
-crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap"
-rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
-
-<link rel="stylesheet"
-href="../css/style.css">
-
-<link rel="stylesheet"
-href="../css/components.css">
-
-<link rel="stylesheet"
-href="../css/animations.css">
-
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/animations.css">
 </head>
-
+<script src="../js/theme.js"></script>
 <body class="bg-background text-text">
 
-<div class="noise-layer"></div>
+<div class="noise-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<div class="grid-layer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></div>
+<canvas id="particles" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></canvas>
 
-<div class="grid-layer"></div>
+<nav class="fixed top-0 left-0 right-0 z-[9999] py-4 px-6 sm:px-12 backdrop-blur-xl bg-[#0A0A0F]/90 border-b border-white/10" style="position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;background:rgba(10,10,15,0.92)!important;">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3 group">
+            <div class="logo-square group-hover:border-accent transition-colors font-terminal text-lg font-bold text-accent">CG</div>
+            <span class="font-terminal text-2xl tracking-widest text-accent hidden sm:inline">COGNIS</span>
+        </a>
 
-<canvas id="particles"></canvas>
 
-<nav class="fixed top-0 w-full z-50 px-8 py-5">
-
-<div class="max-w-7xl mx-auto flex justify-between items-center">
-
-<a href="../index.html"
-class="logo-square">
-
-XR
-
-</a>
-
-<a href="scan.html"
-class="secondary-button">
-
-← BACK
-
-</a>
-
-</div>
-
+        <div class="flex items-center gap-4 sm:gap-6 text-xs font-mono">
+            <a href="../index.html" class="nav-link text-muted hover:text-text">HOME</a>
+            <a href="scan.html" class="nav-link text-muted hover:text-accent">SCAN</a>
+            <a href="subject_graph.html" class="nav-link text-muted hover:text-accent">KNOWLEDGE MAP</a>
+            <a href="dashboard.html" class="nav-link text-muted hover:text-accent">DASHBOARD</a>
+            <a href="about.html" class="nav-link text-muted hover:text-text">ABOUT</a>
+        </div>
+    </div>
 </nav>
 
-<section class="pt-40 pb-24">
 
-<div class="max-w-7xl mx-auto px-8">
 
-<span class="status-chip">
+<!-- HERO -->
+<section class="pt-28 pb-12">
 
-ROOT CAUSE FOUND
 
-</span>
-
-<h1 class="hero-title mt-8">
-
-YOUR
-
-LEARNING
-
-PATH
-
-</h1>
-
-<p class="hero-description mt-8">
-
-The engine identified the prerequisite concepts preventing complete understanding.
-
-</p>
-
-</div>
-
+    <div class="max-w-7xl mx-auto px-8">
+        <span class="status-chip" id="lessonChip">LOADING...</span>
+        <h1 class="hero-title mt-8">YOUR<br>LEARNING<br>PATH</h1>
+        <p class="hero-description mt-8" id="lessonDescription">
+            Loading remediation content from the AI engine...
+        </p>
+    </div>
 </section>
 
-<section class="pb-24">
+<!-- AI EXPLANATION -->
+<section class="pb-16">
+    <div class="max-w-7xl mx-auto px-8 space-y-8">
+        <div class="scanner-panel p-10" id="explanationPanel">
+            <div class="panel-top mb-6 flex justify-between items-center">
+                <span class="status-chip">AI COMPREHENSIVE LESSON</span>
+                <span class="text-accent font-terminal text-xl" id="explanationStatus">LOADING</span>
+            </div>
+            <div id="explanationContent" class="text-lg leading-relaxed space-y-4" style="white-space: pre-line;">
+                Loading explanation...
+            </div>
+        </div>
 
-<div class="max-w-7xl mx-auto px-8 grid lg:grid-cols-3 gap-8">
+        <!-- WORKED EXAMPLES CONTAINER -->
+        <div id="workedExamplesSection" class="hidden">
+            <h2 class="text-2xl font-terminal text-primary mb-4">Step-by-Step Worked Examples</h2>
+            <div id="workedExamplesContainer" class="grid lg:grid-cols-2 gap-6"></div>
+        </div>
 
-<div class="feature-card">
+        <!-- MISCONCEPTIONS & TIPS -->
+        <div id="misconceptionsSection" class="hidden grid lg:grid-cols-2 gap-6">
+            <div class="scanner-panel p-8">
+                <h3 class="text-xl font-terminal text-danger mb-4">⚠️ Common Misconceptions</h3>
+                <div id="misconceptionsContainer" class="space-y-4"></div>
+            </div>
+            <div class="scanner-panel p-8">
+                <h3 class="text-xl font-terminal text-accent mb-4">💡 Summary Tips</h3>
+                <ul id="summaryTipsContainer" class="list-disc pl-5 space-y-2 text-muted"></ul>
+            </div>
+        </div>
 
-<div class="feature-icon">
+        <!-- VIDEO & RESOURCE RECOMMENDATIONS -->
+        <div id="videoResourcesSection" class="hidden scanner-panel p-8">
+            <h3 class="text-xl font-terminal text-primary mb-4">📺 Recommended Video Resources</h3>
+            <p class="text-muted mb-4 text-sm">Targeted topics to look up on YouTube or Khan Academy for deep visual learning:</p>
+            <div id="videoLinksContainer" class="flex flex-wrap gap-3"></div>
+        </div>
 
-<i data-lucide="circle"></i>
-
-</div>
-
-<h3>
-
-Variables
-
-</h3>
-
-<p>
-
-Basic storage and assignment.
-
-</p>
-
-</div>
-
-<div class="feature-card">
-
-<div class="feature-icon">
-
-<i data-lucide="git-branch"></i>
-
-</div>
-
-<h3>
-
-Loops & Conditions
-
-</h3>
-
-<p>
-
-Decision making and iteration.
-
-</p>
-
-</div>
-
-<div class="feature-card">
-
-<div class="feature-icon">
-
-<i data-lucide="brain"></i>
-
-</div>
-
-<h3>
-
-Binary Search Trees
-
-</h3>
-
-<p>
-
-Current concept requiring recovery.
-
-</p>
-
-</div>
-
-</div>
-
+        <!-- AI CHAT TUTOR -->
+        <div class="scanner-panel p-8" id="chatSection">
+            <div class="panel-top mb-6 flex justify-between items-center">
+                <span class="status-chip">AI TUTOR CHAT</span>
+                <span class="text-accent font-terminal text-sm">INTERACTIVE Q&A</span>
+            </div>
+            <div id="chatMessages" class="space-y-4 max-h-96 overflow-y-auto mb-6 p-4 bg-black/30 rounded-xl border border-white/5 scroll-smooth">
+                <!-- Messages rendered dynamically -->
+            </div>
+            <div class="flex gap-4">
+                <input type="text" id="chatInput"
+                    placeholder="Ask the AI tutor a question..."
+                    class="flex-1 bg-black/30 border border-white/10 p-4 rounded-xl outline-none text-text focus:border-accent">
+                <button id="chatSendBtn" class="primary-button px-6" onclick="sendChatMessage()">
+                    SEND
+                </button>
+            </div>
+            <!-- Quick prompts -->
+            <div class="flex flex-wrap gap-2 mt-4" id="quickPrompts">
+                <button class="secondary-button text-xs py-2 px-3 hover:border-accent"
+                    onclick="sendQuickPrompt('Can you explain this concept with a real-world analogy?')">
+                    🎯 Real-world analogy
+                </button>
+                <button class="secondary-button text-xs py-2 px-3 hover:border-accent"
+                    onclick="sendQuickPrompt('Can you give me a simpler step-by-step example?')">
+                    📝 Simpler example
+                </button>
+                <button class="secondary-button text-xs py-2 px-3 hover:border-accent"
+                    onclick="sendQuickPrompt('Why is this concept important for downstream topics?')">
+                    ❓ Why is this important?
+                </button>
+            </div>
+        </div>
+    </div>
 </section>
 
-<section class="pb-28">
 
-<div class="max-w-7xl mx-auto px-8">
 
-<div class="timeline">
-
-<div class="timeline-line"></div>
-
-<div class="timeline-step">
-
-<div class="timeline-number">
-
-1
-
-</div>
-
-<div class="timeline-card">
-
-<h3>
-
-Read Theory
-
-</h3>
-
-<p>
-
-Review prerequisite notes and concept explanations.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="timeline-step">
-
-<div class="timeline-number">
-
-2
-
-</div>
-
-<div class="timeline-card">
-
-<h3>
-
-Watch Animation
-
-</h3>
-
-<p>
-
-Understand concept visually before coding.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="timeline-step">
-
-<div class="timeline-number">
-
-3
-
-</div>
-
-<div class="timeline-card">
-
-<h3>
-
-Practice Questions
-
-</h3>
-
-<p>
-
-Solve progressively harder exercises.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="timeline-step">
-
-<div class="timeline-number">
-
-4
-
-</div>
-
-<div class="timeline-card">
-
-<h3>
-
-Verification Quiz
-
-</h3>
-
-<p>
-
-Confirm mastery before proceeding.
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+<!-- PRACTICE QUESTIONS -->
+<section class="pb-16">
+    <div class="max-w-7xl mx-auto px-8">
+        <div class="text-center mb-12">
+            <span class="status-chip">PRACTICE</span>
+            <h2 class="section-title mt-6">TEST YOUR UNDERSTANDING</h2>
+            <p class="section-description">Answer practice questions to verify your grasp of the concept.</p>
+        </div>
+        <div id="practiceContainer" class="space-y-8">
+            <!-- Practice questions will be rendered here dynamically -->
+        </div>
+    </div>
 </section>
 
+<!-- CTA -->
 <section class="pb-32">
-
-<div class="max-w-6xl mx-auto px-8">
-
-<div class="cta-panel">
-
-<span class="status-chip">
-
-NEXT STEP
-
-</span>
-
-<h2 class="section-title mt-8">
-
-START LEARNING
-
-</h2>
-
-<p class="section-description">
-
-Continue through the generated recovery path until mastery is achieved.
-
-</p>
-
-<div class="flex justify-center mt-10 gap-6">
-
-<a
-href="success.html"
-class="primary-button">
-
-BEGIN LESSON
-
-</a>
-
-<a
-href="../index.html"
-class="secondary-button">
-
-HOME
-
-</a>
-
-</div>
-
-</div>
-
-</div>
-
+    <div class="max-w-6xl mx-auto px-8">
+        <div class="cta-panel">
+            <span class="status-chip">NEXT STEP</span>
+            <h2 class="section-title mt-8" id="ctaTitle">COMPLETE PRACTICE</h2>
+            <p class="section-description" id="ctaDescription">
+                Answer all practice questions to verify mastery.
+            </p>
+            <div class="flex justify-center mt-10 gap-6">
+                <button id="verifyBtn" class="primary-button" disabled style="opacity:.5">
+                    VERIFY MASTERY →
+                </button>
+                <a href="../index.html" class="secondary-button">HOME</a>
+            </div>
+        </div>
+    </div>
 </section>
+
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/session.js"></script>
+<script src="../js/ui.js"></script>
 
 <script>
+// ======================================================
+// DYNAMIC LESSON — powered by backend API
+// ======================================================
 
-lucide.createIcons();
+const sessionId = Session.getSessionId();
+const rootCauseNode = Session.getRootCauseNode() || Session.getMatchedNodeId();
+const chipEl = document.getElementById("lessonChip");
+const descEl = document.getElementById("lessonDescription");
+const explanationContent = document.getElementById("explanationContent");
+const explanationStatus = document.getElementById("explanationStatus");
+const practiceContainer = document.getElementById("practiceContainer");
+const verifyBtn = document.getElementById("verifyBtn");
+const ctaTitle = document.getElementById("ctaTitle");
+const ctaDescription = document.getElementById("ctaDescription");
 
+let practiceQuestions = [];
+let practiceResults = {};
+let allPracticeComplete = false;
+
+if (!rootCauseNode) {
+    showToast("No diagnostic data. Please complete a scan first.", "error");
+    setTimeout(() => { window.location.href = "scan.html"; }, 1500);
+}
+
+
+async function loadRemediation() {
+    try {
+        showLoader("Loading Recovery Path...", "Fetching AI-generated remediation");
+
+        const currentSubject = Session.getSubject();
+        const data = await remediation(rootCauseNode, sessionId, currentSubject);
+
+
+        hideLoader();
+
+        // Update header
+        const nodeLabel = rootCauseNode.replace(/_/g, " ");
+        chipEl.textContent = `REMEDIATION: ${nodeLabel.toUpperCase()}`;
+        descEl.textContent = `The AI engine identified "${nodeLabel}" as the key concept to strengthen. Study the explanation below, then complete the practice questions.`;
+
+        // Render explanation
+        const fullExplanation = data.detailed_explanation || data.explanation || data.description;
+        explanationContent.textContent = fullExplanation;
+        explanationStatus.textContent = "GENERATED BY AI";
+
+        // Render worked examples
+        const workedExamples = data.worked_examples || [];
+        if (workedExamples.length > 0) {
+            const weSection = document.getElementById("workedExamplesSection");
+            const weContainer = document.getElementById("workedExamplesContainer");
+            weContainer.innerHTML = workedExamples.map((ex, idx) => `
+                <div class="scanner-panel p-6 border border-white/10 rounded-xl">
+                    <div class="status-chip mb-3">EXAMPLE ${idx + 1}</div>
+                    <h3 class="text-xl font-bold mb-2 text-accent">${ex.title || 'Worked Example'}</h3>
+                    <p class="text-text mb-4"><strong>Problem:</strong> ${ex.problem || ''}</p>
+                    <div class="space-y-2 mb-4 bg-black/40 p-4 rounded-lg text-sm text-muted">
+                        ${(ex.solution_steps || []).map(step => `<div>• ${step}</div>`).join('')}
+                    </div>
+                    <div class="text-xs text-primary font-mono">💡 Key Takeaway: ${ex.key_takeaway || ''}</div>
+                </div>
+            `).join('');
+            weSection.classList.remove("hidden");
+        }
+
+        // Render misconceptions & summary tips
+        const misconceptions = data.common_misconceptions || [];
+        const tips = data.summary_tips || [];
+        if (misconceptions.length > 0 || tips.length > 0) {
+            const miscSection = document.getElementById("misconceptionsSection");
+            const miscContainer = document.getElementById("misconceptionsContainer");
+            const tipsContainer = document.getElementById("summaryTipsContainer");
+
+            miscContainer.innerHTML = misconceptions.map(m => `
+                <div class="bg-black/30 p-4 rounded-lg border border-danger/20 text-sm">
+                    <div class="text-danger font-semibold mb-1">❌ Myth: ${m.misconception}</div>
+                    <div class="text-accent font-semibold">✓ Reality: ${m.reality}</div>
+                </div>
+            `).join('');
+
+            tipsContainer.innerHTML = tips.map(t => `<li>${t}</li>`).join('');
+            miscSection.classList.remove("hidden");
+        }
+
+        // Render video resources
+        const videoKeywords = data.video_keywords || [];
+        if (videoKeywords.length > 0) {
+            const vidSection = document.getElementById("videoResourcesSection");
+            const vidContainer = document.getElementById("videoLinksContainer");
+
+            vidContainer.innerHTML = videoKeywords.map(kw => {
+                const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(kw)}`;
+                return `
+                    <a href="${searchUrl}" target="_blank" rel="noopener noreferrer" 
+                       class="secondary-button text-xs py-2 px-4 inline-flex items-center gap-2 hover:border-accent">
+                        <span>▶ YouTube: "${kw}"</span>
+                    </a>
+                `;
+            }).join('');
+            vidSection.classList.remove("hidden");
+        }
+
+
+        // Render practice questions
+        practiceQuestions = data.practice_questions || [];
+
+        if (practiceQuestions.length === 0) {
+            practiceContainer.innerHTML = `
+                <div class="feature-card text-center">
+                    <h3>No Practice Questions Available</h3>
+                    <p class="mt-4">You can proceed to verify mastery directly.</p>
+                </div>
+            `;
+            enableVerify();
+            return;
+        }
+
+        practiceContainer.innerHTML = "";
+
+        practiceQuestions.forEach((q, index) => {
+            const card = document.createElement("div");
+            card.className = "scanner-panel p-8";
+            card.id = `practice-${index}`;
+
+            const rawOptions = q.options || q.choices || [];
+            const options = Array.isArray(rawOptions)
+                ? rawOptions
+                : (typeof rawOptions === "object" && rawOptions !== null)
+                    ? Object.values(rawOptions)
+                    : [];
+
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-6">
+                    <span class="status-chip">QUESTION ${index + 1}/${practiceQuestions.length}</span>
+                    <span class="text-muted practice-status" id="pstatus-${index}">UNANSWERED</span>
+                </div>
+                <h3 class="text-xl mb-6">${q.prompt || q.question}</h3>
+                <div class="grid gap-4" id="poptions-${index}">
+                    ${options.map((opt, oi) => `
+                        <button class="secondary-button practice-option text-left"
+                                data-question="${index}"
+                                data-option="${oi}"
+                                onclick="selectPracticeAnswer(${index}, ${oi}, this)">
+                            ${opt}
+                        </button>
+                    `).join("")}
+                </div>
+                <button class="primary-button mt-6 w-full practice-submit"
+                        id="psubmit-${index}"
+                        disabled style="opacity:.5"
+                        onclick="submitPracticeAnswer(${index})">
+                    SUBMIT ANSWER
+                </button>
+            `;
+
+            practiceContainer.appendChild(card);
+        });
+
+    } catch (err) {
+        console.error("Failed to load remediation:", err);
+        hideLoader();
+        explanationContent.textContent = "Failed to load remediation content: " + (err.message || "Unknown error");
+        explanationStatus.textContent = "ERROR";
+        showToast("Error loading remediation: " + err.message, "error");
+    }
+}
+
+// Track selected answer per practice question
+const selectedPracticeAnswers = {};
+
+function selectPracticeAnswer(questionIdx, optionIdx, clickedBtn) {
+    selectedPracticeAnswers[questionIdx] = optionIdx;
+
+    // Reset all buttons for this question
+    const container = document.getElementById(`poptions-${questionIdx}`);
+    container.querySelectorAll(".practice-option").forEach(btn => {
+        btn.style.borderColor = "rgba(255,255,255,.08)";
+        btn.style.background = "rgba(255,255,255,.03)";
+    });
+
+    // Highlight selected
+    clickedBtn.style.borderColor = "#C5FF6B";
+    clickedBtn.style.background = "rgba(197,255,107,.12)";
+
+    // Enable submit
+    const submitBtn = document.getElementById(`psubmit-${questionIdx}`);
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = "1";
+}
+
+async function submitPracticeAnswer(questionIdx) {
+    const answer = selectedPracticeAnswers[questionIdx];
+    if (answer === undefined) return;
+
+    const q = practiceQuestions[questionIdx];
+    const submitBtn = document.getElementById(`psubmit-${questionIdx}`);
+    const statusEl = document.getElementById(`pstatus-${questionIdx}`);
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "CHECKING...";
+
+    try {
+        const result = await practiceAnswer(sessionId, q.question_id, answer);
+
+        practiceResults[questionIdx] = result.correct;
+
+        if (result.correct) {
+            statusEl.textContent = "✓ CORRECT";
+            statusEl.style.color = "#C5FF6B";
+            submitBtn.textContent = "✓ CORRECT";
+            submitBtn.style.background = "rgba(197,255,107,.15)";
+            showToast("✓ Correct!", "success");
+        } else {
+            statusEl.textContent = "✗ INCORRECT";
+            statusEl.style.color = "#FF5F6D";
+            submitBtn.textContent = "✗ TRY AGAIN";
+            submitBtn.style.background = "rgba(255,95,109,.15)";
+            showToast("✗ Incorrect — review the explanation above", "error");
+
+            // Re-enable for retry after delay
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "RETRY";
+                submitBtn.style.background = "";
+                submitBtn.style.opacity = "1";
+            }, 1500);
+            return;
+        }
+
+        // Disable all options for this question
+        const container = document.getElementById(`poptions-${questionIdx}`);
+        container.querySelectorAll(".practice-option").forEach(btn => {
+            btn.disabled = true;
+            btn.style.pointerEvents = "none";
+        });
+
+        // Check if all questions answered correctly
+        checkAllComplete();
+
+    } catch (err) {
+        console.error("Practice answer failed:", err);
+        submitBtn.disabled = false;
+        submitBtn.textContent = "SUBMIT ANSWER";
+        submitBtn.style.opacity = "1";
+        showToast("Error: " + err.message, "error");
+    }
+}
+
+function checkAllComplete() {
+    const correctCount = Object.values(practiceResults).filter(v => v === true).length;
+
+    if (correctCount >= practiceQuestions.length) {
+        allPracticeComplete = true;
+        enableVerify();
+        showToast("🎉 All practice questions completed!", "success");
+    }
+}
+
+function enableVerify() {
+    verifyBtn.disabled = false;
+    verifyBtn.style.opacity = "1";
+    ctaTitle.textContent = "READY TO VERIFY";
+    ctaDescription.textContent = "All practice questions completed. Verify mastery to complete the recovery.";
+}
+
+verifyBtn.onclick = () => {
+    window.location.href = "success.html";
+};
+
+// AI Chat Tutor Logic
+const chatMessages = document.getElementById("chatMessages");
+const chatInput = document.getElementById("chatInput");
+
+async function initChat() {
+    chatMessages.innerHTML = "";
+    try {
+        const histData = await getChatHistory(sessionId, rootCauseNode);
+        if (histData && histData.history && histData.history.length > 0) {
+            histData.history.forEach(msg => {
+                addChatBubble(msg.role, msg.content);
+            });
+            return;
+        }
+    } catch(e) {
+        console.error("Could not fetch chat history", e);
+    }
+
+    const nodeLabel = rootCauseNode.replace(/_/g, " ");
+    addChatBubble("assistant",
+        `👋 Hi! I'm your AI tutor. Ask me anything about **${nodeLabel}**, or click one of the quick prompt buttons below to explore!`
+    );
+}
+
+function addChatBubble(role, text) {
+    const div = document.createElement("div");
+    if (role === "user") {
+        div.className = "ml-auto max-w-lg bg-accent/10 border border-accent/30 p-4 rounded-xl text-sm text-text";
+    } else {
+        div.className = "mr-auto max-w-lg bg-white/5 border border-white/10 p-4 rounded-xl text-sm text-muted";
+    }
+    div.style.whiteSpace = "pre-line";
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function sendChatMessage() {
+    const msg = chatInput.value.trim();
+    if (!msg) return;
+    chatInput.value = "";
+    addChatBubble("user", msg);
+
+    const typingEl = document.createElement("div");
+    typingEl.id = "chatTyping";
+    typingEl.className = "mr-auto text-xs text-muted animate-pulse p-2";
+    typingEl.textContent = "AI is thinking...";
+    chatMessages.appendChild(typingEl);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+        const result = await chatWithTutor(sessionId, rootCauseNode, msg);
+        typingEl.remove();
+        addChatBubble("assistant", result.reply);
+    } catch (err) {
+        typingEl.remove();
+        addChatBubble("assistant", "Sorry, I ran into an issue processing your question. Please try again!");
+    }
+}
+
+function sendQuickPrompt(prompt) {
+    chatInput.value = prompt;
+    sendChatMessage();
+}
+
+chatInput?.addEventListener("keydown", e => {
+    if (e.key === "Enter") sendChatMessage();
+});
+
+// Start
+loadRemediation();
+initChat();
+
+if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+}
 </script>
+
 
 <script src="../js/ui-polish.js"></script>
 <script src="../js/particles.js"></script>
 
 </body>
-
 </html>

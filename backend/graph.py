@@ -1,6 +1,9 @@
 """
 graph.py — Concept graph data model and loading utilities.
 Provides the in-memory graph representation and prerequisite traversal helpers.
+
+Supports multiple subjects via SUBJECTS_CONFIG. Each subject has its own
+graph and question bank files under the data/ directory.
 """
 
 from __future__ import annotations
@@ -9,18 +12,23 @@ import json
 from pathlib import Path
 from typing import Any
 
+from database import get_subject_graph, get_subject_questions, get_all_subjects
+
 # ---------------------------------------------------------------------------
-# Data paths
+# Subject registry (now dynamic via DB)
 # ---------------------------------------------------------------------------
-DATA_DIR = Path(__file__).parent / "data"
-SUBJECTS_CONFIG = {
-    "linear_algebra": {
-        "title": "Linear Algebra",
-        "description": "Vectors, matrices, eigenvectors, and more.",
-        "graph_file": "graph.json",
-        "questions_file": "questions.json"
-    }
-}
+def get_subjects_config():
+    subjects = get_all_subjects()
+    config = {}
+    for sub in subjects:
+        config[sub['slug']] = {
+            "title": sub['title'],
+            "description": sub['description']
+        }
+    return config
+
+# Maintain for backwards compat where possible, though main.py should ideally use get_subjects_config()
+SUBJECTS_CONFIG = get_subjects_config()
 
 
 # ---------------------------------------------------------------------------
@@ -157,25 +165,20 @@ class ConceptGraph:
 
 
 # ---------------------------------------------------------------------------
-# Factory
+# Factory — subject-aware loaders
 # ---------------------------------------------------------------------------
 
-def load_graph(subject_id: str = "linear_algebra") -> ConceptGraph:
-    """Load the concept graph from the JSON data file for a specific subject."""
-    conf = SUBJECTS_CONFIG.get(subject_id)
-    if not conf:
-        raise ValueError(f"Unknown subject: {subject_id}")
-    file_path = DATA_DIR / conf["graph_file"]
-    with open(file_path, "r", encoding="utf-8") as f:
-        raw = json.load(f)
+def load_graph(subject: str = "linear_algebra") -> ConceptGraph:
+    """Load the concept graph from the database for a given subject."""
+    raw = get_subject_graph(subject)
+    if not raw or not raw.get("nodes"):
+        raise ValueError(f"Unknown subject '{subject}' or missing graph.")
     return ConceptGraph(raw)
 
 
-def load_questions(subject_id: str = "linear_algebra") -> dict[str, list[dict[str, Any]]]:
-    """Load the question bank from JSON. Keyed by node_id."""
-    conf = SUBJECTS_CONFIG.get(subject_id)
-    if not conf:
-        raise ValueError(f"Unknown subject: {subject_id}")
-    file_path = DATA_DIR / conf["questions_file"]
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+def load_questions(subject: str = "linear_algebra") -> dict[str, list[dict[str, Any]]]:
+    """Load the question bank from the database. Keyed by node_id."""
+    questions = get_subject_questions(subject)
+    if not questions:
+        raise ValueError(f"Unknown subject '{subject}' or missing questions.")
+    return questions
