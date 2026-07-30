@@ -9,13 +9,7 @@
 
 ---
 
-## 🎬 Demo Video
-*(Link your 2-minute YouTube/Loom demo video here)*
-[![Cognis Demo Video](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
-
----
-
-## 🌟 Pitch & Vision
+## 📖 About
 
 When students struggle with complex subjects like **Linear Algebra**, **Data Structures**, or **Physics**, the problem is rarely the topic right in front of them—it is almost always an **unrecognized prerequisite gap** from weeks or semesters prior.
 
@@ -39,7 +33,7 @@ Traditional AI tutors just answer the student's immediate prompt, creating a fal
 
 ## ⚙️ Architecture & Data Flow
 
-```
+```text
 [ Student Query ] ---> [ Gemini Vector Embeddings ] ---> [ Cosine Similarity Node Match ]
                                                                    |
                                                                    v
@@ -56,6 +50,8 @@ Traditional AI tutors just answer the student's immediate prompt, creating a fal
 
 ### 1. Backend Setup (FastAPI & Gemini AI)
 
+Navigate to the backend directory and set up a virtual environment:
+
 ```bash
 cd backend
 python3 -m venv venv
@@ -63,7 +59,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Create a `.env` file in the `backend/` directory:
+Create a `.env` file in the `backend/` directory with your Google Gemini API key:
 ```env
 GEMINI_API_KEY=your_google_gemini_api_key
 ```
@@ -98,7 +94,7 @@ Cognis is designed to easily scale to new topics. To add a subject:
 
 ## 🧪 Automated Test Suite
 
-Run the full pytest integration suite:
+Run the full pytest integration suite from the backend directory:
 ```bash
 cd backend
 pytest tests/test_new_features.py -v
@@ -106,9 +102,6 @@ pytest tests/test_new_features.py -v
 
 ---
 
-## 🏆 Prometheus July AI Challenge Submission
-- **Project Name**: Cognis
-- **Tagline**: Uncover the root of every learning gap.
-- **Category**: Educational AI Tool
-- **Core AI**: Google Gemini AI (`google-genai` SDK, `gemini-3.5-flash-lite`, Vector Embeddings)
-- **Repo**: [GitHub Source Code](https://github.com/fang/prereq-sleuth)
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
