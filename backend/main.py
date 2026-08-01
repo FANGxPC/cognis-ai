@@ -37,6 +37,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from graph import load_graph, load_questions, ConceptGraph
@@ -1112,3 +1113,12 @@ def api_demo_load(profile_name: str = Query(...)) -> dict[str, Any]:
     _sessions[sid] = session
 
     return {"session_id": sid, "profile_name": profile_name, "status": session["status"]}
+
+
+# ---------------------------------------------------------------------------
+# Mount Static Frontend (Single-Domain Serving)
+# ---------------------------------------------------------------------------
+_frontend_path = Path(__file__).resolve().parent.parent / "frontend"
+if _frontend_path.exists():
+    app.mount("/", StaticFiles(directory=str(_frontend_path), html=True), name="static")
+
