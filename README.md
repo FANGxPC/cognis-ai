@@ -7,6 +7,9 @@
 ![UI](https://img.shields.io/badge/UI-Vanilla--JS%20%7C%20TailwindCSS-06B6D4.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
+## 🌐 Live Deployment
+### ✨ Try Cognis now: [cognis-ai-dxzl.onrender.com](https://cognis-ai-dxzl.onrender.com)
+
 ---
 
 ## 🎬 Demo Video
