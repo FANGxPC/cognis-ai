@@ -13,8 +13,11 @@
 ---
 
 ## 🎬 Demo Video
-*(Link your 2-minute YouTube/Loom demo video here)*
-[![Cognis Demo Video](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
+
+
+https://github.com/user-attachments/assets/24912cdc-50ae-4578-ac72-d246c8e712b3
+
+
 
 ---
 
